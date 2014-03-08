@@ -1,3 +1,7 @@
+var setting = {
+	zeroEstimateSamples: 16
+};
+
 var APITag = document.createElement('script');
 APITag.src = 'https://www.youtube.com/iframe_api';
 var firstScript = document.getElementsByTagName('script')[0];
@@ -8,7 +12,7 @@ function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
 		height: '630',
 		width: '1120',
-		videoId: 'fQ_m5VLhqNg',
+		videoId: 'p3ih4rDduug',
 		playerVars: {
 			rel: 0,
 			controls: 0,
@@ -21,23 +25,47 @@ function onYouTubeIframeAPIReady() {
 			'onStateChange': onPlayerStateChange
 		}
 	});
-	$('#debug').html($('#debug').html() + "<br>" + "Youtube Player API is Ready.");
+	logTrace("Youtube Player API is Ready.");
 	// try to hide advertisement
-	if (!getParameterByName('adfree')) document.getElementById('player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
+	if (!getParameterByName('adfree')) {
+		document.getElementById('player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
+	}
 }
 
 function onPlayerReady(event) {
-	$('#debug').html($('#debug').html() + "<br>" + "Player is Ready.");
+	logTrace("Player is Ready.");
 	loadScreen();
 	event.target.playVideo();
 }
 
-var done = false;
 function onPlayerStateChange(event) {
-	if (event.data == YT.PlayerState.PLAYING && !done) {
-		done = true;
-		$('#debug').html($('#debug').html() + "<br>" + "Player Started.");
+	switch (event.data) {
+	case YT.PlayerState.ENDED:
+		logTrace("Player Ended.");
+		break;
+	case YT.PlayerState.PLAYING:
+		logTrace("Player Started.");
+		break;
+	case YT.PlayerState.PAUSED:
+		logTrace("Player Paused.");
+		break;
+	case YT.PlayerState.BUFFERING:
+		logTrace("Player Buffering.");
+		break;
+	case YT.PlayerState.CUED:
+		logTrace("Player Cued.");
+		break;
 	}
+}
+
+function logTrace(text) {
+	var time = new Date();
+	var hh = pad(time.getHours(), 2);
+	var mm = pad(time.getMinutes(), 2);
+	var ss = pad(time.getSeconds(), 2);
+	var lll = pad(time.getMilliseconds(), 3);
+	$('#debug').append('[' + hh + ':' + mm + ':' + ss + '.' + lll + '] ' + text + '\n');
+	console.log(text);
 }
 
 // from http://stackoverflow.com/questions/901115/
@@ -46,4 +74,10 @@ function getParameterByName(name) {
 	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
 		results = regex.exec(location.search);
 	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+// from http://stackoverflow.com/questions/6466135/
+function pad(str, max) {
+	str = str.toString();
+	return str.length < max ? pad("0" + str, max) : str;
 }

@@ -1,0 +1,35 @@
+p {
+	text-align: center;
+}
+
+h1 {
+	text-align: center;
+}
+
+#wrapper {
+	margin: 0 auto;
+	height: 630px;
+	width: 1120px;
+	position: relative;
+}
+
+#player {
+	display: block;
+	z-index: 0;
+}
+
+canvas#screen {
+	height: 630px;
+	width: 1120px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 100;
+}
+
+#debug {
+	display: block;
+	margin: 0 auto;
+	width: 480px;
+	height: 180px;
+}

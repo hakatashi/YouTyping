@@ -15,46 +15,49 @@ loadScreen = function() {
 	var estimatedLine = new paper.Path.Line([0, 250], [0, 380]);
 	estimatedLine.strokeColor = 'white';
 
-	var debugText = [];
-	debugText[0] = new paper.PointText([30, 30]);
-	debugText[0].justification = 'left';
-	debugText[0].fillColor = 'white';
-	debugText[1] = new paper.PointText([30, 60]);
-	debugText[1].justification = 'left';
-	debugText[1].fillColor = 'white';
-	debugText[2] = new paper.PointText([30, 90]);
-	debugText[2].justification = 'left';
-	debugText[2].fillColor = 'white';
+	var debugTexts = [];
+	for (var i = 0; i < 4; i++) {
+		var index = debugTexts.push(new paper.PointText([30, 30 + 30 * i]));
+		debugText = debugTexts[index - 1];
+		debugText.justification = 'left';
+		debugText.fillColor = 'white';
+	}
 
 	var zeroTime = 0;
 	var currentTime = 0;
-	var estimatedSum = 0;
-	var estimatedPoints = 0;
+	var estimateSamples = new Array();
 
 	var fps = 0;
 	var zerocallfps = 0;
 
 	paper.view.onFrame = function(event) {
-		if (player.getPlayerState() == 1) circle.position.x = 1200 - (window.performance.now() - zeroTime) / 3 % 1300;
+		if (player.getPlayerState() == 1) {
+			circle.position.x = 1200 - (window.performance.now() - zeroTime) / 3 % 1300;
+		}
 		fps++;
 	}
 
 	setInterval(function() {
-		debugText[0].content = "FPS: " + fps;
+		debugTexts[0].content = "FPS: " + fps;
 		fps = 0;
-		debugText[2].content = "Zerocall FPS: " + zerocallfps;
+		debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
 		zerocallfps = 0;
 	}, 1000)
 
 	setInterval(function() {
 		if (currentTime != player.getCurrentTime()) {
-			var estimatedZero = window.performance.now() - player.getCurrentTime() * 1000;
-			estimatedLine.position.x = estimatedZero / 10;
 			currentTime = player.getCurrentTime();
-			estimatedSum += estimatedZero;
-			estimatedPoints++;
-			zeroTime = estimatedSum / estimatedPoints;
-			debugText[1].content = "Measured Zero: " + estimatedZero;
+			var estimatedZero = window.performance.now() - currentTime * 1000;
+			estimatedLine.position.x = estimatedZero / 10;
+			debugTexts[1].content = "Measured Zero: " + estimatedZero;
+
+			estimateSamples.push(estimatedZero);
+			if (estimateSamples.length > setting.zeroEstimateSamples) estimateSamples.shift();
+			var estimatedSum = estimateSamples.reduce(function(previous, current) {
+				return previous + current;
+			});
+			zeroTime = estimatedSum / estimateSamples.length;
+
 			zerocallfps++;
 		}
 		zeroLine.position.x = zeroTime / 10;
