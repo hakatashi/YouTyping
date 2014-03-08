@@ -1,18 +1,22 @@
+$(document).ready(function() {
+	logTrace('Document is Ready.');
+
+	var APITag = document.createElement('script');
+	APITag.src = 'https://www.youtube.com/iframe_api';
+	var firstScript = document.getElementsByTagName('script')[0];
+	firstScript.parentNode.insertBefore(APITag, firstScript);
+});
+
 var setting = {
 	zeroEstimateSamples: 16
 };
-
-var APITag = document.createElement('script');
-APITag.src = 'https://www.youtube.com/iframe_api';
-var firstScript = document.getElementsByTagName('script')[0];
-firstScript.parentNode.insertBefore(APITag, firstScript);
 
 var player;
 function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
 		height: '630',
 		width: '1120',
-		videoId: 'p3ih4rDduug',
+		videoId: 'pOHwVZc6QYY',
 		playerVars: {
 			rel: 0,
 			controls: 0,
@@ -25,9 +29,9 @@ function onYouTubeIframeAPIReady() {
 			'onStateChange': onPlayerStateChange
 		}
 	});
-	logTrace("Youtube Player API is Ready.");
+	logTrace("Player API is Ready.");
 	// try to hide advertisement
-	if (!getParameterByName('adfree')) {
+	if (!getParameterByName('sandbox') || getParameterByName('sandbox') == 'true') {
 		document.getElementById('player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
 	}
 }

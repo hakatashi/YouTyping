@@ -6,7 +6,7 @@ h1 {
 	text-align: center;
 }
 
-#wrapper {
+div#wrapper {
 	margin: 0 auto;
 	height: 630px;
 	width: 1120px;
@@ -27,7 +27,7 @@ canvas#screen {
 	z-index: 100;
 }
 
-#debug {
+textarea#debug {
 	display: block;
 	margin: 0 auto;
 	width: 480px;
