@@ -1,40 +1,20 @@
-loadScreen = function() {
-	var screen = document.getElementById('screen');
+var zeroTime = 0;
+var currentTime = 0;
+var estimateSamples = new Array();
+
+var fps = 0;
+var zerocallfps = 0;
+
+var setupScreen = function() {
+	screen = document.getElementById('screen');
 	paper.setup(screen);
 
-	var cover = new paper.Path.Rectangle([0, 0], [1120, 630]);
-	cover.fillColor = 'black';
-	cover.fillColor.alpha = 0.7;
-
-	var circle = new paper.Path.Circle([560, 315], 50);
-	circle.fillColor = 'red';
-
-	var zeroLine = new paper.Path.Line([0, 250], [0, 380]);
-	zeroLine.strokeColor = 'blue';
-
-	var estimatedLine = new paper.Path.Line([0, 250], [0, 380]);
-	estimatedLine.strokeColor = 'white';
-
-	var debugTexts = [];
+	debugTexts = [];
 	for (var i = 0; i < 4; i++) {
 		var index = debugTexts.push(new paper.PointText([30, 30 + 30 * i]));
 		debugText = debugTexts[index - 1];
 		debugText.justification = 'left';
 		debugText.fillColor = 'white';
-	}
-
-	var zeroTime = 0;
-	var currentTime = 0;
-	var estimateSamples = new Array();
-
-	var fps = 0;
-	var zerocallfps = 0;
-
-	paper.view.onFrame = function(event) {
-		if (player.getPlayerState() == 1) {
-			circle.position.x = 1200 - (window.performance.now() - zeroTime) / 3 % 1300;
-		}
-		fps++;
 	}
 
 	setInterval(function() {
@@ -43,6 +23,28 @@ loadScreen = function() {
 		debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
 		zerocallfps = 0;
 	}, 1000)
+}
+
+var loadScreen = function() {
+	cover = new paper.Path.Rectangle([0, 0], [1120, 630]);
+	cover.fillColor = 'black';
+	cover.fillColor.alpha = 0.7;
+
+	circle = new paper.Path.Circle([560, 315], 50);
+	circle.fillColor = 'red';
+
+	zeroLine = new paper.Path.Line([0, 250], [0, 380]);
+	zeroLine.strokeColor = 'blue';
+
+	estimatedLine = new paper.Path.Line([0, 250], [0, 380]);
+	estimatedLine.strokeColor = 'white';
+
+	paper.view.onFrame = function(event) {
+		if (player.getPlayerState() == 1) {
+			circle.position.x = 1200 - (window.performance.now() - zeroTime) / 3 % 1300;
+		}
+		fps++;
+	}
 
 	setInterval(function() {
 		if (currentTime != player.getCurrentTime()) {
@@ -62,4 +64,8 @@ loadScreen = function() {
 		}
 		zeroLine.position.x = zeroTime / 10;
 	}, 100);
+}
+
+var startScreen = function() {
+
 }

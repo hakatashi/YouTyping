@@ -1,22 +1,35 @@
-$(document).ready(function() {
-	logTrace('Document is Ready.');
-
-	var APITag = document.createElement('script');
-	APITag.src = 'https://www.youtube.com/iframe_api';
-	var firstScript = document.getElementsByTagName('script')[0];
-	firstScript.parentNode.insertBefore(APITag, firstScript);
-});
-
 var setting = {
 	zeroEstimateSamples: 16
 };
 
+$(document).ready(function() {
+	logTrace('Document is Ready.');
+});
+
+function setupPlayer() {
+	setupPlayerDeferred = $.Deferred(); //grobal
+	
+	var APITag = document.createElement('script');
+	APITag.src = 'https://www.youtube.com/iframe_api';
+	var firstScript = document.getElementsByTagName('script')[0];
+	firstScript.parentNode.insertBefore(APITag, firstScript);
+
+	return setupPlayerDeferred.promise();
+}
+
 var player;
 function onYouTubeIframeAPIReady() {
+	logTrace("Player API is Ready.");
+
+	// try to hide advertisement if sandbox parameter is 'true' or not defined in URI query
+	if (!getParameterByName('sandbox') || getParameterByName('sandbox') == 'true') {
+		document.getElementById('player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
+	}
+
 	player = new YT.Player('player', {
 		height: '630',
 		width: '1120',
-		videoId: 'pOHwVZc6QYY',
+		videoId: 'fQ_m5VLhqNg',
 		playerVars: {
 			rel: 0,
 			controls: 0,
@@ -29,16 +42,12 @@ function onYouTubeIframeAPIReady() {
 			'onStateChange': onPlayerStateChange
 		}
 	});
-	logTrace("Player API is Ready.");
-	// try to hide advertisement
-	if (!getParameterByName('sandbox') || getParameterByName('sandbox') == 'true') {
-		document.getElementById('player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
-	}
 }
 
 function onPlayerReady(event) {
 	logTrace("Player is Ready.");
-	loadScreen();
+	setupPlayerDeferred.resolve();
+	setupScreen();
 	event.target.playVideo();
 }
 
