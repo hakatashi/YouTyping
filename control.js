@@ -1,17 +1,23 @@
 var setting = {
 	zeroEstimateSamples: 16,
-	videoId: 'fQ_m5VLhqNg'
+	videoId: 'fQ_m5VLhqNg',
+	fumen: 'data.utfx'
 };
+
+var fumen;
 
 $(document).ready(function() {
 	logTrace('Document is Ready.');
 	var player = setupPlayer();
 	var screen = $.Deferred(setupScreen).promise();
-	var UTFX = $.Deferred(loadUTFX).promise();
+	var UTFX = loadUTFX();
 	$.when(
-		$.when(UTFX, screen).then(loadScreen),
+		$.when(UTFX, screen).done(loadScreen),
 		player
-	).then(startScreen);
+	).done(startScreen)
+	.fail(function() {
+		logTrace('ERROR: Initialization Failed...');
+	});
 });
 
 function setupPlayer(callback) {
@@ -78,9 +84,26 @@ function onPlayerStateChange(event) {
 	}
 }
 
-function loadUTFX(deferred) {
-	logTrace('UTFX File is Loaded.');
-	deferred.resolve();
+function loadUTFX() {
+	var deferred = $.Deferred();
+
+	$.ajax({
+		url: setting.fumen,
+		type: 'get',
+		datatype: 'xml',
+		timeout: 1000,
+		success: function(data, textStatus, jqXHR) {
+			fumen = $(data).find('fumen');
+			logTrace('Successfully Loaded UTFX File.');
+			deferred.resolve();
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			logTrace('ERROR: UTFX File Loading Failed: ' + errorThrown);
+			deferred.reject();
+		}
+	})
+
+	return deferred.promise();
 }
 
 function logTrace(text) {
