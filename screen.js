@@ -6,7 +6,7 @@ var fps = 0;
 var zerocallfps = 0;
 
 var setupScreen = function(deferred) {
-	screen = document.getElementById('screen');
+	var screen = document.getElementById('screen');
 	paper.setup(screen);
 
 	cover = new paper.Path.Rectangle([0, 0], [1120, 630]);
