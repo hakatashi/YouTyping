@@ -12,6 +12,8 @@
 Session.vim
 .netrwhist
 *~
+*.vimprojects
+.vimprojects
 
 ## Windows
 

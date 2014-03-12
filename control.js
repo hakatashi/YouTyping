@@ -1,13 +1,22 @@
 var setting = {
-	zeroEstimateSamples: 16
+	zeroEstimateSamples: 16,
+	videoId: 'fQ_m5VLhqNg'
 };
 
 $(document).ready(function() {
 	logTrace('Document is Ready.');
+	var player = setupPlayer();
+	var screen = $.Deferred(setupScreen).promise();
+	var UTFX = $.Deferred(loadUTFX).promise();
+	$.when(
+		$.when(UTFX, screen).then(loadScreen),
+		player
+	).then(startScreen);
 });
 
-function setupPlayer() {
+function setupPlayer(callback) {
 	setupPlayerDeferred = $.Deferred(); //grobal
+	logTrace('Setting Player Up...');
 	
 	var APITag = document.createElement('script');
 	APITag.src = 'https://www.youtube.com/iframe_api';
@@ -29,7 +38,7 @@ function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
 		height: '630',
 		width: '1120',
-		videoId: 'fQ_m5VLhqNg',
+		videoId: setting.videoId,
 		playerVars: {
 			rel: 0,
 			controls: 0,
@@ -47,8 +56,6 @@ function onYouTubeIframeAPIReady() {
 function onPlayerReady(event) {
 	logTrace("Player is Ready.");
 	setupPlayerDeferred.resolve();
-	setupScreen();
-	event.target.playVideo();
 }
 
 function onPlayerStateChange(event) {
@@ -69,6 +76,11 @@ function onPlayerStateChange(event) {
 		logTrace("Player Cued.");
 		break;
 	}
+}
+
+function loadUTFX(deferred) {
+	logTrace('UTFX File is Loaded.');
+	deferred.resolve();
 }
 
 function logTrace(text) {

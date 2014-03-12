@@ -5,9 +5,13 @@ var estimateSamples = new Array();
 var fps = 0;
 var zerocallfps = 0;
 
-var setupScreen = function() {
+var setupScreen = function(deferred) {
 	screen = document.getElementById('screen');
 	paper.setup(screen);
+
+	cover = new paper.Path.Rectangle([0, 0], [1120, 630]);
+	cover.fillColor = 'black';
+	cover.fillColor.alpha = 0.7;
 
 	debugTexts = [];
 	for (var i = 0; i < 4; i++) {
@@ -23,13 +27,12 @@ var setupScreen = function() {
 		debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
 		zerocallfps = 0;
 	}, 1000)
+
+	logTrace('Screen is Set.')
+	deferred.resolve();
 }
 
 var loadScreen = function() {
-	cover = new paper.Path.Rectangle([0, 0], [1120, 630]);
-	cover.fillColor = 'black';
-	cover.fillColor.alpha = 0.7;
-
 	circle = new paper.Path.Circle([560, 315], 50);
 	circle.fillColor = 'red';
 
@@ -38,6 +41,12 @@ var loadScreen = function() {
 
 	estimatedLine = new paper.Path.Line([0, 250], [0, 380]);
 	estimatedLine.strokeColor = 'white';
+
+	logTrace('Screen is Ready.')
+}
+
+var startScreen = function() {
+	player.playVideo();
 
 	paper.view.onFrame = function(event) {
 		if (player.getPlayerState() == 1) {
@@ -63,9 +72,6 @@ var loadScreen = function() {
 			zerocallfps++;
 		}
 		zeroLine.position.x = zeroTime / 10;
-	}, 100);
+	}, 10);
 }
 
-var startScreen = function() {
-
-}
