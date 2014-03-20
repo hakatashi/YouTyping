@@ -39,10 +39,44 @@ var setupScreen = function(deferred) {
 var loadScreen = function() {
 	computeParameters();
 
-	circle = new paper.Path.Circle([560, 315], setting.noteSize);
-	circle.fillColor = 'red';
+	fumen.forEach(function(item, index) {
+		if (item.emergeTime < 0 && item.vanishTime > 0) {
+			var Xpos = item.time * setting.speed + setting.hitPosition;
+			if (item.type == '=') {
+				items[index] = new paper.Path.Line({
+					from: [Xpos, setting.fumenYpos - setting.longLineHeight / 2],
+					to: [Xpos, setting.fumenYpos + setting.longLineHeight / 2],
+					strokeColor: 'white',
+					strokeWidth: 2
+				});
+			}
+			if (item.type == '-') {
+				items[index] = new paper.Path.Line({
+					from: [Xpos, setting.fumenYpos - setting.lineHeight / 2],
+					to: [Xpos, setting.fumenYpos + setting.lineHeight / 2],
+					strokeColor: 'white',
+					strokeWidth: 1
+				});
+			}
+			if (item.type == '+' || item.type == '*') {
+				items[index] = new paper.Path.Circle({
+					center: [Xpos, setting.fumenYpos],
+					radius: setting.noteSize,
+					strokeWidth: 0,
+					fillColor: 'red'
+				});
+			}
+		}
+	});
 
-	logTrace('Screen is Ready.')
+	hitCircle = new paper.Path.Circle({
+		center: [setting.hitPosition, setting.fumenYpos],
+		radius: setting.noteSize,
+		strokeWidth: 1,
+		strokeColor: 'white'
+	})
+
+	logTrace('Screen is Ready.');
 }
 
 // Parse UTFX into fumen Object and computes various parameters like the time when the note emerges and vanishes.
@@ -70,8 +104,6 @@ function computeParameters() {
 			item.vanishTime = (setting.speed * item.time + paddingLeft) / setting.speed;
 		});
 
-		console.log(fumen);
-
 		logTrace('Computed Fumen Parameters.');
 	} catch (error) {
 		logTrace('Computing Fumen Parameters Faild: ' + error);
@@ -83,9 +115,6 @@ var startScreen = function() {
 	player.playVideo();
 
 	paper.view.onFrame = function(event) {
-		if (player.getPlayerState() == 1) {
-			circle.position.x = 1200 - (window.performance.now() - zeroTime) / 3 % 1300;
-		}
 		fps++;
 	}
 

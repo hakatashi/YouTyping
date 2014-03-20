@@ -6,7 +6,10 @@ var setting = {
 	height: 630,
 	hitPosition: 200,
 	noteSize: 50,
-	speed: 500 // pixel per second
+	speed: 500, // pixel per second
+	fumenYpos: 315,
+	longLineHeight: 150,
+	lineHeight: 120
 };
 
 var fumenUTFX;
