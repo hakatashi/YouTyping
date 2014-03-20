@@ -1,10 +1,16 @@
 var setting = {
 	zeroEstimateSamples: 16,
 	videoId: 'fQ_m5VLhqNg',
-	fumen: 'data.utfx'
+	fumen: 'data.utfx',
+	width: 1120,
+	height: 630,
+	hitPosition: 200,
+	noteSize: 50,
+	speed: 500 // pixel per second
 };
 
-var fumen;
+var fumenUTFX;
+var fumen = [];
 
 $(document).ready(function() {
 	logTrace('Document is Ready.');
@@ -42,8 +48,8 @@ function onYouTubeIframeAPIReady() {
 	}
 
 	player = new YT.Player('player', {
-		height: '630',
-		width: '1120',
+		height: setting.height,
+		width: setting.width,
 		videoId: setting.videoId,
 		playerVars: {
 			rel: 0,
@@ -54,7 +60,8 @@ function onYouTubeIframeAPIReady() {
 		},
 		events:{
 			'onReady': onPlayerReady,
-			'onStateChange': onPlayerStateChange
+			'onStateChange': onPlayerStateChange,
+			'onError': onPlayerError
 		}
 	});
 }
@@ -66,26 +73,47 @@ function onPlayerReady(event) {
 
 function onPlayerStateChange(event) {
 	switch (event.data) {
-	case YT.PlayerState.ENDED:
-		logTrace("Player Ended.");
-		break;
-	case YT.PlayerState.PLAYING:
-		logTrace("Player Started.");
-		break;
-	case YT.PlayerState.PAUSED:
-		logTrace("Player Paused.");
-		break;
-	case YT.PlayerState.BUFFERING:
-		logTrace("Player Buffering.");
-		break;
-	case YT.PlayerState.CUED:
-		logTrace("Player Cued.");
-		break;
+		case YT.PlayerState.ENDED:
+			logTrace("Player Ended.");
+			break;
+		case YT.PlayerState.PLAYING:
+			logTrace("Player Started.");
+			break;
+		case YT.PlayerState.PAUSED:
+			logTrace("Player Paused.");
+			break;
+		case YT.PlayerState.BUFFERING:
+			logTrace("Player Buffering.");
+			break;
+		case YT.PlayerState.CUED:
+			logTrace("Player Cued.");
+			break;
 	}
 }
 
+function onPlayerError(event) {
+	switch (event.data) {
+		case 2:
+			logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
+			break;
+		case 5:
+			logTrace('ERROR: The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.');
+			break;
+		case 100:
+			logTrace('ERROR: The video requested was not found. This error occurs when a video has been removed (for any reason) or has been marked as private.');
+			break;
+		case 101:
+			logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
+			break;
+		case 150:
+			logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
+			break;
+	}
+	setupPlayerDeferred.reject();
+}
+
 function loadUTFX() {
-	var deferred = $.Deferred();
+	loadUTFXDeferred = $.Deferred(); //global
 
 	$.ajax({
 		url: setting.fumen,
@@ -93,17 +121,17 @@ function loadUTFX() {
 		datatype: 'xml',
 		timeout: 1000,
 		success: function(data, textStatus, jqXHR) {
-			fumen = $(data).find('fumen');
-			logTrace('Successfully Loaded UTFX File.');
-			deferred.resolve();
+			fumenUTFX = $(data).find('fumen').find('item');
+			logTrace('Loaded UTFX File.');
+			loadUTFXDeferred.resolve();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			logTrace('ERROR: UTFX File Loading Failed: ' + errorThrown);
-			deferred.reject();
+			loadUTFXDeferred.reject();
 		}
-	})
+	});
 
-	return deferred.promise();
+	return loadUTFXDeferred.promise();
 }
 
 function logTrace(text) {

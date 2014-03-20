@@ -5,6 +5,10 @@ var estimateSamples = new Array();
 var fps = 0;
 var zerocallfps = 0;
 
+// All notes and lines will be stored in this variable and managed
+// in key which represents index.
+var items = {};
+
 var setupScreen = function(deferred) {
 	var screen = document.getElementById('screen');
 	paper.setup(screen);
@@ -26,23 +30,53 @@ var setupScreen = function(deferred) {
 		fps = 0;
 		debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
 		zerocallfps = 0;
-	}, 1000)
+	}, 1000);
 
 	logTrace('Screen is Set.')
 	deferred.resolve();
 }
 
 var loadScreen = function() {
-	circle = new paper.Path.Circle([560, 315], 50);
+	computeParameters();
+
+	circle = new paper.Path.Circle([560, 315], setting.noteSize);
 	circle.fillColor = 'red';
 
-	zeroLine = new paper.Path.Line([0, 250], [0, 380]);
-	zeroLine.strokeColor = 'blue';
-
-	estimatedLine = new paper.Path.Line([0, 250], [0, 380]);
-	estimatedLine.strokeColor = 'white';
-
 	logTrace('Screen is Ready.')
+}
+
+// Parse UTFX into fumen Object and computes various parameters like the time when the note emerges and vanishes.
+function computeParameters() {
+	var paddingRight = setting.width - setting.hitPosition + setting.noteSize; // distance from hit line to right edge
+	var paddingLeft = setting.hitPosition + setting.noteSize; // distance from hit line to left edge
+
+	try {
+		$(fumenUTFX).each(function() {
+			var tempItem = {
+				time: parseFloat($(this).attr('time')),
+				type: $(this).attr('type')
+			};
+			if ($(this).attr('text')) {
+				tempItem.text = $(this).attr('text');
+			}
+
+			fumen.push(tempItem);
+		});
+
+		// Computes emerge time and vanishing time of item.
+		// This is yet a very simple way without regards for speed changes.
+		fumen.forEach(function(item, index) {
+			item.emergeTime = (setting.speed * item.time - paddingRight) / setting.speed;
+			item.vanishTime = (setting.speed * item.time + paddingLeft) / setting.speed;
+		});
+
+		console.log(fumen);
+
+		logTrace('Computed Fumen Parameters.');
+	} catch (error) {
+		logTrace('Computing Fumen Parameters Faild: ' + error);
+		loadUTFXDeferred.reject();
+	}
 }
 
 var startScreen = function() {
@@ -59,7 +93,6 @@ var startScreen = function() {
 		if (currentTime != player.getCurrentTime()) {
 			currentTime = player.getCurrentTime();
 			var estimatedZero = window.performance.now() - currentTime * 1000;
-			estimatedLine.position.x = estimatedZero / 10;
 			debugTexts[1].content = "Measured Zero: " + estimatedZero;
 
 			estimateSamples.push(estimatedZero);
@@ -71,7 +104,10 @@ var startScreen = function() {
 
 			zerocallfps++;
 		}
-		zeroLine.position.x = zeroTime / 10;
 	}, 10);
+}
+
+function normalizeNotes() {
+
 }
 
