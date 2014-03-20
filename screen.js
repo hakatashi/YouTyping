@@ -1,5 +1,6 @@
 var zeroTime = 0;
 var currentTime = 0;
+var runTime = 0;
 var estimateSamples = new Array();
 
 var fps = 0;
@@ -30,6 +31,7 @@ var setupScreen = function(deferred) {
 		fps = 0;
 		debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
 		zerocallfps = 0;
+		debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
 	}, 1000);
 
 	logTrace('Screen is Set.')
@@ -39,35 +41,7 @@ var setupScreen = function(deferred) {
 var loadScreen = function() {
 	computeParameters();
 
-	fumen.forEach(function(item, index) {
-		if (item.emergeTime < 0 && item.vanishTime > 0) {
-			var Xpos = item.time * setting.speed + setting.hitPosition;
-			if (item.type == '=') {
-				items[index] = new paper.Path.Line({
-					from: [Xpos, setting.fumenYpos - setting.longLineHeight / 2],
-					to: [Xpos, setting.fumenYpos + setting.longLineHeight / 2],
-					strokeColor: 'white',
-					strokeWidth: 2
-				});
-			}
-			if (item.type == '-') {
-				items[index] = new paper.Path.Line({
-					from: [Xpos, setting.fumenYpos - setting.lineHeight / 2],
-					to: [Xpos, setting.fumenYpos + setting.lineHeight / 2],
-					strokeColor: 'white',
-					strokeWidth: 1
-				});
-			}
-			if (item.type == '+' || item.type == '*') {
-				items[index] = new paper.Path.Circle({
-					center: [Xpos, setting.fumenYpos],
-					radius: setting.noteSize,
-					strokeWidth: 0,
-					fillColor: 'red'
-				});
-			}
-		}
-	});
+	updateScreen();
 
 	hitCircle = new paper.Path.Circle({
 		center: [setting.hitPosition, setting.fumenYpos],
@@ -115,12 +89,17 @@ var startScreen = function() {
 	player.playVideo();
 
 	paper.view.onFrame = function(event) {
+		if (player.getPlayerState() == 1) {
+			updateScreen();
+			runTime += 1.0 / 60.0;
+		}
 		fps++;
 	}
 
 	setInterval(function() {
 		if (currentTime != player.getCurrentTime()) {
 			currentTime = player.getCurrentTime();
+			runTime = currentTime;
 			var estimatedZero = window.performance.now() - currentTime * 1000;
 			debugTexts[1].content = "Measured Zero: " + estimatedZero;
 
@@ -136,7 +115,45 @@ var startScreen = function() {
 	}, 10);
 }
 
-function normalizeNotes() {
-
+// layout notes and lines fitting to current time
+function updateScreen() {
+	fumen.forEach(function(item, index) {
+		var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
+		if (index in items) { // if indexth item exists in screen
+			if (item.emergeTime > runTime || item.vanishTime < runTime) {
+				items[index].remove();
+				delete items[index];
+			} else {
+				items[index].position.x = Xpos;
+			}
+		} else { // if indexth item doesn't exist in screen
+			if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
+				if (item.type == '=') {
+					items[index] = new paper.Path.Line({
+						from: [Xpos, setting.fumenYpos - setting.longLineHeight / 2],
+						to: [Xpos, setting.fumenYpos + setting.longLineHeight / 2],
+						strokeColor: 'white',
+						strokeWidth: 2
+					});
+				}
+				if (item.type == '-') {
+					items[index] = new paper.Path.Line({
+						from: [Xpos, setting.fumenYpos - setting.lineHeight / 2],
+						to: [Xpos, setting.fumenYpos + setting.lineHeight / 2],
+						strokeColor: 'white',
+						strokeWidth: 1
+					});
+				}
+				if (item.type == '+' || item.type == '*') {
+					items[index] = new paper.Path.Circle({
+						center: [Xpos, setting.fumenYpos],
+						radius: setting.noteSize,
+						strokeWidth: 1,
+						strokeColor: '#aaa',
+						fillColor: 'red'
+					});
+				}
+			}
+		}
+	});
 }
-
