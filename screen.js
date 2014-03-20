@@ -31,7 +31,6 @@ var setupScreen = function(deferred) {
 		fps = 0;
 		debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
 		zerocallfps = 0;
-		debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
 	}, 1000);
 
 	logTrace('Screen is Set.')
@@ -92,17 +91,26 @@ var startScreen = function() {
 		if (player.getPlayerState() == 1) {
 			updateScreen();
 		}
+		debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
 		debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
 		fps++;
 	}
 
 	setInterval(function() {
 		if (currentTime != player.getCurrentTime()) {
+			var now = window.performance.now() || (Date.now() - startTime);
+
 			currentTime = player.getCurrentTime();
 			runTime = currentTime;
-			var estimatedZero = window.performance.now() - currentTime * 1000;
+			var estimatedZero = now - currentTime * 1000;
 			debugTexts[1].content = "Measured Zero: " + estimatedZero.toFixed(2);
 
+			// Estimated zero time is stored in estimatesamples and
+			// we assume that correct zero time is recent `zeroEstimateSamples` samples
+			// because it contains great ranges of error.
+			// We also introduced `zeroTimePad` to supress a sudden change of zeroTime.
+			// It contains correct zero time and sudden-change-supressed zero time
+			// will be stored in `zeroTime`.
 			estimateSamples.push(estimatedZero);
 			if (estimateSamples.length > setting.zeroEstimateSamples) estimateSamples.shift();
 			var estimatedSum = estimateSamples.reduce(function(previous, current) {
@@ -118,7 +126,8 @@ var startScreen = function() {
 
 // layout notes and lines fitting to current time
 function updateScreen() {
-	var runTime = (window.performance.now() - zeroTime) / 1000;
+	var now = window.performance.now() || (Date.now() - startTime);
+	var runTime = (now - zeroTime) / 1000;
 	fumen.forEach(function(item, index) {
 		var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
 		if (index in items) { // if indexth item exists in screen

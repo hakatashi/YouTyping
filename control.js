@@ -1,3 +1,5 @@
+var startTime = Date.now();
+
 var setting = {
 	zeroEstimateSamples: 16,
 	videoId: 'fQ_m5VLhqNg',
