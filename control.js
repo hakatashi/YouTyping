@@ -46,7 +46,7 @@ function onYouTubeIframeAPIReady() {
 	logTrace("Player API is Ready.");
 
 	// try to hide advertisement if sandbox parameter is 'true' or not defined in URI query
-	if (!getParameterByName('sandbox') || getParameterByName('sandbox') == 'true') {
+	if (getParameterByName('sandbox') || getParameterByName('sandbox') == 'true') {
 		document.getElementById('player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
 	}
 
