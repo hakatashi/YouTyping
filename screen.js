@@ -1,6 +1,5 @@
 var zeroTime = 0;
 var currentTime = 0;
-var runTime = 0;
 var estimateSamples = new Array();
 
 var fps = 0;
@@ -91,7 +90,6 @@ var startScreen = function() {
 	paper.view.onFrame = function(event) {
 		if (player.getPlayerState() == 1) {
 			updateScreen();
-			runTime += 1.0 / 60.0;
 		}
 		fps++;
 	}
@@ -117,6 +115,7 @@ var startScreen = function() {
 
 // layout notes and lines fitting to current time
 function updateScreen() {
+	var runTime = (window.performance.now() - zeroTime) / 1000;
 	fumen.forEach(function(item, index) {
 		var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
 		if (index in items) { // if indexth item exists in screen
