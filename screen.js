@@ -1,4 +1,5 @@
 var zeroTime = 0;
+var zeroTimePad = 0;
 var currentTime = 0;
 var estimateSamples = new Array();
 
@@ -18,8 +19,8 @@ var setupScreen = function(deferred) {
 	cover.fillColor.alpha = 0.7;
 
 	debugTexts = [];
-	for (var i = 0; i < 4; i++) {
-		var index = debugTexts.push(new paper.PointText([30, 30 + 30 * i]));
+	for (var i = 0; i < 5; i++) {
+		var index = debugTexts.push(new paper.PointText([20, 20 * (i + 1)]));
 		debugText = debugTexts[index - 1];
 		debugText.justification = 'left';
 		debugText.fillColor = 'white';
@@ -91,6 +92,7 @@ var startScreen = function() {
 		if (player.getPlayerState() == 1) {
 			updateScreen();
 		}
+		debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
 		fps++;
 	}
 
@@ -99,17 +101,18 @@ var startScreen = function() {
 			currentTime = player.getCurrentTime();
 			runTime = currentTime;
 			var estimatedZero = window.performance.now() - currentTime * 1000;
-			debugTexts[1].content = "Measured Zero: " + estimatedZero;
+			debugTexts[1].content = "Measured Zero: " + estimatedZero.toFixed(2);
 
 			estimateSamples.push(estimatedZero);
 			if (estimateSamples.length > setting.zeroEstimateSamples) estimateSamples.shift();
 			var estimatedSum = estimateSamples.reduce(function(previous, current) {
 				return previous + current;
 			});
-			zeroTime = estimatedSum / estimateSamples.length;
+			zeroTimePad = estimatedSum / estimateSamples.length;
 
 			zerocallfps++;
 		}
+		zeroTime = (zeroTime - zeroTimePad) * 0.9 + zeroTimePad;
 	}, 10);
 }
 
