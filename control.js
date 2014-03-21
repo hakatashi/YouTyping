@@ -14,6 +14,16 @@ var setting = {
 	lineHeight: 120
 };
 
+for (var param in setting) {
+	if (getParameterByName(param)) {
+		if (typeof setting[param] == 'number') {
+			setting[param] = parseInt(getParameterByName(param));
+		} else {
+			setting[param] = getParameterByName(param);
+		}
+	}
+}
+
 var fumenUTFX;
 var fumen = [];
 
