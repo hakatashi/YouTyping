@@ -79,7 +79,7 @@ function computeParameters() {
 
 		logTrace('Computed Fumen Parameters.');
 	} catch (error) {
-		logTrace('Computing Fumen Parameters Faild: ' + error);
+		logTrace('ERROR: Computing Fumen Parameters Faild: ' + error);
 		loadUTFXDeferred.reject();
 	}
 }
@@ -128,6 +128,7 @@ var startScreen = function() {
 function updateScreen() {
 	var now = window.performance.now() || (Date.now() - startTime);
 	var runTime = (now - zeroTime) / 1000;
+
 	fumen.forEach(function(item, index) {
 		var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
 		if (index in items) { // if indexth item exists in screen
@@ -139,30 +140,40 @@ function updateScreen() {
 			}
 		} else { // if indexth item doesn't exist in screen
 			if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
+				items[index] = new paper.Group();
+
 				if (item.type == '=') {
-					items[index] = new paper.Path.Line({
+					items[index].addChild(new paper.Path.Line({
 						from: [Xpos, setting.fumenYpos - setting.longLineHeight / 2],
 						to: [Xpos, setting.fumenYpos + setting.longLineHeight / 2],
 						strokeColor: 'white',
 						strokeWidth: 2
-					});
+					}));
 				}
 				if (item.type == '-') {
-					items[index] = new paper.Path.Line({
+					items[index].addChild(new paper.Path.Line({
 						from: [Xpos, setting.fumenYpos - setting.lineHeight / 2],
 						to: [Xpos, setting.fumenYpos + setting.lineHeight / 2],
 						strokeColor: 'white',
 						strokeWidth: 1
-					});
+					}));
 				}
-				if (item.type == '+' || item.type == '*') {
-					items[index] = new paper.Path.Circle({
+				if (item.type == '+') {
+					items[index].addChild(new paper.Path.Circle({
 						center: [Xpos, setting.fumenYpos],
 						radius: setting.noteSize,
 						strokeWidth: 1,
 						strokeColor: '#aaa',
 						fillColor: 'red'
-					});
+					}));
+					items[index].addChild(new paper.PointText({
+						position: [Xpos, setting.fumenYpos + setting.noteSize + 50],
+						content: item.text,
+						fillColor: 'white',
+						justification: 'center',
+						fontSize: 20,
+						fontFamily: 'sans-serif'
+					}));
 				}
 			}
 		}
