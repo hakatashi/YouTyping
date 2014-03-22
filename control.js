@@ -28,7 +28,7 @@ for (var param in setting) {
 var fumenUTFX;
 var fumen = [];
 
-$.ajax('/don.svg').done(function (data) {
+$.ajax('./don.svg').done(function (data) {
 	don = new paper.Symbol(paper.project.importSVG(data));
 });
 
