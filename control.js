@@ -11,7 +11,8 @@ var setting = {
 	speed: 500, // pixel per second
 	fumenYpos: 315,
 	longLineHeight: 150,
-	lineHeight: 120
+	lineHeight: 120,
+	screenPadding: 30
 };
 
 for (var param in setting) {
@@ -26,6 +27,10 @@ for (var param in setting) {
 
 var fumenUTFX;
 var fumen = [];
+
+$.ajax('/don.svg').done(function (data) {
+	don = new paper.Symbol(paper.project.importSVG(data));
+});
 
 $(document).ready(function() {
 	logTrace('Document is Ready.');

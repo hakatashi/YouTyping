@@ -54,8 +54,8 @@ var loadScreen = function() {
 
 // Parse UTFX into fumen Object and computes various parameters like the time when the note emerges and vanishes.
 function computeParameters() {
-	var paddingRight = setting.width - setting.hitPosition + setting.noteSize; // distance from hit line to right edge
-	var paddingLeft = setting.hitPosition + setting.noteSize; // distance from hit line to left edge
+	var paddingRight = setting.width - setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to right edge
+	var paddingLeft = setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to left edge
 
 	try {
 		$(fumenUTFX).each(function() {
@@ -159,13 +159,9 @@ function updateScreen() {
 					}));
 				}
 				if (item.type == '+') {
-					items[index].addChild(new paper.Path.Circle({
-						center: [Xpos, setting.fumenYpos],
-						radius: setting.noteSize,
-						strokeWidth: 1,
-						strokeColor: '#aaa',
-						fillColor: 'red'
-					}));
+					// note
+					items[index].addChild(don.place([Xpos, setting.fumenYpos]).scale(setting.noteSize / 50 * 2));
+					// lyric
 					items[index].addChild(new paper.PointText({
 						position: [Xpos, setting.fumenYpos + setting.noteSize + 50],
 						content: item.text,
