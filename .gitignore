@@ -7,7 +7,7 @@ util
 # Visual Studio
 Scripts
 *.sln
-Web.config
+*.config
 
 ### imported from https://github.com/github/gitignore
 ### Copyright (c) 2014 GitHub, Inc. Licensed under MIT.
