@@ -4,6 +4,10 @@ util
 # UTFX File(Fumen data)
 *.utfx
 
+# Visual Studio
+Scripts
+Web.config
+
 ### imported from https://github.com/github/gitignore
 ### Copyright (c) 2014 GitHub, Inc. Licensed under MIT.
 
