@@ -14,7 +14,7 @@ var setupScreen = function(deferred) {
 	var screen = document.getElementById('screen');
 	paper.setup(screen);
 
-	cover = new paper.Path.Rectangle([0, 0], [1120, 630]);
+	cover = new paper.Path.Rectangle(paper.view.bounds);
 	cover.fillColor = 'black';
 	cover.fillColor.alpha = 0.7;
 
@@ -43,7 +43,7 @@ var loadScreen = function() {
 	updateScreen();
 
 	hitCircle = new paper.Path.Circle({
-		center: [setting.hitPosition, setting.fumenYpos],
+		center: [setting.hitPosition, setting.fumenYpos * setting.height],
 		radius: setting.noteSize,
 		strokeWidth: 1,
 		strokeColor: 'white'
@@ -144,26 +144,26 @@ function updateScreen() {
 
 				if (item.type == '=') {
 					items[index].addChild(new paper.Path.Line({
-						from: [Xpos, setting.fumenYpos - setting.longLineHeight / 2],
-						to: [Xpos, setting.fumenYpos + setting.longLineHeight / 2],
+						from: [Xpos, setting.fumenYpos * setting.height - setting.longLineHeight / 2],
+						to: [Xpos, setting.fumenYpos * setting.height + setting.longLineHeight / 2],
 						strokeColor: 'white',
 						strokeWidth: 2
 					}));
 				}
 				if (item.type == '-') {
 					items[index].addChild(new paper.Path.Line({
-						from: [Xpos, setting.fumenYpos - setting.lineHeight / 2],
-						to: [Xpos, setting.fumenYpos + setting.lineHeight / 2],
+						from: [Xpos, setting.fumenYpos * setting.height - setting.lineHeight / 2],
+						to: [Xpos, setting.fumenYpos * setting.height + setting.lineHeight / 2],
 						strokeColor: 'white',
 						strokeWidth: 1
 					}));
 				}
 				if (item.type == '+') {
 					// note
-					items[index].addChild(don.place([Xpos, setting.fumenYpos]).scale(setting.noteSize / 50 * 2));
+					items[index].addChild(don.place([Xpos, setting.fumenYpos * setting.height]).scale(setting.noteSize / 50 * 2));
 					// lyric
 					items[index].addChild(new paper.PointText({
-						position: [Xpos, setting.fumenYpos + setting.noteSize + 50],
+						position: [Xpos, setting.fumenYpos * setting.height + setting.noteSize + 50],
 						content: item.text,
 						fillColor: 'white',
 						justification: 'center',

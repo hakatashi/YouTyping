@@ -1,18 +1,18 @@
 var startTime = Date.now();
 
 var setting = {
-	zeroEstimateSamples: 16,
+	zeroEstimateSamples: 16, // integer
 	videoId: 'fQ_m5VLhqNg',
 	fumen: 'data.utfx',
-	width: 1120,
-	height: 630,
-	hitPosition: 200,
-	noteSize: 50,
+	width: 560, // pixel
+	height: 315, // pixel
+	hitPosition: 200, // pixel
+	noteSize: 50, // pixel
 	speed: 500, // pixel per second
-	fumenYpos: 315,
-	longLineHeight: 150,
-	lineHeight: 120,
-	screenPadding: 30
+	fumenYpos: 0.5, // ratio
+	longLineHeight: 150, // pixel
+	lineHeight: 120, // pixel
+	screenPadding: 30 // pixel
 };
 
 for (var param in setting) {
@@ -33,12 +33,21 @@ $.ajax('./don.svg').done(function (data) {
 });
 
 $(document).ready(function() {
-	logTrace('Document is Ready.');
+    logTrace('Document is Ready.');
+
+    $('div#wrapper, #player, canvas#screen').css({
+        width: setting.width + 'px',
+        height: setting.height + 'px'
+    });
+
 	var player = setupPlayer();
 	var screen = $.Deferred(setupScreen).promise();
 	var UTFX = loadUTFX();
 	$.when(
-		$.when(UTFX, screen).done(loadScreen),
+		$.when(
+            UTFX,
+            screen
+        ).done(loadScreen),
 		player
 	).done(startScreen)
 	.fail(function() {
