@@ -3,4 +3,4 @@ YouTyping
 
 Solution for UTyping by web application and YouTube.
 
-Test is running [here](http://hakatashi.com/test/youtyping/).
+Test is running [here](http://www.tsg.ne.jp/hakatashi/deploy/YouTyping/).

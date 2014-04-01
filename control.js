@@ -4,8 +4,8 @@ var setting = {
 	zeroEstimateSamples: 16, // integer
 	videoId: 'fQ_m5VLhqNg',
 	fumen: 'data.utfx',
-	width: 560, // pixel
-	height: 315, // pixel
+	width: 1120, // pixel
+	height: 630, // pixel
 	hitPosition: 200, // pixel
 	noteSize: 50, // pixel
 	speed: 500, // pixel per second
