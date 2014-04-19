@@ -33,7 +33,7 @@ var setupScreen = function(deferred) {
 		zerocallfps = 0;
 	}, 1000);
 
-	logTrace('Screen is Set.')
+	logTrace('Screen is Set.');
 	deferred.resolve();
 }
 
