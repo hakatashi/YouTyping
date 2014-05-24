@@ -39,7 +39,7 @@ var Screen = function (canvas) {
     };
 
     this.load = function () {
-        computeParameters();
+        this.computeParameters();
 
         updateScreen();
 
