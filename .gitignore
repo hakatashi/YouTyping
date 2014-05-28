@@ -6,7 +6,6 @@ util
 
 # Visual Studio
 Scripts
-*.sln
 *.config
 
 ### imported from https://github.com/github/gitignore
@@ -235,3 +234,7 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# Build Files
+youtyping.js
+youtyping.min.js

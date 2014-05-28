@@ -162,3 +162,38 @@ function loadUTFX() {
 
 	return loadUTFXDeferred.promise();
 }
+
+
+// Parse UTFX into fumen Object and computes various parameters like the time when the note emerges and vanishes.
+YouTyping.prototype.computeParameters = function () {
+    var setting = this.setting;
+
+    var paddingRight = setting.width - setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to right edge
+    var paddingLeft = setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to left edge
+
+    try {
+        $(this.scoreXML).each(function () {
+            var tempItem = {
+                time: parseFloat($(this).attr('time')),
+                type: $(this).attr('type')
+            };
+            if ($(this).attr('text')) {
+                tempItem.text = $(this).attr('text');
+            }
+
+            this.score.push(tempItem);
+        });
+
+        // Computes emerge time and vanishing time of item.
+        // This is yet a very simple way without regards for speed changes.
+        fumen.forEach(function (item, index) {
+            item.emergeTime = (setting.speed * item.time - paddingRight) / setting.speed;
+            item.vanishTime = (setting.speed * item.time + paddingLeft) / setting.speed;
+        });
+
+        logTrace('Computed Fumen Parameters.');
+    } catch (error) {
+        logTrace('ERROR: Computing Fumen Parameters Faild: ' + error);
+        loadUTFXDeferred.reject();
+    }
+}

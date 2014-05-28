@@ -2,7 +2,7 @@
 // in key which represents index.
 var items = {};
 
-var Screen = function (canvas) {
+var Screen = function (canvas, youTyping) {
     var zeroTime = 0;
     var zeroTimePad = 0;
     var currentTime = 0;
@@ -10,6 +10,8 @@ var Screen = function (canvas) {
 
     var fps = 0;
     var zerocallfps = 0;
+
+    this.youTyping = youTyping;
 
     this.setup = function (deferred) {
         this.canvas = canvas;
@@ -41,9 +43,9 @@ var Screen = function (canvas) {
     this.load = function () {
         this.computeParameters();
 
-        updateScreen();
+        this.update();
 
-        hitCircle = new paper.Path.Circle({
+        this.hitCircle = new paper.Path.Circle({
             center: [setting.hitPosition, setting.fumenYpos * setting.height],
             radius: setting.noteSize,
             strokeWidth: 1,
@@ -52,38 +54,6 @@ var Screen = function (canvas) {
 
         logTrace('Screen is Ready.');
     };
-
-    // Parse UTFX into fumen Object and computes various parameters like the time when the note emerges and vanishes.
-    function computeParameters() {
-        var paddingRight = setting.width - setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to right edge
-        var paddingLeft = setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to left edge
-
-        try {
-            $(fumenUTFX).each(function () {
-                var tempItem = {
-                    time: parseFloat($(this).attr('time')),
-                    type: $(this).attr('type')
-                };
-                if ($(this).attr('text')) {
-                    tempItem.text = $(this).attr('text');
-                }
-
-                fumen.push(tempItem);
-            });
-
-            // Computes emerge time and vanishing time of item.
-            // This is yet a very simple way without regards for speed changes.
-            fumen.forEach(function (item, index) {
-                item.emergeTime = (setting.speed * item.time - paddingRight) / setting.speed;
-                item.vanishTime = (setting.speed * item.time + paddingLeft) / setting.speed;
-            });
-
-            logTrace('Computed Fumen Parameters.');
-        } catch (error) {
-            logTrace('ERROR: Computing Fumen Parameters Faild: ' + error);
-            loadUTFXDeferred.reject();
-        }
-    }
 
     var startScreen = function () {
         player.playVideo();
