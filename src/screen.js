@@ -55,21 +55,23 @@ var Screen = function (canvas, youTyping) {
         logTrace('Screen is Ready.');
     };
 
-    var startScreen = function () {
+    this.start = function () {
+        var player = this.youTyping.player;
+
         player.playVideo();
 
         paper.view.onFrame = function (event) {
             if (player.getPlayerState() == 1) {
                 updateScreen();
             }
-            debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
-            debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
+            this.debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
+            this.debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
             fps++;
         };
 
         setInterval(function () {
             if (currentTime != player.getCurrentTime()) {
-                var now = window.performance.now() || (Date.now() - startTime);
+                var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 
                 currentTime = player.getCurrentTime();
                 runTime = currentTime;
@@ -96,13 +98,15 @@ var Screen = function (canvas, youTyping) {
     };
 
     // layout notes and lines fitting to current time
-    function updateScreen() {
-        var now = window.performance.now() || (Date.now() - startTime);
+    this.update = function () {
+        var setting = this.youTyping.setting;
+
+        var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
         var runTime = (now - zeroTime) / 1000;
 
-        fumen.forEach(function (item, index) {
+        this.youTyping.score.forEach(function (item, index) {
             var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
-            if (index in items) { // if indexth item exists in screen
+            if (index in items) { // if index-th item exists in screen
                 if (item.emergeTime > runTime || item.vanishTime < runTime) {
                     items[index].remove();
                     delete items[index];
@@ -113,7 +117,7 @@ var Screen = function (canvas, youTyping) {
                 if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
                     items[index] = new paper.Group();
 
-                    if (item.type == '=') {
+                    if (item.type === '=') {
                         items[index].addChild(new paper.Path.Line({
                             from: [Xpos, setting.fumenYpos * setting.height - setting.longLineHeight / 2],
                             to: [Xpos, setting.fumenYpos * setting.height + setting.longLineHeight / 2],
@@ -121,7 +125,7 @@ var Screen = function (canvas, youTyping) {
                             strokeWidth: 2
                         }));
                     }
-                    if (item.type == '-') {
+                    if (item.type === '-') {
                         items[index].addChild(new paper.Path.Line({
                             from: [Xpos, setting.fumenYpos * setting.height - setting.lineHeight / 2],
                             to: [Xpos, setting.fumenYpos * setting.height + setting.lineHeight / 2],
@@ -129,7 +133,7 @@ var Screen = function (canvas, youTyping) {
                             strokeWidth: 1
                         }));
                     }
-                    if (item.type == '+') {
+                    if (item.type === '+') {
                         // note
                         items[index].addChild(don.place([Xpos, setting.fumenYpos * setting.height]).scale(setting.noteSize / 50 * 2));
                         // lyric
@@ -145,6 +149,6 @@ var Screen = function (canvas, youTyping) {
                 }
             }
         });
-    }
+    };
 
 };

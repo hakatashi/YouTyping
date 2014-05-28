@@ -186,7 +186,7 @@ YouTyping.prototype.computeParameters = function () {
 
         // Computes emerge time and vanishing time of item.
         // This is yet a very simple way without regards for speed changes.
-        fumen.forEach(function (item, index) {
+        this.score.forEach(function (item, index) {
             item.emergeTime = (setting.speed * item.time - paddingRight) / setting.speed;
             item.vanishTime = (setting.speed * item.time + paddingLeft) / setting.speed;
         });
@@ -196,4 +196,4 @@ YouTyping.prototype.computeParameters = function () {
         logTrace('ERROR: Computing Fumen Parameters Faild: ' + error);
         loadUTFXDeferred.reject();
     }
-}
+};
