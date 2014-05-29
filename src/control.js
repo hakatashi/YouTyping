@@ -1,16 +1,18 @@
 var YouTyping = function (element, settings) {
+	var youTyping = this;
+
 	this.startTime = Date.now();
 
 	this.settings = {
 		zeroEstimateSamples: 16, // integer
 		videoId: 'fQ_m5VLhqNg',
-		fumen: 'data.XML',
+		score: 'data.utfx',
 		width: 1120, // pixel
 		height: 630, // pixel
 		hitPosition: 200, // pixel
 		noteSize: 50, // pixel
 		speed: 500, // pixel per second
-		fumenYpos: 0.5, // ratio
+		scoreYpos: 0.5, // ratio
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
 		screenPadding: 30 // pixel
@@ -30,10 +32,9 @@ var YouTyping = function (element, settings) {
 	this.score = null;
 	this.player = null;
 
-	this.element = element;
-
+	var setupPlayerDeferred;
 	function setupPlayer(callback) {
-		this.setupPlayerDeferred = $.Deferred();
+		setupPlayerDeferred = $.Deferred();
 		logTrace('Setting Player Up...');
 
 		var APITag = document.createElement('script');
@@ -41,21 +42,23 @@ var YouTyping = function (element, settings) {
 		var firstScript = document.getElementsByTagName('script')[0];
 		firstScript.parentNode.insertBefore(APITag, firstScript);
 
-		return this.setupPlayerDeferred.promise();
+		return setupPlayerDeferred.promise();
 	}
 
 	onYouTubeIframeAPIReady = function () { // global
+		var settings = youTyping.settings;
+
 		logTrace("Player API is Ready.");
 
 		// try to hide advertisement if sandbox parameter is 'true' or not defined in URI query
 		if (getParameterByName('sandbox') == 'true') {
-			this.element.children('.player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
+			this.DOM.player.setAttribute('sandbox', 'allow-same-origin allow-scripts');
 		}
 
-		player = new YT.Player('player', {
-			height: setting.height,
-			width: setting.width,
-			videoId: setting.videoId,
+		youTyping.player = new YT.Player('youtyping-player', {
+			height: settings.height,
+			width: settings.width,
+			videoId: settings.videoId,
 			playerVars: {
 				rel: 0,
 				controls: 0,
@@ -69,11 +72,11 @@ var YouTyping = function (element, settings) {
 				'onError': onPlayerError
 			}
 		});
-	}
+	};
 
 	function onPlayerReady(event) {
 		logTrace("Player is Ready.");
-		this.setupPlayerDeferred.resolve();
+		setupPlayerDeferred.resolve();
 	}
 
 	function onPlayerStateChange(event) {
@@ -114,38 +117,43 @@ var YouTyping = function (element, settings) {
 				logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
 				break;
 		}
-		this.setupPlayerDeferred.reject();
+		setupPlayerDeferred.reject();
 	}
 
+	var loadXMLDeferred;
 	function loadScoreXML() {
-		this.loadXMLDeferred = $.Deferred();
+		var settings = youTyping.settings;
+
+		loadXMLDeferred = $.Deferred();
 
 		$.ajax({
-			url: setting.fumen,
+			url: settings.score,
 			type: 'get',
 			datatype: 'xml',
 			timeout: 1000,
 			success: function (data, textStatus, jqXHR) {
-				fumenXML = $(data).find('fumen').find('item');
+				scoreXML = $(data).find('score').find('item');
 				logTrace('Loaded XML File.');
-				this.loadXMLDeferred.resolve();
+				loadXMLDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				logTrace('ERROR: XML File Loading Failed: ' + errorThrown);
-				this.loadXMLDeferred.reject();
+				loadXMLDeferred.reject();
 			}
 		});
 
-		return this.loadXMLDeferred.promise();
+		return loadXMLDeferred.promise();
 	}
 
-	function computeParameters () {
+	this.computeParameters = function () {
 		var setting = this.settings;
 
 		var paddingRight = setting.width - setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to right edge
 		var paddingLeft = setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to left edge
 
 		try {
+			this.score = [];
+
 			$(this.scoreXML).each(function () {
 				var tempItem = {
 					time: parseFloat($(this).attr('time')),
@@ -165,32 +173,62 @@ var YouTyping = function (element, settings) {
 				item.vanishTime = (setting.speed * item.time + paddingLeft) / setting.speed;
 			});
 
-			logTrace('Computed Fumen Parameters.');
+			logTrace('Computed score Parameters.');
 		} catch (error) {
-			logTrace('ERROR: Computing Fumen Parameters Faild: ' + error);
+			logTrace('ERROR: Computing score Parameters Faild: ' + error);
 			loadXMLDeferred.reject();
 		}
 	};
 
-	$.ajax('./don.svg').done(function (data) {
-		this.don = new paper.Symbol(paper.project.importSVG(data));
+	// setup DOM
+	this.DOM = {
+		wrap: element,
+		player: $('<div/>', {
+			id: 'youtyping-player'
+		}).appendTo(element),
+		screen: $('<canvas/>', {
+			id: 'youtyping-screen',
+			width: this.settings.width.toString(),
+			height: this.settings.height.toString()
+		}).appendTo(element)
+	};
+
+	$(this.DOM.wrap).css({
+		width: this.settings.width + 'px',
+		height: this.settings.height + 'px',
+		margin: '0 auto',
+		position: 'relative'
 	});
 
-	$('div#wrapper, #player, canvas#screen').css({
-		width: setting.width + 'px',
-		height: setting.height + 'px'
+	$(this.DOM.player).css({
+		width: this.settings.width + 'px',
+		height: this.settings.height + 'px',
+		display: 'block',
+		'z-index': 0
 	});
+
+	$(this.DOM.screen).css({
+		width: this.settings.width + 'px',
+		height: this.settings.height + 'px',
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		'z-index': 100
+	});
+
+	// create screen class
+	this.screen = new Screen(this.DOM.screen, this);
 
 	var player = setupPlayer();
 	var XML = loadScoreXML();
-	var screen = $.Deferred(setupScreen).promise();
+	var screen = $.Deferred(this.screen.setup).promise();
 	$.when(
 		$.when(
 			XML,
 			screen
-		).done(loadScreen),
+		).done(this.screen.load),
 		player
-	).done(startScreen)
+	).done(this.screen.start)
 	.fail(function () {
 		logTrace('ERROR: Initialization Failed...');
 	});

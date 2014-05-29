@@ -3,6 +3,8 @@
 var items = {};
 
 var Screen = function (canvas, youTyping) {
+	var screen = this;
+
 	var zeroTime = 0;
 	var zeroTimePad = 0;
 	var currentTime = 0;
@@ -11,28 +13,32 @@ var Screen = function (canvas, youTyping) {
 	var fps = 0;
 	var zerocallfps = 0;
 
-	if (youTyping) this.youTyping = youTyping;
+	this.canvas = canvas;
 
 	this.setup = function (deferred) {
-		this.canvas = canvas;
-		paper.setup(this.canvas);
+		screen.canvas = canvas;
+		paper.setup(screen.canvas);
 
-		this.cover = new paper.Path.Rectangle(paper.view.bounds);
-		this.cover.fillColor = 'black';
-		this.cover.fillColor.alpha = 0.7;
+		$.ajax('/don.svg').done(function (data) {
+			youTyping.don = new paper.Symbol(paper.project.importSVG(data));
+		});
 
-		this.debugTexts = [];
+		screen.cover = new paper.Path.Rectangle(paper.view.bounds);
+		screen.cover.fillColor = 'black';
+		screen.cover.fillColor.alpha = 0.7;
+
+		screen.debugTexts = [];
 		for (var i = 0; i < 5; i++) {
-			var index = this.debugTexts.push(new paper.PointText([20, 20 * (i + 1)]));
-			this.debugText = debugTexts[index - 1];
-			this.debugText.justification = 'left';
-			this.debugText.fillColor = 'white';
+			var index = screen.debugTexts.push(new paper.PointText([20, 20 * (i + 1)]));
+			screen.debugText = screen.debugTexts[index - 1];
+			screen.debugText.justification = 'left';
+			screen.debugText.fillColor = 'white';
 		}
 
 		setInterval(function () {
-			this.debugTexts[0].content = "FPS: " + fps;
+			screen.debugTexts[0].content = "FPS: " + fps;
 			fps = 0;
-			this.debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
+			screen.debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
 			zerocallfps = 0;
 		}, 1000);
 
@@ -41,13 +47,15 @@ var Screen = function (canvas, youTyping) {
 	};
 
 	this.load = function () {
-		this.computeParameters();
+		var settings = youTyping.settings;
 
-		this.update();
+		youTyping.computeParameters();
+
+		screen.update();
 
 		this.hitCircle = new paper.Path.Circle({
-			center: [setting.hitPosition, setting.fumenYpos * setting.height],
-			radius: setting.noteSize,
+			center: [settings.hitPosition, settings.scoreYpos * settings.height],
+			radius: settings.noteSize,
 			strokeWidth: 1,
 			strokeColor: 'white'
 		});
@@ -56,13 +64,13 @@ var Screen = function (canvas, youTyping) {
 	};
 
 	this.start = function () {
-		var player = this.youTyping.player;
+		var player = youTyping.player;
 
 		player.playVideo();
 
 		paper.view.onFrame = function (event) {
 			if (player.getPlayerState() == 1) {
-				updateScreen();
+				this.update();
 			}
 			this.debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
 			this.debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
@@ -76,7 +84,7 @@ var Screen = function (canvas, youTyping) {
 				currentTime = player.getCurrentTime();
 				runTime = currentTime;
 				var estimatedZero = now - currentTime * 1000;
-				debugTexts[1].content = "Measured Zero: " + estimatedZero.toFixed(2);
+				screen.debugTexts[1].content = "Measured Zero: " + estimatedZero.toFixed(2);
 
 				// Estimated zero time is stored in estimatesamples and
 				// we assume that correct zero time is recent `zeroEstimateSamples` samples
@@ -85,7 +93,7 @@ var Screen = function (canvas, youTyping) {
 				// It contains correct zero time and sudden-change-supressed zero time
 				// will be stored in `zeroTime`.
 				estimateSamples.push(estimatedZero);
-				if (estimateSamples.length > setting.zeroEstimateSamples) estimateSamples.shift();
+				if (estimateSamples.length > youTyping.settings.zeroEstimateSamples) estimateSamples.shift();
 				var estimatedSum = estimateSamples.reduce(function (previous, current) {
 					return previous + current;
 				});
@@ -99,12 +107,12 @@ var Screen = function (canvas, youTyping) {
 
 	// layout notes and lines fitting to current time
 	this.update = function () {
-		var setting = this.youTyping.setting;
+		var setting = youTyping.setting;
 
 		var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 		var runTime = (now - zeroTime) / 1000;
 
-		this.youTyping.score.forEach(function (item, index) {
+		youTyping.score.forEach(function (item, index) {
 			var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
 			if (index in items) { // if index-th item exists in screen
 				if (item.emergeTime > runTime || item.vanishTime < runTime) {
@@ -119,26 +127,26 @@ var Screen = function (canvas, youTyping) {
 
 					if (item.type === '=') {
 						items[index].addChild(new paper.Path.Line({
-							from: [Xpos, setting.fumenYpos * setting.height - setting.longLineHeight / 2],
-							to: [Xpos, setting.fumenYpos * setting.height + setting.longLineHeight / 2],
+							from: [Xpos, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
+							to: [Xpos, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
 							strokeColor: 'white',
 							strokeWidth: 2
 						}));
 					}
 					if (item.type === '-') {
 						items[index].addChild(new paper.Path.Line({
-							from: [Xpos, setting.fumenYpos * setting.height - setting.lineHeight / 2],
-							to: [Xpos, setting.fumenYpos * setting.height + setting.lineHeight / 2],
+							from: [Xpos, setting.scoreYpos * setting.height - setting.lineHeight / 2],
+							to: [Xpos, setting.scoreYpos * setting.height + setting.lineHeight / 2],
 							strokeColor: 'white',
 							strokeWidth: 1
 						}));
 					}
 					if (item.type === '+') {
 						// note
-						items[index].addChild(don.place([Xpos, setting.fumenYpos * setting.height]).scale(setting.noteSize / 50 * 2));
+						items[index].addChild(don.place([Xpos, setting.scoreYpos * setting.height]).scale(setting.noteSize / 50 * 2));
 						// lyric
 						items[index].addChild(new paper.PointText({
-							position: [Xpos, setting.fumenYpos * setting.height + setting.noteSize + 50],
+							position: [Xpos, setting.scoreYpos * setting.height + setting.noteSize + 50],
 							content: item.text,
 							fillColor: 'white',
 							justification: 'center',

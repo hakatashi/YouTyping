@@ -4,12 +4,12 @@
 	<title>YouTyping test page</title>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.12/paper-full.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="youtyping.js"></script>
-    <script src="jquery-deparam.js"></script>
+    <script src="/youtyping.js"></script>
+    <script src="/jquery-deparam.js"></script>
     <script>
         $(document).ready(function () {
             logTrace('Document is Ready.');
-            var youTyping = new YouTyping($('#youtyping'), $.deparam(location.search));
+            youTyping = new YouTyping($('#youtyping'), $.deparam(location.search));
         });
     </script>
 	<link rel="stylesheet" type="text/css" href="style.css">
