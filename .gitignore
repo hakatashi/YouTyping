@@ -1,9 +1,6 @@
 # Recently inactive
 util
 
-# UTFX File(Fumen data)
-*.utfx
-
 # Visual Studio
 Scripts
 *.config

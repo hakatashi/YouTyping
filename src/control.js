@@ -1,4 +1,4 @@
-var YouTyping = function (settings) {
+var YouTyping = function (element, settings) {
 	this.startTime = Date.now();
 
 	this.settings = {
@@ -30,6 +30,8 @@ var YouTyping = function (settings) {
 	this.score = null;
 	this.player = null;
 
+	this.element = element;
+
 	function setupPlayer(callback) {
 		this.setupPlayerDeferred = $.Deferred();
 		logTrace('Setting Player Up...');
@@ -42,12 +44,12 @@ var YouTyping = function (settings) {
 		return this.setupPlayerDeferred.promise();
 	}
 
-	function onYouTubeIframeAPIReady() {
+	onYouTubeIframeAPIReady = function () { // global
 		logTrace("Player API is Ready.");
 
 		// try to hide advertisement if sandbox parameter is 'true' or not defined in URI query
 		if (getParameterByName('sandbox') == 'true') {
-			document.getElementById('player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
+			this.element.children('.player').setAttribute('sandbox', 'allow-same-origin allow-scripts');
 		}
 
 		player = new YT.Player('player', {
@@ -71,7 +73,7 @@ var YouTyping = function (settings) {
 
 	function onPlayerReady(event) {
 		logTrace("Player is Ready.");
-		setupPlayerDeferred.resolve();
+		this.setupPlayerDeferred.resolve();
 	}
 
 	function onPlayerStateChange(event) {
@@ -112,11 +114,11 @@ var YouTyping = function (settings) {
 				logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
 				break;
 		}
-		setupPlayerDeferred.reject();
+		this.setupPlayerDeferred.reject();
 	}
 
 	function loadScoreXML() {
-		loadXMLDeferred = $.Deferred(); //global
+		this.loadXMLDeferred = $.Deferred();
 
 		$.ajax({
 			url: setting.fumen,
@@ -126,15 +128,15 @@ var YouTyping = function (settings) {
 			success: function (data, textStatus, jqXHR) {
 				fumenXML = $(data).find('fumen').find('item');
 				logTrace('Loaded XML File.');
-				loadXMLDeferred.resolve();
+				this.loadXMLDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				logTrace('ERROR: XML File Loading Failed: ' + errorThrown);
-				loadXMLDeferred.reject();
+				this.loadXMLDeferred.reject();
 			}
 		});
 
-		return loadXMLDeferred.promise();
+		return this.loadXMLDeferred.promise();
 	}
 
 	function computeParameters () {
