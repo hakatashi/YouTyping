@@ -11,7 +11,7 @@ var Screen = function (canvas, youTyping) {
 	var fps = 0;
 	var zerocallfps = 0;
 
-	this.youTyping = youTyping;
+	if (youTyping) this.youTyping = youTyping;
 
 	this.setup = function (deferred) {
 		this.canvas = canvas;
