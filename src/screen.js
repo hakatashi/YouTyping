@@ -19,6 +19,8 @@ var Screen = function (canvas, youTyping) {
 		screen.canvas = canvas;
 		paper.setup(screen.canvas);
 
+		console.log(screen.canvas);
+
 		$.ajax('/don.svg').done(function (data) {
 			youTyping.don = new paper.Symbol(paper.project.importSVG(data));
 		});
@@ -70,10 +72,10 @@ var Screen = function (canvas, youTyping) {
 
 		paper.view.onFrame = function (event) {
 			if (player.getPlayerState() == 1) {
-				this.update();
+				screen.update();
 			}
-			this.debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
-			this.debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
+			screen.debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
+			screen.debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
 			fps++;
 		};
 

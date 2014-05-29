@@ -217,7 +217,7 @@ var YouTyping = function (element, settings) {
 	});
 
 	// create screen class
-	this.screen = new Screen(this.DOM.screen, this);
+	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
 
 	var player = setupPlayer();
 	var XML = loadScoreXML();
