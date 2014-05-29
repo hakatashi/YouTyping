@@ -132,7 +132,7 @@ var YouTyping = function (element, settings) {
 			datatype: 'xml',
 			timeout: 1000,
 			success: function (data, textStatus, jqXHR) {
-				scoreXML = $(data).find('score').find('item');
+				youTyping.scoreXML = $(data).find('fumen').find('item');
 				logTrace('Loaded XML File.');
 				loadXMLDeferred.resolve();
 			},
@@ -152,18 +152,19 @@ var YouTyping = function (element, settings) {
 		var paddingLeft = setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to left edge
 
 		try {
-			this.score = [];
+		    this.score = [];
 
 			$(this.scoreXML).each(function () {
 				var tempItem = {
 					time: parseFloat($(this).attr('time')),
 					type: $(this).attr('type')
 				};
+
 				if ($(this).attr('text')) {
 					tempItem.text = $(this).attr('text');
 				}
 
-				this.score.push(tempItem);
+				youTyping.score.push(tempItem);
 			});
 
 			// Computes emerge time and vanishing time of item.
@@ -175,8 +176,8 @@ var YouTyping = function (element, settings) {
 
 			logTrace('Computed score Parameters.');
 		} catch (error) {
-			logTrace('ERROR: Computing score Parameters Faild: ' + error);
-			loadXMLDeferred.reject();
+		    logTrace('ERROR: Computing score Parameters Faild: ' + error);
+		    loadXMLDeferred.reject();
 		}
 	};
 
@@ -187,7 +188,8 @@ var YouTyping = function (element, settings) {
 			id: 'youtyping-player'
 		}).appendTo(element),
 		screen: $('<canvas/>', {
-			id: 'youtyping-screen',
+		    id: 'youtyping-screen',
+		    'data-paper-keepalive': 'true',
 			width: this.settings.width.toString(),
 			height: this.settings.height.toString()
 		}).appendTo(element)

@@ -19,8 +19,6 @@ var Screen = function (canvas, youTyping) {
 		screen.canvas = canvas;
 		paper.setup(screen.canvas);
 
-		console.log(screen.canvas);
-
 		$.ajax('/don.svg').done(function (data) {
 			youTyping.don = new paper.Symbol(paper.project.importSVG(data));
 		});
@@ -109,7 +107,7 @@ var Screen = function (canvas, youTyping) {
 
 	// layout notes and lines fitting to current time
 	this.update = function () {
-		var setting = youTyping.setting;
+		var setting = youTyping.settings;
 
 		var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 		var runTime = (now - zeroTime) / 1000;
@@ -145,7 +143,7 @@ var Screen = function (canvas, youTyping) {
 					}
 					if (item.type === '+') {
 						// note
-						items[index].addChild(don.place([Xpos, setting.scoreYpos * setting.height]).scale(setting.noteSize / 50 * 2));
+						items[index].addChild(youTyping.don.place([Xpos, setting.scoreYpos * setting.height]).scale(setting.noteSize / 50 * 2));
 						// lyric
 						items[index].addChild(new paper.PointText({
 							position: [Xpos, setting.scoreYpos * setting.height + setting.noteSize + 50],
