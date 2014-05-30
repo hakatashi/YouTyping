@@ -260,10 +260,6 @@ var Screen = function (canvas, youTyping) {
 		screen.canvas = canvas;
 		paper.setup(screen.canvas);
 
-		$.ajax('/don.svg').done(function (data) {
-			youTyping.don = new paper.Symbol(paper.project.importSVG(data));
-		});
-
 		screen.cover = new paper.Path.Rectangle(paper.view.bounds);
 		screen.cover.fillColor = 'black';
 		screen.cover.fillColor.alpha = 0.7;
@@ -384,7 +380,13 @@ var Screen = function (canvas, youTyping) {
 					}
 					if (item.type === '+') {
 						// note
-						items[index].addChild(youTyping.don.place([Xpos, setting.scoreYpos * setting.height]).scale(setting.noteSize / 50 * 2));
+						items[index].addChild(new paper.Path.Circle({
+							center: [Xpos, setting.scoreYpos * setting.height],
+							radius: setting.noteSize,
+							strokeWidth: 1,
+							strokeColor: '#aaa',
+							fillColor: 'red'
+						}));
 						// lyric
 						items[index].addChild(new paper.PointText({
 							position: [Xpos, setting.scoreYpos * setting.height + setting.noteSize + 50],
