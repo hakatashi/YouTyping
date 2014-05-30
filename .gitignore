@@ -1,12 +1,8 @@
 # Recently inactive
 util
 
-# UTFX File(Fumen data)
-*.utfx
-
 # Visual Studio
 Scripts
-*.sln
 *.config
 
 ### imported from https://github.com/github/gitignore
@@ -235,3 +231,7 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# Build Files
+youtyping.js
+youtyping.min.js

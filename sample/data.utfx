@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<utfx version="0.0">
+	<music>tomadoi-short.mp3</music>
+	<fumen>
+		<item type="=" time="0.723000"/>
+		<item type="-" time="1.075941"/>
+		<item type="-" time="1.428882"/>
+		<item type="-" time="1.781824"/>
+		<item type="=" time="2.134765"/>
+		<item type="-" time="2.487706"/>
+		<item type="-" time="2.840647"/>
+		<item type="-" time="3.193588"/>
+		<item type="=" time="3.546529"/>
+		<item type="-" time="3.899471"/>
+		<item type="-" time="4.252412"/>
+		<item type="-" time="4.605353"/>
+		<item type="=" time="4.958294"/>
+		<item type="-" time="5.311235"/>
+		<item type="-" time="5.664176"/>
+		<item type="-" time="6.017118"/>
+		<item type="=" time="6.370059"/>
+		<item type="-" time="6.723000"/>
+		<item type="-" time="7.075941"/>
+		<item type="-" time="7.428882"/>
+		<item type="=" time="7.781824"/>
+		<item type="-" time="8.134765"/>
+		<item type="-" time="8.487706"/>
+		<item type="-" time="8.840647"/>
+		<item type="=" time="9.193588"/>
+		<item type="-" time="9.546529"/>
+		<item type="-" time="9.899471"/>
+		<item type="-" time="10.252412"/>
+		<item type="=" time="10.605353"/>
+		<item type="-" time="10.958294"/>
+		<item type="-" time="11.311235"/>
+		<item type="*" time="11.311235" text="ふぅふぅ らったった らったったった ふぅふぅ"/>
+		<item type="+" time="11.311235" text="ふ"/>
+		<item type="+" time="11.487706" text="う"/>
+		<item type="-" time="11.664176"/>
+		<item type="+" time="11.664176" text="ふ"/>
+		<item type="+" time="11.840647" text="う"/>
+		<item type="=" time="12.017118"/>
+		<item type="+" time="12.017118" text="らっ"/>
+		<item type="-" time="12.370059"/>
+		<item type="+" time="12.370059" text="たっ"/>
+		<item type="-" time="12.723000"/>
+		<item type="+" time="12.723000" text="た"/>
+		<item type="+" time="12.899471" text="らっ"/>
+		<item type="-" time="13.075941"/>
+		<item type="+" time="13.252412" text="たっ"/>
+		<item type="=" time="13.428882"/>
+		<item type="+" time="13.605353" text="たっ"/>
+		<item type="-" time="13.781824"/>
+		<item type="+" time="13.958294" text="た"/>
+		<item type="-" time="14.134765"/>
+		<item type="+" time="14.134765" text="ふ"/>
+		<item type="+" time="14.311235" text="う"/>
+		<item type="-" time="14.487706"/>
+		<item type="+" time="14.487706" text="ふ"/>
+		<item type="+" time="14.664176" text="う"/>
+		<item type="=" time="14.840647"/>
+		<item type="/" time="14.840647"/>
+		<item type="*" time="14.840647" text="らったったらっぱ いぇーい いぇーい"/>
+		<item type="+" time="14.840647" text="らっ"/>
+		<item type="-" time="15.193588"/>
+		<item type="+" time="15.193588" text="たっ"/>
+		<item type="-" time="15.546529"/>
+		<item type="+" time="15.546529" text="た"/>
+		<item type="+" time="15.723000" text="らっ"/>
+		<item type="-" time="15.899471"/>
+		<item type="+" time="16.075941" text="ぱ"/>
+		<item type="=" time="16.252412"/>
+		<item type="+" time="16.252412" text="いぇー"/>
+		<item type="-" time="16.605353"/>
+		<item type="+" time="16.605353" text="い"/>
+		<item type="+" time="16.781824" text="いぇーい"/>
+		<item type="-" time="16.958294"/>
+		<item type="-" time="17.311235"/>
+		<item type="=" time="17.664176"/>
+		<item type="/" time="17.664176"/>
+		<item type="*" time="17.664176" text="らったった らったったった ふぅふぅいぇい"/>
+		<item type="+" time="17.664176" text="らっ"/>
+		<item type="-" time="18.017118"/>
+		<item type="+" time="18.017118" text="たっ"/>
+		<item type="-" time="18.370059"/>
+		<item type="+" time="18.370059" text="た"/>
+		<item type="+" time="18.546529" text="らっ"/>
+		<item type="-" time="18.723000"/>
+		<item type="+" time="18.899471" text="たっ"/>
+		<item type="=" time="19.075941"/>
+		<item type="+" time="19.252412" text="たっ"/>
+		<item type="-" time="19.428882"/>
+		<item type="+" time="19.605353" text="た"/>
+		<item type="-" time="19.781824"/>
+		<item type="+" time="19.781824" text="ふ"/>
+		<item type="+" time="19.958294" text="う"/>
+		<item type="-" time="20.134765"/>
+		<item type="+" time="20.134765" text="ふ"/>
+		<item type="+" time="20.311235" text="う"/>
+		<item type="=" time="20.487706"/>
+		<item type="+" time="20.487706" text="いぇい"/>
+		<item type="/" time="20.664176"/>
+		<item type="-" time="20.840647"/>
+		<item type="-" time="21.193588"/>
+		<item type="-" time="21.546529"/>
+		<item type="=" time="21.899471"/>
+		<item type="-" time="22.252412"/>
+		<item type="-" time="22.605353"/>
+		<item type="-" time="22.958294"/>
+		<item type="=" time="23.311235"/>
+		<item type="*" time="23.311235" text="朝目が覚めたらもう昨日みたいな日常はなくて"/>
+		<item type="+" time="23.311235" text="あ"/>
+		<item type="-" time="23.664176"/>
+		<item type="+" time="23.664176" text="さ"/>
+		<item type="-" time="24.017118"/>
+		<item type="+" time="24.017118" text="め"/>
+		<item type="-" time="24.370059"/>
+		<item type="+" time="24.370059" text="が"/>
+		<item type="+" time="24.546529" text="さ"/>
+		<item type="=" time="24.723000"/>
+		<item type="+" time="24.899471" text="め"/>
+		<item type="-" time="25.075941"/>
+		<item type="+" time="25.075941" text="た"/>
+		<item type="+" time="25.252412" text="ら"/>
+		<item type="-" time="25.428882"/>
+		<item type="+" time="25.428882" text="も"/>
+		<item type="+" time="25.605353" text="う"/>
+		<item type="-" time="25.781824"/>
+		<item type="+" time="25.958294" text="き"/>
+		<item type="=" time="26.134765"/>
+		<item type="+" time="26.134765" text="のう"/>
+		<item type="-" time="26.487706"/>
+		<item type="+" time="26.487706" text="み"/>
+		<item type="+" time="26.664176" text="た"/>
+		<item type="-" time="26.840647"/>
+		<item type="+" time="27.017118" text="い"/>
+		<item type="-" time="27.193588"/>
+		<item type="+" time="27.193588" text="な"/>
+		<item type="+" time="27.370059" text="に"/>
+		<item type="=" time="27.546529"/>
+		<item type="+" time="27.546529" text="ち"/>
+		<item type="-" time="27.899471"/>
+		<item type="+" time="27.899471" text="じょ"/>
+		<item type="-" time="28.252412"/>
+		<item type="+" time="28.252412" text="う"/>
+		<item type="-" time="28.605353"/>
+		<item type="+" time="28.605353" text="は"/>
+		<item type="+" time="28.781824" text="な"/>
+		<item type="=" time="28.958294"/>
+		<item type="+" time="29.134765" text="く"/>
+		<item type="-" time="29.311235"/>
+		<item type="+" time="29.311235" text="て"/>
+		<item type="-" time="29.664176"/>
+		<item type="-" time="30.017118"/>
+		<item type="=" time="30.370059"/>
+		<item type="-" time="30.723000"/>
+		<item type="/" time="30.723000"/>
+		<item type="*" time="30.723000" text="「ホントあぁもう...えっとどうしよう」"/>
+		<item type="+" time="30.723000" text="ほ"/>
+		<item type="-" time="31.075941"/>
+		<item type="+" time="31.075941" text="ん"/>
+		<item type="-" time="31.428882"/>
+		<item type="+" time="31.428882" text="と"/>
+		<item type="=" time="31.781824"/>
+		<item type="+" time="31.781824" text="ああ"/>
+		<item type="-" time="32.134765"/>
+		<item type="+" time="32.311235" text="もう"/>
+		<item type="-" time="32.487706"/>
+		<item type="+" time="32.487706" text="えっ"/>
+		<item type="-" time="32.840647"/>
+		<item type="+" time="33.017118" text="と"/>
+		<item type="=" time="33.193588"/>
+		<item type="+" time="33.193588" text="どう"/>
+		<item type="-" time="33.546529"/>
+		<item type="+" time="33.723000" text="し"/>
+		<item type="-" time="33.899471"/>
+		<item type="+" time="33.899471" text="よう"/>
+		<item type="-" time="34.252412"/>
+		<item type="=" time="34.605353"/>
+		<item type="/" time="34.605353"/>
+		<item type="*" time="34.605353" text="ため息混じりに練るお菓子と妄想のレシピの中に"/>
+		<item type="+" time="34.605353" text="た"/>
+		<item type="-" time="34.958294"/>
+		<item type="+" time="34.958294" text="め"/>
+		<item type="-" time="35.311235"/>
+		<item type="+" time="35.311235" text="い"/>
+		<item type="-" time="35.664176"/>
+		<item type="+" time="35.664176" text="き"/>
+		<item type="+" time="35.840647" text="ま"/>
+		<item type="=" time="36.017118"/>
+		<item type="+" time="36.193588" text="じ"/>
+		<item type="-" time="36.370059"/>
+		<item type="+" time="36.370059" text="り"/>
+		<item type="+" time="36.546529" text="に"/>
+		<item type="-" time="36.723000"/>
+		<item type="+" time="36.723000" text="ね"/>
+		<item type="+" time="36.899471" text="る"/>
+		<item type="-" time="37.075941"/>
+		<item type="+" time="37.252412" text="お"/>
+		<item type="=" time="37.428882"/>
+		<item type="+" time="37.428882" text="か"/>
+		<item type="+" time="37.605353" text="し"/>
+		<item type="-" time="37.781824"/>
+		<item type="+" time="37.781824" text="と"/>
+		<item type="+" time="37.958294" text="も"/>
+		<item type="-" time="38.134765"/>
+		<item type="+" time="38.134765" text="う"/>
+		<item type="+" time="38.311235" text="そ"/>
+		<item type="-" time="38.487706"/>
+		<item type="+" time="38.487706" text="う"/>
+		<item type="+" time="38.664176" text="の"/>
+		<item type="=" time="38.840647"/>
+		<item type="+" time="38.840647" text="れ"/>
+		<item type="-" time="39.193588"/>
+		<item type="+" time="39.193588" text="し"/>
+		<item type="-" time="39.546529"/>
+		<item type="+" time="39.546529" text="ぴ"/>
+		<item type="-" time="39.899471"/>
+		<item type="+" time="39.899471" text="の"/>
+		<item type="+" time="40.075941" text="な"/>
+		<item type="=" time="40.252412"/>
+		<item type="+" time="40.428882" text="か"/>
+		<item type="-" time="40.605353"/>
+		<item type="+" time="40.605353" text="に"/>
+		<item type="-" time="40.958294"/>
+		<item type="-" time="41.311235"/>
+		<item type="/" time="41.311235"/>
+		<item type="*" time="41.311235" text="恋心入っちゃった"/>
+		<item type="+" time="41.311235" text="こ"/>
+		<item type="+" time="41.487706" text="い"/>
+		<item type="=" time="41.664176"/>
+		<item type="+" time="41.664176" text="ご"/>
+		<item type="+" time="41.840647" text="こ"/>
+		<item type="-" time="42.017118"/>
+		<item type="+" time="42.017118" text="ろ"/>
+		<item type="+" time="42.193588" text="はいっ"/>
+		<item type="-" time="42.370059"/>
+		<item type="+" time="42.546529" text="ちゃっ"/>
+		<item type="-" time="42.723000"/>
+		<item type="+" time="42.899471" text="た"/>
+		<item type="=" time="43.075941"/>
+		<item type="/" time="43.075941"/>
+		<item type="-" time="43.428882"/>
+		<item type="-" time="43.781824"/>
+		<item type="-" time="44.134765"/>
+		<item type="=" time="44.487706"/>
+		<item type="-" time="44.840647"/>
+		<item type="-" time="45.193588"/>
+		<item type="*" time="45.370059" text="シフォンケーキにカスタード スコーンにクロテッドクリーム"/>
+		<item type="+" time="45.370059" text="し"/>
+		<item type="-" time="45.546529"/>
+		<item type="+" time="45.546529" text="ふぉ"/>
+		<item type="+" time="45.723000" text="ん"/>
+		<item type="=" time="45.899471"/>
+		<item type="+" time="45.899471" text="け"/>
+		<item type="-" time="46.252412"/>
+		<item type="+" time="46.252412" text="ー"/>
+		<item type="-" time="46.605353"/>
+		<item type="+" time="46.605353" text="き"/>
+		<item type="-" time="46.958294"/>
+		<item type="+" time="46.958294" text="に"/>
+		<item type="+" time="47.134765" text="か"/>
+		<item type="=" time="47.311235"/>
+		<item type="+" time="47.311235" text="す"/>
+		<item type="+" time="47.487706" text="た"/>
+		<item type="-" time="47.664176"/>
+		<item type="+" time="47.664176" text="ー"/>
+		<item type="+" time="47.840647" text="ど"/>
+		<item type="-" time="48.017118"/>
+		<item type="+" time="48.193588" text="す"/>
+		<item type="-" time="48.370059"/>
+		<item type="+" time="48.370059" text="こー"/>
+		<item type="+" time="48.546529" text="ん"/>
+		<item type="=" time="48.723000"/>
+		<item type="+" time="48.723000" text="に"/>
+		<item type="-" time="49.075941"/>
+		<item type="+" time="49.075941" text="く"/>
+		<item type="+" time="49.252412" text="ろ"/>
+		<item type="-" time="49.428882"/>
+		<item type="+" time="49.428882" text="てっ"/>
+		<item type="-" time="49.781824"/>
+		<item type="+" time="49.781824" text="ど"/>
+		<item type="+" time="49.958294" text="く"/>
+		<item type="=" time="50.134765"/>
+		<item type="+" time="50.134765" text="り"/>
+		<item type="+" time="50.311235" text="ー"/>
+		<item type="-" time="50.487706"/>
+		<item type="+" time="50.664176" text="む"/>
+		<item type="-" time="50.840647"/>
+		<item type="/" time="51.017118"/>
+		<item type="*" time="51.017118" text="だけどやっぱこれっておかしいわ どうして私なんだろ"/>
+		<item type="+" time="51.017118" text="だ"/>
+		<item type="-" time="51.193588"/>
+		<item type="+" time="51.193588" text="け"/>
+		<item type="+" time="51.370059" text="ど"/>
+		<item type="=" time="51.546529"/>
+		<item type="+" time="51.546529" text="やっ"/>
+		<item type="-" time="51.899471"/>
+		<item type="+" time="51.899471" text="ぱ"/>
+		<item type="+" time="52.075941" text="こ"/>
+		<item type="-" time="52.252412"/>
+		<item type="+" time="52.252412" text="れっ"/>
+		<item type="-" time="52.605353"/>
+		<item type="+" time="52.605353" text="て"/>
+		<item type="+" time="52.781824" text="お"/>
+		<item type="=" time="52.958294"/>
+		<item type="+" time="52.958294" text="か"/>
+		<item type="+" time="53.134765" text="し"/>
+		<item type="-" time="53.311235"/>
+		<item type="+" time="53.311235" text="い"/>
+		<item type="+" time="53.487706" text="わ"/>
+		<item type="-" time="53.664176"/>
+		<item type="+" time="53.840647" text="ど"/>
+		<item type="-" time="54.017118"/>
+		<item type="+" time="54.017118" text="う"/>
+		<item type="+" time="54.193588" text="し"/>
+		<item type="=" time="54.370059"/>
+		<item type="+" time="54.370059" text="て"/>
+		<item type="-" time="54.723000"/>
+		<item type="+" time="54.723000" text="わ"/>
+		<item type="-" time="55.075941"/>
+		<item type="+" time="55.075941" text="た"/>
+		<item type="-" time="55.428882"/>
+		<item type="+" time="55.428882" text="し"/>
+		<item type="=" time="55.781824"/>
+		<item type="+" time="55.781824" text="なん"/>
+		<item type="-" time="56.134765"/>
+		<item type="+" time="56.134765" text="だ"/>
+		<item type="+" time="56.311235" text="ろ"/>
+		<item type="-" time="56.487706"/>
+		<item type="/" time="56.664176"/>
+		<item type="*" time="56.664176" text="急にそんな事言い出して…"/>
+		<item type="+" time="56.664176" text="きゅ"/>
+		<item type="-" time="56.840647"/>
+		<item type="+" time="56.840647" text="う"/>
+		<item type="+" time="57.017118" text="に"/>
+		<item type="=" time="57.193588"/>
+		<item type="+" time="57.193588" text="そん"/>
+		<item type="-" time="57.546529"/>
+		<item type="-" time="57.899471"/>
+		<item type="+" time="57.899471" text="な"/>
+		<item type="-" time="58.252412"/>
+		<item type="+" time="58.252412" text="こ"/>
+		<item type="+" time="58.428882" text="と"/>
+		<item type="=" time="58.605353"/>
+		<item type="+" time="58.605353" text="いい"/>
+		<item type="-" time="58.958294"/>
+		<item type="+" time="59.134765" text="だ"/>
+		<item type="-" time="59.311235"/>
+		<item type="-" time="59.664176"/>
+		<item type="+" time="59.664176" text="し"/>
+		<item type="=" time="60.017118"/>
+		<item type="+" time="60.017118" text="て"/>
+		<item type="-" time="60.370059"/>
+		<item type="-" time="60.723000"/>
+		<item type="-" time="61.075941"/>
+		<item type="=" time="61.428882"/>
+		<item type="/" time="61.428882"/>
+		<item type="-" time="61.781824"/>
+		<item type="*" time="61.781824" text="あぁどうしよ"/>
+		<item type="+" time="61.781824" text="ああ"/>
+		<item type="-" time="62.134765"/>
+		<item type="+" time="62.134765" text="どう"/>
+		<item type="-" time="62.487706"/>
+		<item type="+" time="62.487706" text="し"/>
+		<item type="+" time="62.664176" text="よ"/>
+		<item type="=" time="62.840647"/>
+		<item type="/" time="62.840647"/>
+		<item type="*" time="62.840647" text="君を好きになっちゃうかなんて分からないけど"/>
+		<item type="+" time="62.840647" text="き"/>
+		<item type="-" time="63.193588"/>
+		<item type="+" time="63.370059" text="み"/>
+		<item type="-" time="63.546529"/>
+		<item type="+" time="63.546529" text="を"/>
+		<item type="-" time="63.899471"/>
+		<item type="+" time="64.075941" text="す"/>
+		<item type="=" time="64.252412"/>
+		<item type="+" time="64.252412" text="き"/>
+		<item type="-" time="64.605353"/>
+		<item type="+" time="64.605353" text="に"/>
+		<item type="+" time="64.781824" text="なっ"/>
+		<item type="-" time="64.958294"/>
+		<item type="+" time="65.134765" text="ちゃう"/>
+		<item type="-" time="65.311235"/>
+		<item type="+" time="65.487706" text="か"/>
+		<item type="=" time="65.664176"/>
+		<item type="+" time="65.664176" text="な"/>
+		<item type="-" time="66.017118"/>
+		<item type="+" time="66.193588" text="ん"/>
+		<item type="-" time="66.370059"/>
+		<item type="+" time="66.370059" text="て"/>
+		<item type="-" time="66.723000"/>
+		<item type="+" time="66.899471" text="わ"/>
+		<item type="=" time="67.075941"/>
+		<item type="+" time="67.075941" text="か"/>
+		<item type="-" time="67.428882"/>
+		<item type="+" time="67.428882" text="ら"/>
+		<item type="+" time="67.605353" text="ない"/>
+		<item type="-" time="67.781824"/>
+		<item type="+" time="67.958294" text="け"/>
+		<item type="-" time="68.134765"/>
+		<item type="+" time="68.311235" text="ど"/>
+		<item type="=" time="68.487706"/>
+		<item type="/" time="68.487706"/>
+		<item type="*" time="68.487706" text="大切な人だなんてAh照れくさいかな"/>
+		<item type="+" time="68.487706" text="た"/>
+		<item type="-" time="68.840647"/>
+		<item type="+" time="68.840647" text="い"/>
+		<item type="-" time="69.193588"/>
+		<item type="+" time="69.193588" text="せ"/>
+		<item type="+" time="69.370059" text="つ"/>
+		<item type="-" time="69.546529"/>
+		<item type="+" time="69.723000" text="な"/>
+		<item type="=" time="69.899471"/>
+		<item type="+" time="69.899471" text="ひ"/>
+		<item type="-" time="70.252412"/>
+		<item type="+" time="70.252412" text="と"/>
+		<item type="+" time="70.428882" text="だ"/>
+		<item type="-" time="70.605353"/>
+		<item type="+" time="70.781824" text="な"/>
+		<item type="-" time="70.958294"/>
+		<item type="+" time="70.958294" text="ん"/>
+		<item type="+" time="71.134765" text="て"/>
+		<item type="=" time="71.311235"/>
+		<item type="+" time="71.311235" text="ああ"/>
+		<item type="-" time="71.664176"/>
+		<item type="+" time="71.664176" text="て"/>
+		<item type="-" time="72.017118"/>
+		<item type="+" time="72.017118" text="れ"/>
+		<item type="-" time="72.370059"/>
+		<item type="+" time="72.370059" text="く"/>
+		<item type="+" time="72.546529" text="さい"/>
+		<item type="=" time="72.723000"/>
+		<item type="-" time="73.075941"/>
+		<item type="+" time="73.075941" text="か"/>
+		<item type="+" time="73.252412" text="な"/>
+		<item type="-" time="73.428882"/>
+		<item type="-" time="73.781824"/>
+		<item type="=" time="74.134765"/>
+		<item type="/" time="74.134765"/>
+		<item type="*" time="74.134765" text="君は真面目なトーンで好きってなんて言うでしょ"/>
+		<item type="+" time="74.134765" text="き"/>
+		<item type="-" time="74.487706"/>
+		<item type="+" time="74.664176" text="み"/>
+		<item type="-" time="74.840647"/>
+		<item type="+" time="74.840647" text="は"/>
+		<item type="-" time="75.193588"/>
+		<item type="+" time="75.370059" text="ま"/>
+		<item type="=" time="75.546529"/>
+		<item type="+" time="75.546529" text="じ"/>
+		<item type="-" time="75.899471"/>
+		<item type="+" time="75.899471" text="め"/>
+		<item type="+" time="76.075941" text="な"/>
+		<item type="-" time="76.252412"/>
+		<item type="+" time="76.428882" text="とー"/>
+		<item type="-" time="76.605353"/>
+		<item type="+" time="76.781824" text="ん"/>
+		<item type="=" time="76.958294"/>
+		<item type="+" time="76.958294" text="で"/>
+		<item type="-" time="77.311235"/>
+		<item type="+" time="77.487706" text="す"/>
+		<item type="-" time="77.664176"/>
+		<item type="+" time="77.664176" text="きっ"/>
+		<item type="-" time="78.017118"/>
+		<item type="+" time="78.193588" text="て"/>
+		<item type="=" time="78.370059"/>
+		<item type="+" time="78.370059" text="なん"/>
+		<item type="-" time="78.723000"/>
+		<item type="+" time="78.723000" text="て"/>
+		<item type="+" time="78.899471" text="いう"/>
+		<item type="-" time="79.075941"/>
+		<item type="+" time="79.252412" text="で"/>
+		<item type="-" time="79.428882"/>
+		<item type="+" time="79.605353" text="しょ"/>
+		<item type="=" time="79.781824"/>
+		<item type="/" time="79.781824"/>
+		<item type="*" time="79.781824" text="ちょっとドキッとしちゃうじゃん"/>
+		<item type="+" time="79.781824" text="ちょっ"/>
+		<item type="-" time="80.134765"/>
+		<item type="+" time="80.134765" text="と"/>
+		<item type="-" time="80.487706"/>
+		<item type="+" time="80.487706" text="ど"/>
+		<item type="+" time="80.664176" text="きっ"/>
+		<item type="-" time="80.840647"/>
+		<item type="+" time="81.017118" text="とし"/>
+		<item type="=" time="81.193588"/>
+		<item type="+" time="81.193588" text="ちゃ"/>
+		<item type="-" time="81.546529"/>
+		<item type="+" time="81.546529" text="う"/>
+		<item type="+" time="81.723000" text="じゃん"/>
+		<item type="-" time="81.899471"/>
+		<item type="/" time="82.075941"/>
+		<item type="*" time="82.075941" text="なんて非日常的なレボリューション"/>
+		<item type="+" time="82.075941" text="な"/>
+		<item type="-" time="82.252412"/>
+		<item type="+" time="82.252412" text="ん"/>
+		<item type="+" time="82.428882" text="て"/>
+		<item type="=" time="82.605353"/>
+		<item type="+" time="82.605353" text="ひ"/>
+		<item type="-" time="82.958294"/>
+		<item type="+" time="82.958294" text="にち"/>
+		<item type="-" time="83.311235"/>
+		<item type="+" time="83.311235" text="じょう"/>
+		<item type="-" time="83.664176"/>
+		<item type="+" time="83.664176" text="てき"/>
+		<item type="=" time="84.017118"/>
+		<item type="+" time="84.017118" text="な"/>
+		<item type="-" time="84.370059"/>
+		<item type="+" time="84.370059" text="れぼ"/>
+		<item type="-" time="84.723000"/>
+		<item type="+" time="84.723000" text="りゅー"/>
+		<item type="-" time="85.075941"/>
+		<item type="+" time="85.075941" text="しょん"/>
+		<item type="=" time="85.428882"/>
+		<item type="/" time="85.428882"/>
+		<item type="*" time="85.428882" text="らったった らったったった ふぅふぅいぇい"/>
+		<item type="+" time="85.428882" text="らっ"/>
+		<item type="-" time="85.781824"/>
+		<item type="+" time="85.781824" text="たっ"/>
+		<item type="-" time="86.134765"/>
+		<item type="+" time="86.134765" text="た"/>
+		<item type="+" time="86.311235" text="らっ"/>
+		<item type="-" time="86.487706"/>
+		<item type="+" time="86.664176" text="たっ"/>
+		<item type="=" time="86.840647"/>
+		<item type="+" time="87.017118" text="たっ"/>
+		<item type="-" time="87.193588"/>
+		<item type="+" time="87.370059" text="た"/>
+		<item type="-" time="87.546529"/>
+		<item type="+" time="87.546529" text="ふ"/>
+		<item type="+" time="87.723000" text="う"/>
+		<item type="-" time="87.899471"/>
+		<item type="+" time="87.899471" text="ふ"/>
+		<item type="+" time="88.075941" text="う"/>
+		<item type="=" time="88.252412"/>
+		<item type="+" time="88.252412" text="いぇい"/>
+		<item type="/" time="88.958294"/>
+	</fumen>
+</utfx>

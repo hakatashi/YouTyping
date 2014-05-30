@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>YouTyping test page</title>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.12/paper-full.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/youtyping.js"></script>
+    <script src="jquery-deparam.js"></script>
+    <script>
+        $(document).ready(function () {
+            logTrace('Document is Ready.');
+            youTyping = new YouTyping($('#youtyping'), $.deparam(location.search));
+        });
+    </script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<h1>YouTyping Test Page</h1>
+	<p><a href="./">default</a> is adfree. non-adfree version is <a href="./?sandbox=true">./?sandbox=true</a></p>
+	<div id="youtyping"></div>
+	<p>Setting can be overrided by URI query e.g. <a href="./?speed=1000&amp;noteSize=30">./?speed=1000&amp;noteSize=30</a></p>
+	<p>Powered by <a href="https://www.youtube.com/">YouTube</a></p>
+	<textarea id="debug"></textarea>
+	<?php $hash = shell_exec("git rev-parse HEAD"); ?>
+	<p style="font-size: small;">Current working version is <a href="https://github.com/hakatashi/YouTyping/tree/<?php echo $hash ?>"><?php echo $hash ?></a></p>
+</body>
+</html>
