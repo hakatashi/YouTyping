@@ -3,7 +3,9 @@ module.exports = function (grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		concat: {
 			options: {
-				separator: ''
+			    separator: '\n\n',
+			    banner: '/* youtyping.js <%= grunt.template.today("mm-dd-yyyy") %> */\n\nvar YouTyping = (function(){\n',
+			    footer: '\n\nreturn YouTyping;\n}());'
 			},
 			dist: {
 				src: ['src/*.js'],
@@ -12,7 +14,7 @@ module.exports = function (grunt) {
 		},
 		uglify: {
 			options: {
-				banner: '/* youtyping.js <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+				banner: '/* youtyping.js <%= grunt.template.today("mm-dd-yyyy") %> */\n'
 			},
 			dist: {
 				files: {

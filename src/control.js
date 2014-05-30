@@ -19,12 +19,12 @@ var YouTyping = function (element, settings) {
 	};
 
 	for (var param in settings) {
-		if (this.settings[param] !== undefined) {
-			if (typeof this.settings[param] === 'number') {
-				this.settings[param] = parseInt(settings[param]);
-			} else {
-				this.settings[param] = settings[param];
-			}
+		if (this.settings[param] === undefined) {
+			this.settings[param] = settings[param];
+		} else if (typeof this.settings[param] === 'number') {
+			this.settings[param] = parseInt(settings[param]);
+		} else {
+			this.settings[param] = settings[param];
 		}
 	}
 
@@ -146,13 +146,13 @@ var YouTyping = function (element, settings) {
 	}
 
 	this.computeParameters = function () {
-		var setting = this.settings;
+		var settings = this.settings;
 
-		var paddingRight = setting.width - setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to right edge
-		var paddingLeft = setting.hitPosition + setting.noteSize + setting.screenPadding; // distance from hit line to left edge
+		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
+		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
 
 		try {
-		    this.score = [];
+			this.score = [];
 
 			$(this.scoreXML).each(function () {
 				var tempItem = {
@@ -170,14 +170,14 @@ var YouTyping = function (element, settings) {
 			// Computes emerge time and vanishing time of item.
 			// This is yet a very simple way without regards for speed changes.
 			this.score.forEach(function (item, index) {
-				item.emergeTime = (setting.speed * item.time - paddingRight) / setting.speed;
-				item.vanishTime = (setting.speed * item.time + paddingLeft) / setting.speed;
+				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
+				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
 			});
 
 			logTrace('Computed score Parameters.');
 		} catch (error) {
-		    logTrace('ERROR: Computing score Parameters Faild: ' + error);
-		    loadXMLDeferred.reject();
+			logTrace('ERROR: Computing score Parameters Faild: ' + error);
+			loadXMLDeferred.reject();
 		}
 	};
 
@@ -188,8 +188,8 @@ var YouTyping = function (element, settings) {
 			id: 'youtyping-player'
 		}).appendTo(element),
 		screen: $('<canvas/>', {
-		    id: 'youtyping-screen',
-		    'data-paper-keepalive': 'true',
+			id: 'youtyping-screen',
+			'data-paper-keepalive': 'true',
 			width: this.settings.width.toString(),
 			height: this.settings.height.toString()
 		}).appendTo(element)
