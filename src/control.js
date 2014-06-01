@@ -119,15 +119,15 @@ var YouTyping = function (element, settings) {
 	};
 
 	var computeParameters = function () {
-		var settings = this.settings;
+		var settings = youTyping.settings;
 
 		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
 		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
 
 		try {
-			this.score = [];
+			youTyping.score = [];
 
-			$(this.scoreXML).each(function () {
+			$(youTyping.scoreXML).each(function () {
 				var tempItem = {
 					time: parseFloat($(this).attr('time')),
 					type: $(this).attr('type')
@@ -142,7 +142,7 @@ var YouTyping = function (element, settings) {
 
 			// Computes emerge time and vanishing time of item.
 			// This is yet a very simple way without regards for speed changes.
-			this.score.forEach(function (item, index) {
+			youTyping.score.forEach(function (item, index) {
 				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
 				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
 			});
