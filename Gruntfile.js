@@ -28,7 +28,8 @@ module.exports = function (grunt) {
 				camelcase: true,
 				curly: true,
 				eqeqeq: true,
-				es3: true
+				es3: true,
+				quotmark: true
 			}
 		}
 	});

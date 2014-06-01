@@ -33,9 +33,9 @@ var Screen = function (canvas, youTyping) {
 		}
 
 		setInterval(function () {
-			screen.debugTexts[0].content = "FPS: " + fps;
+			screen.debugTexts[0].content = 'FPS: ' + fps;
 			fps = 0;
-			screen.debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
+			screen.debugTexts[2].content = 'Zerocall FPS: ' + zerocallfps;
 			zerocallfps = 0;
 		}, 1000);
 
@@ -67,7 +67,7 @@ var Screen = function (canvas, youTyping) {
 			if (player.getPlayerState() === 1) {
 				screen.update();
 			}
-			screen.debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
+			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 			screen.debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
 			fps++;
 		};
@@ -79,7 +79,7 @@ var Screen = function (canvas, youTyping) {
 				currentTime = player.getCurrentTime();
 				runTime = currentTime;
 				var estimatedZero = now - currentTime * 1000;
-				screen.debugTexts[1].content = "Measured Zero: " + estimatedZero.toFixed(2);
+				screen.debugTexts[1].content = 'Measured Zero: ' + estimatedZero.toFixed(2);
 
 				// Estimated zero time is stored in estimatesamples and
 				// we assume that correct zero time is recent `zeroEstimateSamples` samples

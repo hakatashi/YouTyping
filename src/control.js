@@ -20,7 +20,7 @@ var YouTyping = function (element, settings) {
 	onYouTubeIframeAPIReady = function () {
 		var settings = youTyping.settings;
 
-		logTrace("Player API is Ready.");
+		logTrace('Player API is Ready.');
 
 		// try to hide advertisement if sandbox parameter is 'true' or not defined in URI query
 		if (getParameterByName('sandbox') === 'true') {
@@ -47,26 +47,26 @@ var YouTyping = function (element, settings) {
 	};
 
 	var onPlayerReady = function (event) {
-		logTrace("Player is Ready.");
+		logTrace('Player is Ready.');
 		setupPlayerDeferred.resolve();
 	};
 
 	var onPlayerStateChange = function (event) {
 		switch (event.data) {
 			case YT.PlayerState.ENDED:
-				logTrace("Player Ended.");
+				logTrace('Player Ended.');
 				break;
 			case YT.PlayerState.PLAYING:
-				logTrace("Player Started.");
+				logTrace('Player Started.');
 				break;
 			case YT.PlayerState.PAUSED:
-				logTrace("Player Paused.");
+				logTrace('Player Paused.');
 				break;
 			case YT.PlayerState.BUFFERING:
-				logTrace("Player Buffering.");
+				logTrace('Player Buffering.');
 				break;
 			case YT.PlayerState.CUED:
-				logTrace("Player Cued.");
+				logTrace('Player Cued.');
 				break;
 		}
 	};
