@@ -1,39 +1,10 @@
 var YouTyping = function (element, settings) {
 	var youTyping = this;
-
-	this.startTime = Date.now();
-
-	this.settings = {
-		zeroEstimateSamples: 16, // integer
-		videoId: 'fQ_m5VLhqNg',
-		score: 'data.utfx',
-		width: 1120, // pixel
-		height: 630, // pixel
-		hitPosition: 200, // pixel
-		noteSize: 50, // pixel
-		speed: 500, // pixel per second
-		scoreYpos: 0.5, // ratio
-		longLineHeight: 150, // pixel
-		lineHeight: 120, // pixel
-		screenPadding: 30 // pixel
-	};
-
-	for (var param in settings) {
-		if (this.settings[param] === undefined) {
-			this.settings[param] = settings[param];
-		} else if (typeof this.settings[param] === 'number') {
-			this.settings[param] = parseInt(settings[param]);
-		} else {
-			this.settings[param] = settings[param];
-		}
-	}
-
-	this.scoreXML = null;
-	this.score = null;
-	this.player = null;
+	
+	/******************* Internal functions *******************/
 
 	var setupPlayerDeferred;
-	function setupPlayer(callback) {
+	var setupPlayer = function (callback) {
 		setupPlayerDeferred = $.Deferred();
 		logTrace('Setting Player Up...');
 
@@ -43,9 +14,10 @@ var YouTyping = function (element, settings) {
 		firstScript.parentNode.insertBefore(APITag, firstScript);
 
 		return setupPlayerDeferred.promise();
-	}
+	};
 
-	onYouTubeIframeAPIReady = function () { // global
+	// callback function used by YouTube IFrame Player API. must be global
+	onYouTubeIframeAPIReady = function () {
 		var settings = youTyping.settings;
 
 		logTrace("Player API is Ready.");
@@ -74,12 +46,12 @@ var YouTyping = function (element, settings) {
 		});
 	};
 
-	function onPlayerReady(event) {
+	var onPlayerReady = function (event) {
 		logTrace("Player is Ready.");
 		setupPlayerDeferred.resolve();
-	}
+	};
 
-	function onPlayerStateChange(event) {
+	var onPlayerStateChange = function (event) {
 		switch (event.data) {
 			case YT.PlayerState.ENDED:
 				logTrace("Player Ended.");
@@ -97,9 +69,9 @@ var YouTyping = function (element, settings) {
 				logTrace("Player Cued.");
 				break;
 		}
-	}
+	};
 
-	function onPlayerError(event) {
+	var onPlayerError = function (event) {
 		switch (event.data) {
 			case 2:
 				logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
@@ -118,10 +90,10 @@ var YouTyping = function (element, settings) {
 				break;
 		}
 		setupPlayerDeferred.reject();
-	}
+	};
 
 	var loadXMLDeferred;
-	function loadScoreXML() {
+	var loadScoreXML = function () {
 		var settings = youTyping.settings;
 
 		loadXMLDeferred = $.Deferred();
@@ -134,6 +106,7 @@ var YouTyping = function (element, settings) {
 			success: function (data, textStatus, jqXHR) {
 				youTyping.scoreXML = $(data).find('fumen').find('item');
 				logTrace('Loaded XML File.');
+				computeParameters();
 				loadXMLDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -143,9 +116,9 @@ var YouTyping = function (element, settings) {
 		});
 
 		return loadXMLDeferred.promise();
-	}
+	};
 
-	this.computeParameters = function () {
+	var computeParameters = function () {
 		var settings = this.settings;
 
 		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
@@ -181,46 +154,85 @@ var YouTyping = function (element, settings) {
 		}
 	};
 
+
+	/******************* properties *******************/
+
+	this.startTime = Date.now();
+
+	// score data
+	this.scoreXML = null;
+	this.score = null;
+
+	// YouTube IFrame Player
+	this.player = null;
+
+	// default settings
+	this.settings = {
+		zeroEstimateSamples: 16, // integer
+		videoId: 'fQ_m5VLhqNg',
+		score: 'data.utfx',
+		width: 1120, // pixel
+		height: 630, // pixel
+		hitPosition: 200, // pixel
+		noteSize: 50, // pixel
+		speed: 500, // pixel per second
+		scoreYpos: 0.5, // ratio
+		longLineHeight: 150, // pixel
+		lineHeight: 120, // pixel
+		screenPadding: 30 // pixel
+	};
+
+
+	/******************* Initialization *******************/
+
+	// override default settings
+	for (var param in settings) {
+		if (this.settings[param] === undefined) {
+			this.settings[param] = settings[param];
+		} else if (typeof this.settings[param] === 'number') {
+			this.settings[param] = parseInt(settings[param]);
+		} else {
+			this.settings[param] = settings[param];
+		}
+	}
+
 	// setup DOM
 	this.DOM = {
-		wrap: element,
+		wrap: element.css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			margin: '0 auto',
+			position: 'relative'
+		}),
+
 		player: $('<div/>', {
 			id: 'youtyping-player'
-		}).appendTo(element),
+		}).appendTo(element).css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			display: 'block',
+			'z-index': 0
+		}),
+
 		screen: $('<canvas/>', {
 			id: 'youtyping-screen',
 			'data-paper-keepalive': 'true',
 			width: this.settings.width.toString(),
 			height: this.settings.height.toString()
-		}).appendTo(element)
+		}).appendTo(element).css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			position: 'absolute',
+			top: 0,
+			left: 0,
+			'z-index': 100
+		})
 	};
 
-	$(this.DOM.wrap).css({
-		width: this.settings.width + 'px',
-		height: this.settings.height + 'px',
-		margin: '0 auto',
-		position: 'relative'
-	});
-
-	$(this.DOM.player).css({
-		width: this.settings.width + 'px',
-		height: this.settings.height + 'px',
-		display: 'block',
-		'z-index': 0
-	});
-
-	$(this.DOM.screen).css({
-		width: this.settings.width + 'px',
-		height: this.settings.height + 'px',
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		'z-index': 100
-	});
-
-	// create screen class
+	// create YouTyping screen class
 	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
 
+	// Initialize asynchronously
 	var player = setupPlayer();
 	var XML = loadScoreXML();
 	var screen = $.Deferred(this.screen.setup).promise();

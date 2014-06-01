@@ -1,7 +1,3 @@
-// All notes and lines will be stored in this variable and managed
-// in key which represents index.
-var items = {};
-
 var Screen = function (canvas, youTyping) {
 	var screen = this;
 
@@ -14,6 +10,10 @@ var Screen = function (canvas, youTyping) {
 	var zerocallfps = 0;
 
 	this.canvas = canvas;
+
+	// All notes and lines will be stored in this variable and managed
+	// in key which represents index.
+	this.items = {};
 
 	this.setup = function (deferred) {
 		screen.canvas = canvas;
@@ -44,8 +44,6 @@ var Screen = function (canvas, youTyping) {
 
 	this.load = function () {
 		var settings = youTyping.settings;
-
-		youTyping.computeParameters();
 
 		screen.update();
 
@@ -104,6 +102,7 @@ var Screen = function (canvas, youTyping) {
 	// layout notes and lines fitting to current time
 	this.update = function () {
 		var setting = youTyping.settings;
+		var items = this.items;
 
 		var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 		var runTime = (now - zeroTime) / 1000;
