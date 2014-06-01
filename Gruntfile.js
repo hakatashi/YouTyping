@@ -23,13 +23,35 @@ module.exports = function (grunt) {
 			}
 		},
 		jshint: {
-			files: ['src/*.js'],
 			options: {
 				camelcase: true,
 				curly: true,
 				eqeqeq: true,
 				es3: true,
+				forin: true,
+				newcap: true,
+				noempty: true,
+				nonbsp: true,
 				quotmark: true
+			},
+			src: {
+				src: ['src/*.js']
+			},
+			build: {
+				src: ['youtyping.js'],
+				options: {
+					undef: true,
+					browser: true,
+					jquery: true,
+					devel: true,
+					globals: {
+						// YouTube Iframe Player API
+						onYouTubeIframeAPIReady: true,
+						YT: false,
+						// paper.js
+						paper: false
+					}
+				}
 			}
 		}
 	});

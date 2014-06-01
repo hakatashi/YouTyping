@@ -77,7 +77,6 @@ var Screen = function (canvas, youTyping) {
 				var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 
 				currentTime = player.getCurrentTime();
-				runTime = currentTime;
 				var estimatedZero = now - currentTime * 1000;
 				screen.debugTexts[1].content = 'Measured Zero: ' + estimatedZero.toFixed(2);
 
