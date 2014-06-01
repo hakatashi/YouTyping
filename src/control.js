@@ -23,7 +23,7 @@ var YouTyping = function (element, settings) {
 		logTrace("Player API is Ready.");
 
 		// try to hide advertisement if sandbox parameter is 'true' or not defined in URI query
-		if (getParameterByName('sandbox') == 'true') {
+		if (getParameterByName('sandbox') === 'true') {
 			this.DOM.player.setAttribute('sandbox', 'allow-same-origin allow-scripts');
 		}
 

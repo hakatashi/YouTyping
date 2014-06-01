@@ -63,7 +63,7 @@ var Screen = function (canvas, youTyping) {
 		player.playVideo();
 
 		paper.view.onFrame = function (event) {
-			if (player.getPlayerState() == 1) {
+			if (player.getPlayerState() === 1) {
 				screen.update();
 			}
 			screen.debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
@@ -72,7 +72,7 @@ var Screen = function (canvas, youTyping) {
 		};
 
 		setInterval(function () {
-			if (currentTime != player.getCurrentTime()) {
+			if (currentTime !== player.getCurrentTime()) {
 				var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 
 				currentTime = player.getCurrentTime();
@@ -87,7 +87,9 @@ var Screen = function (canvas, youTyping) {
 				// It contains correct zero time and sudden-change-supressed zero time
 				// will be stored in `zeroTime`.
 				estimateSamples.push(estimatedZero);
-				if (estimateSamples.length > youTyping.settings.zeroEstimateSamples) estimateSamples.shift();
+				if (estimateSamples.length > youTyping.settings.zeroEstimateSamples) {
+					estimateSamples.shift();
+				}
 				var estimatedSum = estimateSamples.reduce(function (previous, current) {
 					return previous + current;
 				});

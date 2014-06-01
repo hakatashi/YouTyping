@@ -23,7 +23,12 @@ module.exports = function (grunt) {
 			}
 		},
 		jshint: {
-			files: ['src/*.js']
+			files: ['src/*.js'],
+			options: {
+				camelcase: true,
+				curly: true,
+				eqeqeq: true
+			}
 		}
 	});
 
