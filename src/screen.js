@@ -18,7 +18,6 @@ var Screen = function (canvas, youTyping) {
 	this.items = {};
 
 	this.setup = function (deferred) {
-		screen.canvas = canvas;
 		paper.setup(screen.canvas);
 
 		screen.cover = new paper.Path.Rectangle(paper.view.bounds);

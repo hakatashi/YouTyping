@@ -27,7 +27,8 @@ module.exports = function (grunt) {
 			options: {
 				camelcase: true,
 				curly: true,
-				eqeqeq: true
+				eqeqeq: true,
+				es3: true
 			}
 		}
 	});

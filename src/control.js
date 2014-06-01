@@ -190,7 +190,7 @@ var YouTyping = function (element, settings) {
 		if (this.settings[param] === undefined) {
 			this.settings[param] = settings[param];
 		} else if (typeof this.settings[param] === 'number') {
-			this.settings[param] = parseInt(settings[param]);
+			this.settings[param] = parseInt(settings[param], 10);
 		} else {
 			this.settings[param] = settings[param];
 		}
