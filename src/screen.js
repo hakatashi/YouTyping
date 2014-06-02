@@ -81,7 +81,8 @@ var Screen = function (canvas, youTyping) {
 				screen.debugTexts[1].content = 'Measured Zero: ' + estimatedZero.toFixed(2);
 
 				// Estimated zero time is stored in estimatesamples and
-				// we assume that correct zero time is recent `zeroEstimateSamples` samples
+				// we assume that correct zero time is average of recent
+				// `zeroEstimateSamples` items of samples
 				// because it contains great ranges of error.
 				// We also introduced `zeroTimePad` to supress a sudden change of zeroTime.
 				// It contains correct zero time and sudden-change-supressed zero time
@@ -118,10 +119,11 @@ var Screen = function (canvas, youTyping) {
 				} else {
 					items[index].position.x = Xpos;
 				}
-			} else { // if indexth item doesn't exist in screen
+			} else { // if index-th item doesn't exist in screen
 				if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
 					items[index] = new paper.Group();
 
+					// long line which devides score to measures
 					if (item.type === '=') {
 						items[index].addChild(new paper.Path.Line({
 							from: [Xpos, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
@@ -130,6 +132,7 @@ var Screen = function (canvas, youTyping) {
 							strokeWidth: 2
 						}));
 					}
+					// small line
 					if (item.type === '-') {
 						items[index].addChild(new paper.Path.Line({
 							from: [Xpos, setting.scoreYpos * setting.height - setting.lineHeight / 2],

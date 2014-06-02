@@ -33,10 +33,11 @@ var YouTyping = function (element, settings) {
 			videoId: settings.videoId,
 			playerVars: {
 				rel: 0,
+				// Wishing the best effort of hiding any information except for the video
 				controls: 0,
 				showinfo: 0,
 				modestbranding: 1,
-				wmode: 'opaque'
+				wmode: 'opaque' // thanks http://stackoverflow.com/questions/6826386/
 			},
 			events: {
 				'onReady': onPlayerReady,
@@ -72,6 +73,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	var onPlayerError = function (event) {
+		// from https://developers.google.com/youtube/iframe_api_reference
 		switch (event.data) {
 			case 2:
 				logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
@@ -96,6 +98,7 @@ var YouTyping = function (element, settings) {
 	var loadScoreXML = function () {
 		var settings = youTyping.settings;
 
+		// Initialize deferred
 		loadXMLDeferred = $.Deferred();
 
 		$.ajax({
