@@ -85,10 +85,11 @@ var Screen = function (canvas, youTyping) {
 		correct playing time by taking average of measuring. That's `ZeroTime`.
 
 		YouTyping loops to get current playing time from API (to `gotCurrentTime`)
-		with enough interval time to detect when the `getCurrentTime()` time jumped up to another value.
-		And each time `gotCurrentTime` jumped (called `ZeroCall`),
+		with enough interval time (10ms) to detect when the `getCurrentTime()` time jumped up to another value.
+		And each time `gotCurrentTime` jumped (nameed `ZeroCall`),
 		YouTyping assumes the time to be correct and counts backward to estimate when this video started,
-		so the time is called `ZeroTime`.
+		so the time is nameed `ZeroTime`. Then the current playing time of video will be calculated by `ZeroTime` and
+		current time taken from browser clock (very highly resoluted as <1ms).
 
 		***************/
 		setInterval(function () {
