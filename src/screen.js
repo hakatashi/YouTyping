@@ -72,11 +72,31 @@ var Screen = function (canvas, youTyping) {
 			fps++;
 		};
 
+		// Set interval to calculate `ZeroTime`
+
+		/***************
+
+		# What's `ZeroTime` and `ZeroCall`?
+
+		The current time taken from YouTube API by `getCurrentTime()`
+		is resoluted very roughly (about 0.2s) with a great range of errors (about 0.05s).
+		
+		It's so fatal for music game like YouTyping. So we introduced idea that calibrates
+		correct playing time by taking average of measuring. That's `ZeroTime`.
+
+		YouTyping loops to get current playing time from API (to `gotCurrentTime`)
+		with enough interval time to detect when the `getCurrentTime()` time jumped up to another value.
+		And each time `gotCurrentTime` jumped (called `ZeroCall`),
+		YouTyping assumes the time to be correct and counts backward to estimate when this video started,
+		so the time is called `ZeroTime`.
+
+		***************/
 		setInterval(function () {
-			if (currentTime !== player.getCurrentTime()) {
+			var gotCurrentTime = player.getCurrentTime();
+			if (currentTime !== gotCurrentTime) {
 				var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 
-				currentTime = player.getCurrentTime();
+				currentTime = gotCurrentTime;
 				var estimatedZero = now - currentTime * 1000;
 				screen.debugTexts[1].content = 'Measured Zero: ' + estimatedZero.toFixed(2);
 
@@ -164,5 +184,4 @@ var Screen = function (canvas, youTyping) {
 			}
 		});
 	};
-
 };
