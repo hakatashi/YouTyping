@@ -50,8 +50,6 @@ var Screen = function (canvas, youTyping) {
 			strokeWidth: 1,
 			strokeColor: 'white'
 		});
-
-		logTrace('Screen is Ready.');
 	};
 
 	this.ready = function () {
@@ -69,6 +67,8 @@ var Screen = function (canvas, youTyping) {
 				screen.start();
 			}
 		};
+
+		logTrace('Screen is Ready.');
 	};
 
 	this.start = function () {
