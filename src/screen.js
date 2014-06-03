@@ -45,7 +45,9 @@ var Screen = function (canvas, youTyping) {
 
 	this.load = function () {
 		var settings = youTyping.settings;
+		var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 
+		zeroTime = now;
 		screen.update();
 
 		this.hitCircle = new paper.Path.Circle({
