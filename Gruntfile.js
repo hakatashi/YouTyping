@@ -19,6 +19,9 @@ module.exports = function (grunt) {
 			dist: {
 				files: {
 					'youtyping.min.js': ['<%= concat.dist.dest %>']
+				},
+				options: {
+					sourceMap: true
 				}
 			}
 		},

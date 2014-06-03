@@ -115,6 +115,8 @@ var Screen = function (canvas, youTyping) {
 				var estimatedSum = estimateSamples.reduce(function (previous, current) {
 					return previous + current;
 				});
+
+				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
 				zeroTimePad = estimatedSum / estimateSamples.length;
 
 				zerocallfps++;
