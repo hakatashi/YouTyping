@@ -8,8 +8,8 @@ var Screen = function (canvas, youTyping) {
 	var currentTime = 0;
 	var estimateSamples = [];
 
-	var fps = 0;
-	var zerocallfps = 0;
+	var FPS = 0;
+	var zeroCallFPS = 0;
 
 	this.canvas = canvas;
 
@@ -33,10 +33,10 @@ var Screen = function (canvas, youTyping) {
 		}
 
 		setInterval(function () {
-			screen.debugTexts[0].content = 'FPS: ' + fps;
-			fps = 0;
-			screen.debugTexts[2].content = 'Zerocall FPS: ' + zerocallfps;
-			zerocallfps = 0;
+			screen.debugTexts[0].content = 'FPS: ' + FPS;
+			FPS = 0;
+			screen.debugTexts[2].content = 'Zerocall FPS: ' + zeroCallFPS;
+			zeroCallFPS = 0;
 		}, 1000);
 
 		logTrace('Screen is Set.');
@@ -69,7 +69,7 @@ var Screen = function (canvas, youTyping) {
 			}
 			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 			screen.debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
-			fps++;
+			FPS++;
 		};
 
 		// Set interval to calculate `ZeroTime`
@@ -119,7 +119,7 @@ var Screen = function (canvas, youTyping) {
 				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
 				zeroTimePad = estimatedSum / estimateSamples.length;
 
-				zerocallfps++;
+				zeroCallFPS++;
 			}
 			zeroTime = (zeroTime - zeroTimePad) * 0.9 + zeroTimePad;
 		}, 10);
