@@ -1,39 +1,10 @@
 var YouTyping = function (element, settings) {
 	var youTyping = this;
-
-	this.startTime = Date.now();
-
-	this.settings = {
-		zeroEstimateSamples: 16, // integer
-		videoId: 'fQ_m5VLhqNg',
-		score: 'data.utfx',
-		width: 1120, // pixel
-		height: 630, // pixel
-		hitPosition: 200, // pixel
-		noteSize: 50, // pixel
-		speed: 500, // pixel per second
-		scoreYpos: 0.5, // ratio
-		longLineHeight: 150, // pixel
-		lineHeight: 120, // pixel
-		screenPadding: 30 // pixel
-	};
-
-	for (var param in settings) {
-		if (this.settings[param] === undefined) {
-			this.settings[param] = settings[param];
-		} else if (typeof this.settings[param] === 'number') {
-			this.settings[param] = parseInt(settings[param]);
-		} else {
-			this.settings[param] = settings[param];
-		}
-	}
-
-	this.scoreXML = null;
-	this.score = null;
-	this.player = null;
+	
+	/******************* Internal functions *******************/
 
 	var setupPlayerDeferred;
-	function setupPlayer(callback) {
+	var setupPlayer = function (callback) {
 		setupPlayerDeferred = $.Deferred();
 		logTrace('Setting Player Up...');
 
@@ -43,15 +14,16 @@ var YouTyping = function (element, settings) {
 		firstScript.parentNode.insertBefore(APITag, firstScript);
 
 		return setupPlayerDeferred.promise();
-	}
+	};
 
-	onYouTubeIframeAPIReady = function () { // global
+	// callback function used by YouTube IFrame Player API. must be global
+	onYouTubeIframeAPIReady = function () {
 		var settings = youTyping.settings;
 
-		logTrace("Player API is Ready.");
+		logTrace('Player API is Ready.');
 
 		// try to hide advertisement if sandbox parameter is 'true' or not defined in URI query
-		if (getParameterByName('sandbox') == 'true') {
+		if (getParameterByName('sandbox') === 'true') {
 			this.DOM.player.setAttribute('sandbox', 'allow-same-origin allow-scripts');
 		}
 
@@ -61,10 +33,11 @@ var YouTyping = function (element, settings) {
 			videoId: settings.videoId,
 			playerVars: {
 				rel: 0,
+				// Wishing the best effort of hiding any information except for the video
 				controls: 0,
 				showinfo: 0,
 				modestbranding: 1,
-				wmode: 'opaque'
+				wmode: 'opaque' // thanks http://stackoverflow.com/questions/6826386/
 			},
 			events: {
 				'onReady': onPlayerReady,
@@ -74,32 +47,33 @@ var YouTyping = function (element, settings) {
 		});
 	};
 
-	function onPlayerReady(event) {
-		logTrace("Player is Ready.");
+	var onPlayerReady = function (event) {
+		logTrace('Player is Ready.');
 		setupPlayerDeferred.resolve();
-	}
+	};
 
-	function onPlayerStateChange(event) {
+	var onPlayerStateChange = function (event) {
 		switch (event.data) {
 			case YT.PlayerState.ENDED:
-				logTrace("Player Ended.");
+				logTrace('Player Ended.');
 				break;
 			case YT.PlayerState.PLAYING:
-				logTrace("Player Started.");
+				logTrace('Player Started.');
 				break;
 			case YT.PlayerState.PAUSED:
-				logTrace("Player Paused.");
+				logTrace('Player Paused.');
 				break;
 			case YT.PlayerState.BUFFERING:
-				logTrace("Player Buffering.");
+				logTrace('Player Buffering.');
 				break;
 			case YT.PlayerState.CUED:
-				logTrace("Player Cued.");
+				logTrace('Player Cued.');
 				break;
 		}
-	}
+	};
 
-	function onPlayerError(event) {
+	var onPlayerError = function (event) {
+		// from https://developers.google.com/youtube/iframe_api_reference
 		switch (event.data) {
 			case 2:
 				logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
@@ -118,12 +92,13 @@ var YouTyping = function (element, settings) {
 				break;
 		}
 		setupPlayerDeferred.reject();
-	}
+	};
 
 	var loadXMLDeferred;
-	function loadScoreXML() {
+	var loadScoreXML = function () {
 		var settings = youTyping.settings;
 
+		// Initialize deferred
 		loadXMLDeferred = $.Deferred();
 
 		$.ajax({
@@ -134,6 +109,7 @@ var YouTyping = function (element, settings) {
 			success: function (data, textStatus, jqXHR) {
 				youTyping.scoreXML = $(data).find('fumen').find('item');
 				logTrace('Loaded XML File.');
+				computeParameters();
 				loadXMLDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -143,18 +119,18 @@ var YouTyping = function (element, settings) {
 		});
 
 		return loadXMLDeferred.promise();
-	}
+	};
 
-	this.computeParameters = function () {
-		var settings = this.settings;
+	var computeParameters = function () {
+		var settings = youTyping.settings;
 
 		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
 		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
 
 		try {
-			this.score = [];
+			youTyping.score = [];
 
-			$(this.scoreXML).each(function () {
+			$(youTyping.scoreXML).each(function () {
 				var tempItem = {
 					time: parseFloat($(this).attr('time')),
 					type: $(this).attr('type')
@@ -169,7 +145,7 @@ var YouTyping = function (element, settings) {
 
 			// Computes emerge time and vanishing time of item.
 			// This is yet a very simple way without regards for speed changes.
-			this.score.forEach(function (item, index) {
+			youTyping.score.forEach(function (item, index) {
 				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
 				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
 			});
@@ -181,46 +157,154 @@ var YouTyping = function (element, settings) {
 		}
 	};
 
+
+	/******************* properties *******************/
+
+	this.startTime = Date.now();
+
+	// score data
+	this.scoreXML = null;
+	this.score = null;
+
+	// YouTube IFrame Player
+	this.player = null;
+
+	// default settings
+	this.settings = {
+		zeroEstimateSamples: 16, // integer
+		videoId: 'fQ_m5VLhqNg',
+		score: 'data.utfx',
+		width: 1120, // pixel
+		height: 630, // pixel
+		hitPosition: 200, // pixel
+		noteSize: 50, // pixel
+		speed: 500, // pixel per second
+		scoreYpos: 0.5, // ratio
+		longLineHeight: 150, // pixel
+		lineHeight: 120, // pixel
+		screenPadding: 30 // pixel
+	};
+
+	// ZeroTime calculation
+	this.zeroTime = 0;
+	this.zeroTimePad = 0;
+	this.currentTime = 0;
+	this.estimateSamples = [];
+	this.estimatedZero = 0; // exposed only for debugging
+	this.zeroCallFPS = 0; // exposed only for debugging
+
+
+	/******************* Methods *******************/
+
+	this.play = function () {
+		youTyping.player.playVideo();
+
+		// Set interval to calculate `ZeroTime`
+
+		/***************
+
+		# What's `ZeroTime` and `ZeroCall`?
+
+		The current time taken from YouTube API by `getCurrentTime()`
+		is resoluted very roughly (about 0.2s) with a great range of errors (about 0.05s).
+		
+		It's so fatal for music game like YouTyping. So we introduced idea that calibrates
+		correct playing time by taking average of measuring. That's `ZeroTime`.
+
+		YouTyping loops to get current playing time from API (to `gotCurrentTime`)
+		with enough interval time (10ms) to detect when the `getCurrentTime()` time jumped up to another value.
+		And each time `gotCurrentTime` jumped (nameed `ZeroCall`),
+		YouTyping assumes the time to be correct and counts backward to estimate when this video started,
+		so the time is nameed `ZeroTime`. Then the current playing time of video will be calculated by `ZeroTime` and
+		current time taken from browser clock (very highly resoluted as <1ms).
+
+		***************/
+		setInterval(function () {
+			var gotCurrentTime = youTyping.player.getCurrentTime();
+			var now = window.performance.now() || (Date.now() - youTyping.startTime);
+
+			if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
+				youTyping.zeroTimePad = now;
+			} else if (youTyping.currentTime !== gotCurrentTime) { // if Current Time jumped
+				youTyping.currentTime = gotCurrentTime;
+				youTyping.estimatedZero = now - youTyping.currentTime * 1000;
+
+				// Estimated zero time is stored in estimatesamples and
+				// we assume that correct zero time is average of recent
+				// `zeroEstimateSamples` items of samples
+				// because it contains great ranges of error.
+				// We also introduced `zeroTimePad` to supress a sudden change of zeroTime.
+				// It contains correct zero time and sudden-change-supressed zero time
+				// will be stored in `zeroTime`.
+				youTyping.estimateSamples.push(youTyping.estimatedZero);
+				if (youTyping.estimateSamples.length > youTyping.settings.zeroEstimateSamples) {
+					youTyping.estimateSamples.shift();
+				}
+				// just go hack :)
+				var estimatedSum = youTyping.estimateSamples.reduce(function (previous, current) {
+					return previous + current;
+				});
+
+				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
+				youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length;
+
+				youTyping.zeroCallFPS++;
+			}
+			youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
+		}, 10);
+	};
+
+
+	/******************* Initialization *******************/
+
+	// override default settings
+	for (var param in settings) {
+		if (this.settings[param] === undefined) {
+			this.settings[param] = settings[param];
+		} else if (typeof this.settings[param] === 'number') {
+			this.settings[param] = parseInt(settings[param], 10);
+		} else {
+			this.settings[param] = settings[param];
+		}
+	}
+
 	// setup DOM
 	this.DOM = {
-		wrap: element,
+		wrap: element.css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			margin: '0 auto',
+			position: 'relative'
+		}),
+
 		player: $('<div/>', {
 			id: 'youtyping-player'
-		}).appendTo(element),
+		}).appendTo(element).css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			display: 'block',
+			'z-index': 0
+		}),
+
 		screen: $('<canvas/>', {
 			id: 'youtyping-screen',
 			'data-paper-keepalive': 'true',
 			width: this.settings.width.toString(),
 			height: this.settings.height.toString()
-		}).appendTo(element)
+		}).appendTo(element).css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			position: 'absolute',
+			top: 0,
+			left: 0,
+			'z-index': 100
+		})
 	};
 
-	$(this.DOM.wrap).css({
-		width: this.settings.width + 'px',
-		height: this.settings.height + 'px',
-		margin: '0 auto',
-		position: 'relative'
-	});
-
-	$(this.DOM.player).css({
-		width: this.settings.width + 'px',
-		height: this.settings.height + 'px',
-		display: 'block',
-		'z-index': 0
-	});
-
-	$(this.DOM.screen).css({
-		width: this.settings.width + 'px',
-		height: this.settings.height + 'px',
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		'z-index': 100
-	});
-
-	// create screen class
+	// create YouTyping screen class
 	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
 
+	// Initialize asynchronously
 	var player = setupPlayer();
 	var XML = loadScoreXML();
 	var screen = $.Deferred(this.screen.setup).promise();
@@ -230,7 +314,7 @@ var YouTyping = function (element, settings) {
 			screen
 		).done(this.screen.load),
 		player
-	).done(this.screen.start)
+	).done(this.screen.ready)
 	.fail(function () {
 		logTrace('ERROR: Initialization Failed...');
 	});

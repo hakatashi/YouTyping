@@ -10,14 +10,14 @@
 
 // from http://stackoverflow.com/questions/901115/
 function getParameterByName(name) {
-	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+	name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+	var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
 		results = regex.exec(location.search);
-	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
 // from http://stackoverflow.com/questions/6466135/
 function pad(str, max) {
 	str = str.toString();
-	return str.length < max ? pad("0" + str, max) : str;
+	return str.length < max ? pad('0' + str, max) : str;
 }

@@ -1,22 +1,17 @@
-// All notes and lines will be stored in this variable and managed
-// in key which represents index.
-var items = {};
-
+// Class Screen defines canvas part of YouTyping.
+// One YouTyping have only one Screen as child, and vice versa.
 var Screen = function (canvas, youTyping) {
 	var screen = this;
 
-	var zeroTime = 0;
-	var zeroTimePad = 0;
-	var currentTime = 0;
-	var estimateSamples = [];
-
-	var fps = 0;
-	var zerocallfps = 0;
+	var FPS = 0;
 
 	this.canvas = canvas;
 
+	// All notes and lines will be stored in this variable and managed
+	// in key which represents index.
+	this.items = {};
+
 	this.setup = function (deferred) {
-		screen.canvas = canvas;
 		paper.setup(screen.canvas);
 
 		screen.cover = new paper.Path.Rectangle(paper.view.bounds);
@@ -32,10 +27,10 @@ var Screen = function (canvas, youTyping) {
 		}
 
 		setInterval(function () {
-			screen.debugTexts[0].content = "FPS: " + fps;
-			fps = 0;
-			screen.debugTexts[2].content = "Zerocall FPS: " + zerocallfps;
-			zerocallfps = 0;
+			screen.debugTexts[0].content = 'FPS: ' + FPS;
+			FPS = 0;
+			screen.debugTexts[2].content = 'Zerocall FPS: ' + youTyping.zeroCallFPS;
+			youTyping.zeroCallFPS = 0; // not good
 		}, 1000);
 
 		logTrace('Screen is Set.');
@@ -44,9 +39,9 @@ var Screen = function (canvas, youTyping) {
 
 	this.load = function () {
 		var settings = youTyping.settings;
+		var now = window.performance.now() || (Date.now() - youTyping.startTime);
 
-		youTyping.computeParameters();
-
+		youTyping.zeroTime = now;
 		screen.update();
 
 		this.hitCircle = new paper.Path.Circle({
@@ -55,58 +50,50 @@ var Screen = function (canvas, youTyping) {
 			strokeWidth: 1,
 			strokeColor: 'white'
 		});
+	};
+
+	this.ready = function () {
+		screen.pressEnter = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply([0.5, 0.8]),
+			content: 'Press enter.',
+			justification: 'center',
+			fontSize: 45,
+			fillColor: 'white'
+		});
+		paper.tool.onKeyDown = function (event) {
+			if (event.key === 'enter') {
+				screen.pressEnter.remove();
+				paper.tool.onKeyDown = null; // unbind
+				screen.start();
+			}
+		};
 
 		logTrace('Screen is Ready.');
 	};
 
 	this.start = function () {
-		var player = youTyping.player;
-
-		player.playVideo();
+		logTrace('Starting game.');
 
 		paper.view.onFrame = function (event) {
-			if (player.getPlayerState() == 1) {
+			if (youTyping.player.getPlayerState() === 1) {
 				screen.update();
 			}
-			screen.debugTexts[3].content = "Active Objects: " + paper.project.activeLayer.children.length;
-			screen.debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
-			fps++;
+			screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
+			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
+			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
+			FPS++;
 		};
 
-		setInterval(function () {
-			if (currentTime != player.getCurrentTime()) {
-				var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
-
-				currentTime = player.getCurrentTime();
-				runTime = currentTime;
-				var estimatedZero = now - currentTime * 1000;
-				screen.debugTexts[1].content = "Measured Zero: " + estimatedZero.toFixed(2);
-
-				// Estimated zero time is stored in estimatesamples and
-				// we assume that correct zero time is recent `zeroEstimateSamples` samples
-				// because it contains great ranges of error.
-				// We also introduced `zeroTimePad` to supress a sudden change of zeroTime.
-				// It contains correct zero time and sudden-change-supressed zero time
-				// will be stored in `zeroTime`.
-				estimateSamples.push(estimatedZero);
-				if (estimateSamples.length > youTyping.settings.zeroEstimateSamples) estimateSamples.shift();
-				var estimatedSum = estimateSamples.reduce(function (previous, current) {
-					return previous + current;
-				});
-				zeroTimePad = estimatedSum / estimateSamples.length;
-
-				zerocallfps++;
-			}
-			zeroTime = (zeroTime - zeroTimePad) * 0.9 + zeroTimePad;
-		}, 10);
+		youTyping.play();
 	};
 
 	// layout notes and lines fitting to current time
 	this.update = function () {
 		var setting = youTyping.settings;
+		var items = this.items;
 
-		var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
-		var runTime = (now - zeroTime) / 1000;
+		var now = window.performance.now() || (Date.now() - youTyping.startTime);
+		var runTime = (now - youTyping.zeroTime) / 1000;
 
 		youTyping.score.forEach(function (item, index) {
 			var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
@@ -117,10 +104,11 @@ var Screen = function (canvas, youTyping) {
 				} else {
 					items[index].position.x = Xpos;
 				}
-			} else { // if indexth item doesn't exist in screen
+			} else { // if index-th item doesn't exist in screen
 				if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
 					items[index] = new paper.Group();
 
+					// long line which devides score to measures
 					if (item.type === '=') {
 						items[index].addChild(new paper.Path.Line({
 							from: [Xpos, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
@@ -129,6 +117,7 @@ var Screen = function (canvas, youTyping) {
 							strokeWidth: 2
 						}));
 					}
+					// small line
 					if (item.type === '-') {
 						items[index].addChild(new paper.Path.Line({
 							from: [Xpos, setting.scoreYpos * setting.height - setting.lineHeight / 2],
@@ -160,5 +149,4 @@ var Screen = function (canvas, youTyping) {
 			}
 		});
 	};
-
 };
