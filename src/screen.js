@@ -55,9 +55,25 @@ var Screen = function (canvas, youTyping) {
 	};
 
 	this.ready = function () {
+		screen.pressEnter = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply([0.5, 0.8]),
+			content: 'Press enter.',
+			justification: 'center',
+			fontSize: 45,
+			fillColor: 'white'
+		});
+		paper.tool.onKeyDown = function (event) {
+			if (event.key === 'enter') {
+				screen.pressEnter.remove();
+				paper.tool.onKeyDown = null; // unbind
+				screen.start();
+			}
+		};
 	};
 
 	this.start = function () {
+		logTrace('Starting game.');
+
 		paper.view.onFrame = function (event) {
 			if (youTyping.player.getPlayerState() === 1) {
 				screen.update();

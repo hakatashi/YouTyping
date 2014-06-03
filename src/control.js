@@ -314,7 +314,7 @@ var YouTyping = function (element, settings) {
 			screen
 		).done(this.screen.load),
 		player
-	).done(this.screen.start)
+	).done(this.screen.ready)
 	.fail(function () {
 		logTrace('ERROR: Initialization Failed...');
 	});
