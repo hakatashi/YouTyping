@@ -1,5 +1,5 @@
 // Class Screen defines canvas part of YouTyping.
-// One YouTyping have one Screen as child, and vice versa.
+// One YouTyping have only one Screen as child, and vice versa.
 var Screen = function (canvas, youTyping) {
 	var screen = this;
 
@@ -58,13 +58,14 @@ var Screen = function (canvas, youTyping) {
 		logTrace('Screen is Ready.');
 	};
 
-	this.start = function () {
-		var player = youTyping.player;
+	this.ready = function () {
+	};
 
-		player.playVideo();
+	this.start = function () {
+		youTyping.player.playVideo();
 
 		paper.view.onFrame = function (event) {
-			if (player.getPlayerState() === 1) {
+			if (youTyping.player.getPlayerState() === 1) {
 				screen.update();
 			}
 			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
@@ -93,10 +94,12 @@ var Screen = function (canvas, youTyping) {
 
 		***************/
 		setInterval(function () {
-			var gotCurrentTime = player.getCurrentTime();
-			if (currentTime !== gotCurrentTime) {
-				var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
+			var gotCurrentTime = youTyping.player.getCurrentTime();
+			var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
 
+			if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
+				zeroTimePad = now;
+			} else if (currentTime !== gotCurrentTime) { // if Current Time jumped
 				currentTime = gotCurrentTime;
 				var estimatedZero = now - currentTime * 1000;
 				screen.debugTexts[1].content = 'Measured Zero: ' + estimatedZero.toFixed(2);
