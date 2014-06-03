@@ -3,13 +3,7 @@
 var Screen = function (canvas, youTyping) {
 	var screen = this;
 
-	var zeroTime = 0;
-	var zeroTimePad = 0;
-	var currentTime = 0;
-	var estimateSamples = [];
-
 	var FPS = 0;
-	var zeroCallFPS = 0;
 
 	this.canvas = canvas;
 
@@ -35,8 +29,8 @@ var Screen = function (canvas, youTyping) {
 		setInterval(function () {
 			screen.debugTexts[0].content = 'FPS: ' + FPS;
 			FPS = 0;
-			screen.debugTexts[2].content = 'Zerocall FPS: ' + zeroCallFPS;
-			zeroCallFPS = 0;
+			screen.debugTexts[2].content = 'Zerocall FPS: ' + youTyping.zeroCallFPS;
+			youTyping.zeroCallFPS = 0; // not good
 		}, 1000);
 
 		logTrace('Screen is Set.');
@@ -45,9 +39,9 @@ var Screen = function (canvas, youTyping) {
 
 	this.load = function () {
 		var settings = youTyping.settings;
-		var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
+		var now = window.performance.now() || (Date.now() - youTyping.startTime);
 
-		zeroTime = now;
+		youTyping.zeroTime = now;
 		screen.update();
 
 		this.hitCircle = new paper.Path.Circle({
@@ -64,70 +58,17 @@ var Screen = function (canvas, youTyping) {
 	};
 
 	this.start = function () {
-		youTyping.player.playVideo();
-
 		paper.view.onFrame = function (event) {
 			if (youTyping.player.getPlayerState() === 1) {
 				screen.update();
 			}
+			screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
 			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
-			screen.debugTexts[4].content = 'Zero Time: ' + zeroTime.toFixed(2);
+			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 			FPS++;
 		};
 
-		// Set interval to calculate `ZeroTime`
-
-		/***************
-
-		# What's `ZeroTime` and `ZeroCall`?
-
-		The current time taken from YouTube API by `getCurrentTime()`
-		is resoluted very roughly (about 0.2s) with a great range of errors (about 0.05s).
-		
-		It's so fatal for music game like YouTyping. So we introduced idea that calibrates
-		correct playing time by taking average of measuring. That's `ZeroTime`.
-
-		YouTyping loops to get current playing time from API (to `gotCurrentTime`)
-		with enough interval time (10ms) to detect when the `getCurrentTime()` time jumped up to another value.
-		And each time `gotCurrentTime` jumped (nameed `ZeroCall`),
-		YouTyping assumes the time to be correct and counts backward to estimate when this video started,
-		so the time is nameed `ZeroTime`. Then the current playing time of video will be calculated by `ZeroTime` and
-		current time taken from browser clock (very highly resoluted as <1ms).
-
-		***************/
-		setInterval(function () {
-			var gotCurrentTime = youTyping.player.getCurrentTime();
-			var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
-
-			if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
-				zeroTimePad = now;
-			} else if (currentTime !== gotCurrentTime) { // if Current Time jumped
-				currentTime = gotCurrentTime;
-				var estimatedZero = now - currentTime * 1000;
-				screen.debugTexts[1].content = 'Measured Zero: ' + estimatedZero.toFixed(2);
-
-				// Estimated zero time is stored in estimatesamples and
-				// we assume that correct zero time is average of recent
-				// `zeroEstimateSamples` items of samples
-				// because it contains great ranges of error.
-				// We also introduced `zeroTimePad` to supress a sudden change of zeroTime.
-				// It contains correct zero time and sudden-change-supressed zero time
-				// will be stored in `zeroTime`.
-				estimateSamples.push(estimatedZero);
-				if (estimateSamples.length > youTyping.settings.zeroEstimateSamples) {
-					estimateSamples.shift();
-				}
-				var estimatedSum = estimateSamples.reduce(function (previous, current) {
-					return previous + current;
-				});
-
-				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
-				zeroTimePad = estimatedSum / estimateSamples.length;
-
-				zeroCallFPS++;
-			}
-			zeroTime = (zeroTime - zeroTimePad) * 0.9 + zeroTimePad;
-		}, 10);
+		youTyping.play();
 	};
 
 	// layout notes and lines fitting to current time
@@ -135,8 +76,8 @@ var Screen = function (canvas, youTyping) {
 		var setting = youTyping.settings;
 		var items = this.items;
 
-		var now = window.performance.now() || (Date.now() - this.youTyping.startTime);
-		var runTime = (now - zeroTime) / 1000;
+		var now = window.performance.now() || (Date.now() - youTyping.startTime);
+		var runTime = (now - youTyping.zeroTime) / 1000;
 
 		youTyping.score.forEach(function (item, index) {
 			var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;

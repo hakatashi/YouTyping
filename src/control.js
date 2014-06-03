@@ -185,6 +185,75 @@ var YouTyping = function (element, settings) {
 		screenPadding: 30 // pixel
 	};
 
+	// ZeroTime calculation
+	this.zeroTime = 0;
+	this.zeroTimePad = 0;
+	this.currentTime = 0;
+	this.estimateSamples = [];
+	this.estimatedZero = 0; // exposed only for debugging
+	this.zeroCallFPS = 0; // exposed only for debugging
+
+
+	/******************* Methods *******************/
+
+	this.play = function () {
+		youTyping.player.playVideo();
+
+		// Set interval to calculate `ZeroTime`
+
+		/***************
+
+		# What's `ZeroTime` and `ZeroCall`?
+
+		The current time taken from YouTube API by `getCurrentTime()`
+		is resoluted very roughly (about 0.2s) with a great range of errors (about 0.05s).
+		
+		It's so fatal for music game like YouTyping. So we introduced idea that calibrates
+		correct playing time by taking average of measuring. That's `ZeroTime`.
+
+		YouTyping loops to get current playing time from API (to `gotCurrentTime`)
+		with enough interval time (10ms) to detect when the `getCurrentTime()` time jumped up to another value.
+		And each time `gotCurrentTime` jumped (nameed `ZeroCall`),
+		YouTyping assumes the time to be correct and counts backward to estimate when this video started,
+		so the time is nameed `ZeroTime`. Then the current playing time of video will be calculated by `ZeroTime` and
+		current time taken from browser clock (very highly resoluted as <1ms).
+
+		***************/
+		setInterval(function () {
+			var gotCurrentTime = youTyping.player.getCurrentTime();
+			var now = window.performance.now() || (Date.now() - youTyping.startTime);
+
+			if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
+				youTyping.zeroTimePad = now;
+			} else if (youTyping.currentTime !== gotCurrentTime) { // if Current Time jumped
+				youTyping.currentTime = gotCurrentTime;
+				youTyping.estimatedZero = now - youTyping.currentTime * 1000;
+
+				// Estimated zero time is stored in estimatesamples and
+				// we assume that correct zero time is average of recent
+				// `zeroEstimateSamples` items of samples
+				// because it contains great ranges of error.
+				// We also introduced `zeroTimePad` to supress a sudden change of zeroTime.
+				// It contains correct zero time and sudden-change-supressed zero time
+				// will be stored in `zeroTime`.
+				youTyping.estimateSamples.push(youTyping.estimatedZero);
+				if (youTyping.estimateSamples.length > youTyping.settings.zeroEstimateSamples) {
+					youTyping.estimateSamples.shift();
+				}
+				// just go hack :)
+				var estimatedSum = youTyping.estimateSamples.reduce(function (previous, current) {
+					return previous + current;
+				});
+
+				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
+				youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length;
+
+				youTyping.zeroCallFPS++;
+			}
+			youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
+		}, 10);
+	};
+
 
 	/******************* Initialization *******************/
 
