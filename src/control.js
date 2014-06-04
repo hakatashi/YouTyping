@@ -166,7 +166,7 @@ var YouTyping = function (element, settings) {
 	this.scoreXML = null;
 	this.score = null;
 
-	// YouTube IFrame Player
+	// YouTube Iframe Player
 	this.player = null;
 
 	// default settings
@@ -225,6 +225,7 @@ var YouTyping = function (element, settings) {
 
 			if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
 				youTyping.zeroTimePad = now;
+				youTyping.zeroTime = now;
 			} else if (youTyping.currentTime !== gotCurrentTime) { // if Current Time jumped
 				youTyping.currentTime = gotCurrentTime;
 				youTyping.estimatedZero = now - youTyping.currentTime * 1000;
