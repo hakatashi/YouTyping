@@ -318,6 +318,7 @@ var YouTyping = function (element, settings) {
 	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
 
 	// Initialize asynchronously
+	// http://stackoverflow.com/questions/22346345/
 	var player = setupPlayer();
 	var XML = loadScoreXML();
 	var screen = $.Deferred(this.screen.setup).promise();
