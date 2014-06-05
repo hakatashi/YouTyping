@@ -193,6 +193,13 @@ var YouTyping = function (element, settings) {
 	this.estimatedZero = 0; // exposed only for debugging
 	this.zeroCallFPS = 0; // exposed only for debugging
 
+	// utility
+	Object.defineProperty(this, 'now', {
+		get: function () {
+			return window.performance.now() || (Date.now() - youTyping.startTime);
+		}
+	});
+
 
 	/******************* Methods *******************/
 
@@ -221,7 +228,7 @@ var YouTyping = function (element, settings) {
 		***************/
 		setInterval(function () {
 			var gotCurrentTime = youTyping.player.getCurrentTime();
-			var now = window.performance.now() || (Date.now() - youTyping.startTime);
+			var now = youTyping.now;
 
 			if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
 				youTyping.zeroTimePad = now;

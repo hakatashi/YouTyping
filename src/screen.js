@@ -39,7 +39,7 @@ var Screen = function (canvas, youTyping) {
 
 	this.load = function () {
 		var settings = youTyping.settings;
-		var now = window.performance.now() || (Date.now() - youTyping.startTime);
+		var now = youTyping.now;
 
 		youTyping.zeroTime = now;
 		screen.update();
@@ -92,7 +92,7 @@ var Screen = function (canvas, youTyping) {
 		var setting = youTyping.settings;
 		var items = this.items;
 
-		var now = window.performance.now() || (Date.now() - youTyping.startTime);
+		var now = youTyping.now;
 		var runTime = (now - youTyping.zeroTime) / 1000;
 
 		youTyping.score.forEach(function (item, index) {
