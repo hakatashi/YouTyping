@@ -319,15 +319,12 @@ var YouTyping = function (element, settings) {
 
 	// Initialize asynchronously
 	// http://stackoverflow.com/questions/22346345/
-	var player = setupPlayer();
-	var XML = loadScoreXML();
-	var screen = $.Deferred(this.screen.setup).promise();
 	$.when(
 		$.when(
-			XML,
-			screen
+			loadScoreXML(),
+			$.Deferred(this.screen.setup).promise()
 		).done(this.screen.load),
-		player
+		setupPlayer()
 	).done(this.screen.ready)
 	.fail(function () {
 		logTrace('ERROR: Initialization Failed...');
