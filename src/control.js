@@ -270,6 +270,11 @@ var YouTyping = function (element, settings) {
 	}
 
 	// setup DOM
+	/*
+	 * div(this.DOM.wrap)
+	 * |-div#youtyping-player(this.DOM.player)
+	 * \-canvas#youtyping-screen(this.DOM.screen)
+	 */
 	this.DOM = {
 		wrap: element.css({
 			width: this.settings.width + 'px',
