@@ -1,6 +1,6 @@
 var YouTyping = function (element, settings) {
 	var youTyping = this;
-	
+
 	/******************* Internal functions *******************/
 
 	var setupPlayerDeferred;
@@ -193,7 +193,7 @@ var YouTyping = function (element, settings) {
 	this.estimatedZero = 0; // exposed only for debugging
 	this.zeroCallFPS = 0; // exposed only for debugging
 
-	// utility
+	// YouTyping.now
 	Object.defineProperty(this, 'now', {
 		get: function () {
 			return window.performance.now() || (Date.now() - youTyping.startTime);
@@ -214,7 +214,7 @@ var YouTyping = function (element, settings) {
 
 		The current time taken from YouTube API by `getCurrentTime()`
 		is resoluted very roughly (about 0.2s) with a great range of errors (about 0.05s).
-		
+
 		It's so fatal for music game like YouTyping. So we introduced idea that calibrates
 		correct playing time by taking average of measuring. That's `ZeroTime`.
 
@@ -260,6 +260,14 @@ var YouTyping = function (element, settings) {
 			}
 			youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
 		}, 10);
+	};
+
+	// hit key
+	this.hit = function (key, time) {
+		if (!time) {
+			time = youTyping.now;
+		}
+
 	};
 
 
