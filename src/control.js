@@ -166,7 +166,7 @@ var YouTyping = function (element, settings) {
 	this.scoreXML = null;
 	this.score = null;
 
-	// YouTube IFrame Player
+	// YouTube Iframe Player
 	this.player = null;
 
 	// default settings
@@ -192,6 +192,13 @@ var YouTyping = function (element, settings) {
 	this.estimateSamples = [];
 	this.estimatedZero = 0; // exposed only for debugging
 	this.zeroCallFPS = 0; // exposed only for debugging
+
+	// utility
+	Object.defineProperty(this, 'now', {
+		get: function () {
+			return window.performance.now() || (Date.now() - youTyping.startTime);
+		}
+	});
 
 
 	/******************* Methods *******************/
@@ -221,10 +228,11 @@ var YouTyping = function (element, settings) {
 		***************/
 		setInterval(function () {
 			var gotCurrentTime = youTyping.player.getCurrentTime();
-			var now = window.performance.now() || (Date.now() - youTyping.startTime);
+			var now = youTyping.now;
 
 			if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
 				youTyping.zeroTimePad = now;
+				youTyping.zeroTime = now;
 			} else if (youTyping.currentTime !== gotCurrentTime) { // if Current Time jumped
 				youTyping.currentTime = gotCurrentTime;
 				youTyping.estimatedZero = now - youTyping.currentTime * 1000;
@@ -269,6 +277,11 @@ var YouTyping = function (element, settings) {
 	}
 
 	// setup DOM
+	/*
+	 * div(this.DOM.wrap)
+	 * |-div#youtyping-player(this.DOM.player)
+	 * \-canvas#youtyping-screen(this.DOM.screen)
+	 */
 	this.DOM = {
 		wrap: element.css({
 			width: this.settings.width + 'px',
@@ -305,15 +318,13 @@ var YouTyping = function (element, settings) {
 	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
 
 	// Initialize asynchronously
-	var player = setupPlayer();
-	var XML = loadScoreXML();
-	var screen = $.Deferred(this.screen.setup).promise();
+	// http://stackoverflow.com/questions/22346345/
 	$.when(
 		$.when(
-			XML,
-			screen
+			loadScoreXML(),
+			$.Deferred(this.screen.setup).promise()
 		).done(this.screen.load),
-		player
+		setupPlayer()
 	).done(this.screen.ready)
 	.fail(function () {
 		logTrace('ERROR: Initialization Failed...');

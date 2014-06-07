@@ -28,7 +28,7 @@ module.exports = function (grunt) {
 		jshint: {
 			options: {
 				camelcase: true,
-				curly: true,
+				curly: true, // no more GOTO FAIL ;)
 				eqeqeq: true,
 				es3: true,
 				forin: true,
