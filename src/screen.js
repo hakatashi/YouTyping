@@ -55,18 +55,20 @@ var Screen = function (canvas, youTyping) {
 	this.ready = function () {
 		screen.pressEnter = new paper.PointText({
 			point: paper.view.bounds.bottomRight.multiply([0.5, 0.8]),
-			content: 'Press enter.',
+			content: 'Press enter or click.',
 			justification: 'center',
 			fontSize: 45,
 			fillColor: 'white'
 		});
-		paper.tool.onKeyDown = function (event) {
-			if (event.key === 'enter') {
+		var triggerStartScreen = function (event) {
+			if ((event.type === 'keydown' && event.key === 'enter') || event.type === 'mousedown') {
 				screen.pressEnter.remove();
 				paper.tool.onKeyDown = null; // unbind
 				screen.start();
 			}
 		};
+		paper.tool.onKeyDown = triggerStartScreen;
+		screen.pressEnter.onMouseDown = triggerStartScreen;
 
 		logTrace('Screen is Ready.');
 	};
