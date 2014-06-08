@@ -37,9 +37,25 @@ var Screen = function (canvas, youTyping) {
 		deferred.resolve();
 	};
 
-	this.load = function () {
+	this.load = function (deffered) {
 		var settings = youTyping.settings;
 		var now = youTyping.now;
+
+		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
+		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
+
+		try {
+			// Computes emerge time and vanishing time of item.
+			// This is yet a very simple way without regards for speed changes.
+			youTyping.score.forEach(function (item, index) {
+				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
+				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
+			});
+
+			logTrace('Computed score Parameters.');
+		} catch (error) {
+			logTrace('ERROR: Computing score Parameters Faild: ' + error);
+		}
 
 		youTyping.zeroTime = now;
 		screen.update();

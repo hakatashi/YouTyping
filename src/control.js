@@ -109,7 +109,23 @@ var YouTyping = function (element, settings) {
 			success: function (data, textStatus, jqXHR) {
 				youTyping.scoreXML = $(data).find('fumen').find('item');
 				logTrace('Loaded XML File.');
-				computeParameters();
+
+				// parse XML and store into YouTyping.score
+				youTyping.score = [];
+
+				$(youTyping.scoreXML).each(function () {
+				    var tempItem = {
+				        time: parseFloat($(this).attr('time')),
+				        type: $(this).attr('type')
+				    };
+
+				    if ($(this).attr('text')) {
+				        tempItem.text = $(this).attr('text');
+				    }
+
+				    youTyping.score.push(tempItem);
+				});
+
 				loadXMLDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -119,42 +135,6 @@ var YouTyping = function (element, settings) {
 		});
 
 		return loadXMLDeferred.promise();
-	};
-
-	var computeParameters = function () {
-		var settings = youTyping.settings;
-
-		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
-		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
-
-		try {
-			youTyping.score = [];
-
-			$(youTyping.scoreXML).each(function () {
-				var tempItem = {
-					time: parseFloat($(this).attr('time')),
-					type: $(this).attr('type')
-				};
-
-				if ($(this).attr('text')) {
-					tempItem.text = $(this).attr('text');
-				}
-
-				youTyping.score.push(tempItem);
-			});
-
-			// Computes emerge time and vanishing time of item.
-			// This is yet a very simple way without regards for speed changes.
-			youTyping.score.forEach(function (item, index) {
-				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
-				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
-			});
-
-			logTrace('Computed score Parameters.');
-		} catch (error) {
-			logTrace('ERROR: Computing score Parameters Faild: ' + error);
-			loadXMLDeferred.reject();
-		}
 	};
 
 
@@ -267,7 +247,7 @@ var YouTyping = function (element, settings) {
 		if (!time) {
 			time = youTyping.now;
 		}
-
+		var scoreTime = time - youTyping.zeroTime;
 	};
 
 
