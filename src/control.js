@@ -201,7 +201,7 @@ var YouTyping = function (element, settings) {
 	// YouTyping.now
 	Object.defineProperty(this, 'now', {
 		get: function () {
-			return window.performance.now() || (Date.now() - youTyping.startTime);
+			return window.performance.now();
 		}
 	});
 

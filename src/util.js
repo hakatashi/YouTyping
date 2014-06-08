@@ -21,3 +21,14 @@ function pad(str, max) {
 	str = str.toString();
 	return str.length < max ? pad('0' + str, max) : str;
 }
+
+// polyfill performance.now()
+if (typeof window.performance === 'undefined') {
+	window.performance = {};
+}
+if (!window.performance.now){
+	var offset = Date.now();
+	window.performance.now = function now(){
+		return Date.now() - offset;
+	};
+}
