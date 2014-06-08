@@ -33,7 +33,6 @@ module.exports = function (grunt) {
 				es3: true,
 				forin: true,
 				newcap: true,
-				noempty: true,
 				nonbsp: true,
 				quotmark: true
 			},
@@ -56,12 +55,24 @@ module.exports = function (grunt) {
 					}
 				}
 			}
+		},
+		connect: {
+			server: {
+				options: {
+					port: 8080,
+					debug: true,
+					keepalive: true,
+					open: 'http://localhost:8080/sample/'
+				}
+			}
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-connect');
 
 	grunt.registerTask('default', ['concat', 'jshint', 'uglify']);
+	grunt.registerTask('debug', ['concat', 'jshint', 'uglify', 'connect']);
 };

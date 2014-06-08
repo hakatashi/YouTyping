@@ -37,9 +37,26 @@ var Screen = function (canvas, youTyping) {
 		deferred.resolve();
 	};
 
-	this.load = function () {
+	this.load = function (deffered) {
 		var settings = youTyping.settings;
 		var now = youTyping.now;
+
+		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
+		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
+
+		try {
+			// Computes emerge time and vanishing time of item.
+			// This is yet a very simple way without regards for speed changes.
+			youTyping.score.forEach(function (item, index) {
+				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
+				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
+			});
+
+			logTrace('Computed score Parameters.');
+		} catch (error) {
+			logTrace('ERROR: Computing score Parameters Faild: ' + error);
+			return -1;
+		}
 
 		youTyping.zeroTime = now;
 		screen.update();
@@ -87,15 +104,77 @@ var Screen = function (canvas, youTyping) {
 		};
 
 		youTyping.play();
+
+		var triggerHitNote = function (event) {
+			if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
+				youTyping.hit(event.key);
+			}
+		};
+		paper.tool.onKeyDown = triggerHitNote;
+	};
+
+	// not good three arguments
+	var createItem = function (item, index, position) {
+		var items = screen.items;
+		var setting = youTyping.settings;
+
+		if (items[index]) {
+			items[index].remove();
+		}
+
+		items[index] = new paper.Group();
+
+		// long line which devides score to measures
+		if (item.type === '=') {
+			items[index].addChild(new paper.Path.Line({
+				from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
+				to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
+				strokeColor: 'white',
+				strokeWidth: 2
+			}));
+		}
+		// small line
+		if (item.type === '-') {
+			items[index].addChild(new paper.Path.Line({
+				from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
+				to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
+				strokeColor: 'white',
+				strokeWidth: 1
+			}));
+		}
+		if (item.type === '+') {
+			if (item.state === youTyping.noteState.WAITING) {
+				// note
+				items[index].addChild(new paper.Path.Circle({
+					center: [position, setting.scoreYpos * setting.height],
+					radius: setting.noteSize,
+					strokeWidth: 1,
+					strokeColor: '#aaa',
+					fillColor: 'red'
+				}));
+				// lyric
+				items[index].addChild(new paper.PointText({
+					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+					content: item.text,
+					fillColor: 'white',
+					justification: 'center',
+					fontSize: 20,
+					fontFamily: 'sans-serif'
+				}));
+				// custom property
+				items[index].state = item.state;
+			} else if (item.state === youTyping.noteState.CLEARED) {
+			}
+		}
 	};
 
 	// layout notes and lines fitting to current time
 	this.update = function () {
 		var setting = youTyping.settings;
-		var items = this.items;
+		var items = screen.items;
 
 		var now = youTyping.now;
-		var runTime = (now - youTyping.zeroTime) / 1000;
+		var runTime = now - youTyping.zeroTime;
 
 		youTyping.score.forEach(function (item, index) {
 			var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
@@ -103,50 +182,15 @@ var Screen = function (canvas, youTyping) {
 				if (item.emergeTime > runTime || item.vanishTime < runTime) {
 					items[index].remove();
 					delete items[index];
+				} else if (item.type === '+' && item.state !== items[index].state) {
+					// if state of note has changed, this recreates the note
+					createItem(item, index, Xpos);
 				} else {
 					items[index].position.x = Xpos;
 				}
 			} else { // if index-th item doesn't exist in screen
 				if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
-					items[index] = new paper.Group();
-
-					// long line which devides score to measures
-					if (item.type === '=') {
-						items[index].addChild(new paper.Path.Line({
-							from: [Xpos, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
-							to: [Xpos, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
-							strokeColor: 'white',
-							strokeWidth: 2
-						}));
-					}
-					// small line
-					if (item.type === '-') {
-						items[index].addChild(new paper.Path.Line({
-							from: [Xpos, setting.scoreYpos * setting.height - setting.lineHeight / 2],
-							to: [Xpos, setting.scoreYpos * setting.height + setting.lineHeight / 2],
-							strokeColor: 'white',
-							strokeWidth: 1
-						}));
-					}
-					if (item.type === '+') {
-						// note
-						items[index].addChild(new paper.Path.Circle({
-							center: [Xpos, setting.scoreYpos * setting.height],
-							radius: setting.noteSize,
-							strokeWidth: 1,
-							strokeColor: '#aaa',
-							fillColor: 'red'
-						}));
-						// lyric
-						items[index].addChild(new paper.PointText({
-							position: [Xpos, setting.scoreYpos * setting.height + setting.noteSize + 50],
-							content: item.text,
-							fillColor: 'white',
-							justification: 'center',
-							fontSize: 20,
-							fontFamily: 'sans-serif'
-						}));
-					}
+					createItem(item, index, Xpos);
 				}
 			}
 		});
