@@ -33,7 +33,6 @@ module.exports = function (grunt) {
 				es3: true,
 				forin: true,
 				newcap: true,
-				noempty: true,
 				nonbsp: true,
 				quotmark: true
 			},

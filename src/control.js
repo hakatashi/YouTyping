@@ -1,6 +1,13 @@
 var YouTyping = function (element, settings) {
 	var youTyping = this;
 
+	this.noteState = {
+		WAITING: 0,
+		HITTING: 1,
+		CLEARED: 2,
+		FAILED: 3
+	};
+
 	/******************* Internal functions *******************/
 
 	var setupPlayerDeferred;
@@ -114,16 +121,20 @@ var YouTyping = function (element, settings) {
 				youTyping.score = [];
 
 				$(youTyping.scoreXML).each(function () {
-				    var tempItem = {
-				        time: parseFloat($(this).attr('time')),
-				        type: $(this).attr('type')
-				    };
+					var tempItem = {
+						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
+						type: $(this).attr('type')
+					};
 
-				    if ($(this).attr('text')) {
-				        tempItem.text = $(this).attr('text');
-				    }
+					if ($(this).attr('text')) {
+						tempItem.text = $(this).attr('text');
+					}
 
-				    youTyping.score.push(tempItem);
+					if (tempItem.type === '+') {
+						tempItem.state = youTyping.noteState.WAITING;
+					}
+
+					youTyping.score.push(tempItem);
 				});
 
 				loadXMLDeferred.resolve();
@@ -158,7 +169,7 @@ var YouTyping = function (element, settings) {
 		height: 630, // pixel
 		hitPosition: 200, // pixel
 		noteSize: 50, // pixel
-		speed: 500, // pixel per second
+		speed: 0.5, // pixel per second
 		scoreYpos: 0.5, // ratio
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
@@ -243,14 +254,30 @@ var YouTyping = function (element, settings) {
 	};
 
 	// hit key
+	// TODO: make HitEvent
 	this.hit = function (key, time) {
 		if (!time) {
 			time = youTyping.now;
 		}
 		var absoluteTime = time - youTyping.zeroTime;
 
-		youTyping.score.fotEach(function (item, index) {
+		// search for nearest note that matches currently passed key rule
+		var nearestNote = null;
+		var nearestDistance = Infinity;
+		youTyping.score.forEach(function (item, index) {
+			if (item.type === '+') {
+				if (item.state === youTyping.noteState.WAITING && Math.abs(absoluteTime - item.time) < nearestDistance) {
+					nearestNote = item;
+					nearestDistance = Math.abs(absoluteTime - item.time);
+				}
+			}
 		});
+
+		console.log(nearestNote);
+
+		if (nearestNote !== null) {
+			nearestNote.state = youTyping.noteState.CLEARED;
+		}
 	};
 
 
