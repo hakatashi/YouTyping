@@ -1,9 +1,16 @@
-/* youtyping.js 06-07-2014 */
+/* youtyping.js 06-08-2014 */
 
 var YouTyping = (function(){
 var YouTyping = function (element, settings) {
 	var youTyping = this;
-	
+
+	this.noteState = {
+		WAITING: 0,
+		HITTING: 1,
+		CLEARED: 2,
+		FAILED: 3
+	};
+
 	/******************* Internal functions *******************/
 
 	var setupPlayerDeferred;
@@ -112,7 +119,27 @@ var YouTyping = function (element, settings) {
 			success: function (data, textStatus, jqXHR) {
 				youTyping.scoreXML = $(data).find('fumen').find('item');
 				logTrace('Loaded XML File.');
-				computeParameters();
+
+				// parse XML and store into YouTyping.score
+				youTyping.score = [];
+
+				$(youTyping.scoreXML).each(function () {
+					var tempItem = {
+						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
+						type: $(this).attr('type')
+					};
+
+					if ($(this).attr('text')) {
+						tempItem.text = $(this).attr('text');
+					}
+
+					if (tempItem.type === '+') {
+						tempItem.state = youTyping.noteState.WAITING;
+					}
+
+					youTyping.score.push(tempItem);
+				});
+
 				loadXMLDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -122,42 +149,6 @@ var YouTyping = function (element, settings) {
 		});
 
 		return loadXMLDeferred.promise();
-	};
-
-	var computeParameters = function () {
-		var settings = youTyping.settings;
-
-		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
-		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
-
-		try {
-			youTyping.score = [];
-
-			$(youTyping.scoreXML).each(function () {
-				var tempItem = {
-					time: parseFloat($(this).attr('time')),
-					type: $(this).attr('type')
-				};
-
-				if ($(this).attr('text')) {
-					tempItem.text = $(this).attr('text');
-				}
-
-				youTyping.score.push(tempItem);
-			});
-
-			// Computes emerge time and vanishing time of item.
-			// This is yet a very simple way without regards for speed changes.
-			youTyping.score.forEach(function (item, index) {
-				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
-				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
-			});
-
-			logTrace('Computed score Parameters.');
-		} catch (error) {
-			logTrace('ERROR: Computing score Parameters Faild: ' + error);
-			loadXMLDeferred.reject();
-		}
 	};
 
 
@@ -181,11 +172,25 @@ var YouTyping = function (element, settings) {
 		height: 630, // pixel
 		hitPosition: 200, // pixel
 		noteSize: 50, // pixel
-		speed: 500, // pixel per second
+		speed: 0.5, // pixel per second
 		scoreYpos: 0.5, // ratio
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
-		screenPadding: 30 // pixel
+		screenPadding: 30, // pixel
+		judges: {
+			perfect: {
+				from: -30,
+				to: 30
+			},
+			great: {
+				from: -50,
+				to: 50
+			},
+			good: {
+				from: -70,
+				to: 70
+			}
+		}
 	};
 
 	// ZeroTime calculation
@@ -196,7 +201,7 @@ var YouTyping = function (element, settings) {
 	this.estimatedZero = 0; // exposed only for debugging
 	this.zeroCallFPS = 0; // exposed only for debugging
 
-	// utility
+	// YouTyping.now
 	Object.defineProperty(this, 'now', {
 		get: function () {
 			return window.performance.now() || (Date.now() - youTyping.startTime);
@@ -217,7 +222,7 @@ var YouTyping = function (element, settings) {
 
 		The current time taken from YouTube API by `getCurrentTime()`
 		is resoluted very roughly (about 0.2s) with a great range of errors (about 0.05s).
-		
+
 		It's so fatal for music game like YouTyping. So we introduced idea that calibrates
 		correct playing time by taking average of measuring. That's `ZeroTime`.
 
@@ -265,17 +270,61 @@ var YouTyping = function (element, settings) {
 		}, 10);
 	};
 
+	// hit key
+	// TODO: make HitEvent interface
+	this.hit = function (key, time) {
+		if (!time) {
+			time = youTyping.now;
+		}
+		var absoluteTime = time - youTyping.zeroTime;
+
+		// search for nearest note that matches currently passed key rule
+		var nearestNote = null;
+		var nearestDistance = Infinity;
+		youTyping.score.forEach(function (item, index) {
+			if (item.type === '+') {
+				if (item.state === youTyping.noteState.WAITING && Math.abs(absoluteTime - item.time) < Math.abs(nearestDistance)) {
+					nearestNote = item;
+					nearestDistance = item.time - absoluteTime;
+				}
+			}
+		});
+
+		var distance = nearestDistance;
+
+		if (nearestNote !== null) {
+			var hitJudge = null;
+
+			for (var judgeName in youTyping.settings.judges) {
+				if (youTyping.settings.judges.hasOwnProperty(judgeName)) {
+					var judge = youTyping.settings.judges[judgeName];
+					if (judge.from <= distance && distance <= judge.to) {
+						hitJudge = judgeName;
+						break;
+					}
+				}
+			}
+
+			if (hitJudge !== null) {
+				nearestNote.state = youTyping.noteState.CLEARED;
+				console.log(distance, hitJudge);
+			}
+		}
+	};
+
 
 	/******************* Initialization *******************/
 
 	// override default settings
 	for (var param in settings) {
-		if (this.settings[param] === undefined) {
-			this.settings[param] = settings[param];
-		} else if (typeof this.settings[param] === 'number') {
-			this.settings[param] = parseInt(settings[param], 10);
-		} else {
-			this.settings[param] = settings[param];
+		if (settings.hasOwnProperty(param)) {
+			if (this.settings[param] === undefined) {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'number') {
+				this.settings[param] = parseInt(settings[param], 10);
+			} else {
+				this.settings[param] = settings[param];
+			}
 		}
 	}
 
@@ -334,6 +383,7 @@ var YouTyping = function (element, settings) {
 	});
 };
 
+
 // Class Screen defines canvas part of YouTyping.
 // One YouTyping have only one Screen as child, and vice versa.
 var Screen = function (canvas, youTyping) {
@@ -373,9 +423,26 @@ var Screen = function (canvas, youTyping) {
 		deferred.resolve();
 	};
 
-	this.load = function () {
+	this.load = function (deffered) {
 		var settings = youTyping.settings;
 		var now = youTyping.now;
+
+		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
+		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
+
+		try {
+			// Computes emerge time and vanishing time of item.
+			// This is yet a very simple way without regards for speed changes.
+			youTyping.score.forEach(function (item, index) {
+				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
+				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
+			});
+
+			logTrace('Computed score Parameters.');
+		} catch (error) {
+			logTrace('ERROR: Computing score Parameters Faild: ' + error);
+			return -1;
+		}
 
 		youTyping.zeroTime = now;
 		screen.update();
@@ -423,15 +490,77 @@ var Screen = function (canvas, youTyping) {
 		};
 
 		youTyping.play();
+
+		var triggerHitNote = function (event) {
+			if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
+				youTyping.hit(event.key);
+			}
+		};
+		paper.tool.onKeyDown = triggerHitNote;
+	};
+
+	// not good three arguments
+	var createItem = function (item, index, position) {
+		var items = screen.items;
+		var setting = youTyping.settings;
+
+		if (items[index]) {
+			items[index].remove();
+		}
+
+		items[index] = new paper.Group();
+
+		// long line which devides score to measures
+		if (item.type === '=') {
+			items[index].addChild(new paper.Path.Line({
+				from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
+				to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
+				strokeColor: 'white',
+				strokeWidth: 2
+			}));
+		}
+		// small line
+		if (item.type === '-') {
+			items[index].addChild(new paper.Path.Line({
+				from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
+				to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
+				strokeColor: 'white',
+				strokeWidth: 1
+			}));
+		}
+		if (item.type === '+') {
+			if (item.state === youTyping.noteState.WAITING) {
+				// note
+				items[index].addChild(new paper.Path.Circle({
+					center: [position, setting.scoreYpos * setting.height],
+					radius: setting.noteSize,
+					strokeWidth: 1,
+					strokeColor: '#aaa',
+					fillColor: 'red'
+				}));
+				// lyric
+				items[index].addChild(new paper.PointText({
+					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+					content: item.text,
+					fillColor: 'white',
+					justification: 'center',
+					fontSize: 20,
+					fontFamily: 'sans-serif'
+				}));
+				// custom property
+				items[index].state = item.state;
+			} else if (item.state === youTyping.noteState.CLEARED) {
+			}
+		}
 	};
 
 	// layout notes and lines fitting to current time
 	this.update = function () {
 		var setting = youTyping.settings;
-		var items = this.items;
+		var items = screen.items;
 
 		var now = youTyping.now;
-		var runTime = (now - youTyping.zeroTime) / 1000;
+		var runTime = now - youTyping.zeroTime;
 
 		youTyping.score.forEach(function (item, index) {
 			var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
@@ -439,50 +568,15 @@ var Screen = function (canvas, youTyping) {
 				if (item.emergeTime > runTime || item.vanishTime < runTime) {
 					items[index].remove();
 					delete items[index];
+				} else if (item.type === '+' && item.state !== items[index].state) {
+					// if state of note has changed, this recreates the note
+					createItem(item, index, Xpos);
 				} else {
 					items[index].position.x = Xpos;
 				}
 			} else { // if index-th item doesn't exist in screen
 				if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
-					items[index] = new paper.Group();
-
-					// long line which devides score to measures
-					if (item.type === '=') {
-						items[index].addChild(new paper.Path.Line({
-							from: [Xpos, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
-							to: [Xpos, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
-							strokeColor: 'white',
-							strokeWidth: 2
-						}));
-					}
-					// small line
-					if (item.type === '-') {
-						items[index].addChild(new paper.Path.Line({
-							from: [Xpos, setting.scoreYpos * setting.height - setting.lineHeight / 2],
-							to: [Xpos, setting.scoreYpos * setting.height + setting.lineHeight / 2],
-							strokeColor: 'white',
-							strokeWidth: 1
-						}));
-					}
-					if (item.type === '+') {
-						// note
-						items[index].addChild(new paper.Path.Circle({
-							center: [Xpos, setting.scoreYpos * setting.height],
-							radius: setting.noteSize,
-							strokeWidth: 1,
-							strokeColor: '#aaa',
-							fillColor: 'red'
-						}));
-						// lyric
-						items[index].addChild(new paper.PointText({
-							position: [Xpos, setting.scoreYpos * setting.height + setting.noteSize + 50],
-							content: item.text,
-							fillColor: 'white',
-							justification: 'center',
-							fontSize: 20,
-							fontFamily: 'sans-serif'
-						}));
-					}
+					createItem(item, index, Xpos);
 				}
 			}
 		});
