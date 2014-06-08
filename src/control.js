@@ -173,7 +173,21 @@ var YouTyping = function (element, settings) {
 		scoreYpos: 0.5, // ratio
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
-		screenPadding: 30 // pixel
+		screenPadding: 30, // pixel
+		judges: {
+			perfect: {
+				from: -30,
+				to: 30
+			},
+			great: {
+				from: -50,
+				to: 50
+			},
+			good: {
+				from: -70,
+				to: 70
+			}
+		}
 	};
 
 	// ZeroTime calculation
@@ -254,7 +268,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	// hit key
-	// TODO: make HitEvent
+	// TODO: make HitEvent interface
 	this.hit = function (key, time) {
 		if (!time) {
 			time = youTyping.now;
@@ -266,15 +280,32 @@ var YouTyping = function (element, settings) {
 		var nearestDistance = Infinity;
 		youTyping.score.forEach(function (item, index) {
 			if (item.type === '+') {
-				if (item.state === youTyping.noteState.WAITING && Math.abs(absoluteTime - item.time) < nearestDistance) {
+				if (item.state === youTyping.noteState.WAITING && Math.abs(absoluteTime - item.time) < Math.abs(nearestDistance)) {
 					nearestNote = item;
-					nearestDistance = Math.abs(absoluteTime - item.time);
+					nearestDistance = item.time - absoluteTime;
 				}
 			}
 		});
 
+		var distance = nearestDistance;
+
 		if (nearestNote !== null) {
-			nearestNote.state = youTyping.noteState.CLEARED;
+			var hitJudge = null;
+
+			for (var judgeName in youTyping.settings.judges) {
+				if (youTyping.settings.judges.hasOwnProperty(judgeName)) {
+					var judge = youTyping.settings.judges[judgeName];
+					if (judge.from <= distance && distance <= judge.to) {
+						hitJudge = judgeName;
+						break;
+					}
+				}
+			}
+
+			if (hitJudge !== null) {
+				nearestNote.state = youTyping.noteState.CLEARED;
+				console.log(distance, hitJudge);
+			}
 		}
 	};
 
