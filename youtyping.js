@@ -204,7 +204,7 @@ var YouTyping = function (element, settings) {
 	// YouTyping.now
 	Object.defineProperty(this, 'now', {
 		get: function () {
-			return window.performance.now() || (Date.now() - youTyping.startTime);
+			return window.performance.now();
 		}
 	});
 
@@ -607,6 +607,18 @@ function pad(str, max) {
 	str = str.toString();
 	return str.length < max ? pad('0' + str, max) : str;
 }
+
+// polyfill performance.now()
+if (typeof window.performance === 'undefined') {
+	window.performance = {};
+}
+if (!window.performance.now){
+	var offset = Date.now();
+	window.performance.now = function now(){
+		return Date.now() - offset;
+	};
+}
+
 
 return YouTyping;
 }());
