@@ -106,7 +106,7 @@ var Screen = function (canvas, youTyping) {
 		youTyping.play();
 
 		var triggerHitNote = function (event) {
-			if (event.type === 'keydown') {
+			if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
 				youTyping.hit(event.key);
 			}
 		};

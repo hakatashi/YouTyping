@@ -273,8 +273,6 @@ var YouTyping = function (element, settings) {
 			}
 		});
 
-		console.log(nearestNote);
-
 		if (nearestNote !== null) {
 			nearestNote.state = youTyping.noteState.CLEARED;
 		}
