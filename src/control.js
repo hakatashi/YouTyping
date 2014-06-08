@@ -247,7 +247,10 @@ var YouTyping = function (element, settings) {
 		if (!time) {
 			time = youTyping.now;
 		}
-		var scoreTime = time - youTyping.zeroTime;
+		var absoluteTime = time - youTyping.zeroTime;
+
+		youTyping.score.fotEach(function (item, index) {
+		});
 	};
 
 
@@ -255,12 +258,14 @@ var YouTyping = function (element, settings) {
 
 	// override default settings
 	for (var param in settings) {
-		if (this.settings[param] === undefined) {
-			this.settings[param] = settings[param];
-		} else if (typeof this.settings[param] === 'number') {
-			this.settings[param] = parseInt(settings[param], 10);
-		} else {
-			this.settings[param] = settings[param];
+		if (settings.hasOwnProperty(param)) {
+			if (this.settings[param] === undefined) {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'number') {
+				this.settings[param] = parseInt(settings[param], 10);
+			} else {
+				this.settings[param] = settings[param];
+			}
 		}
 	}
 
