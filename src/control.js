@@ -103,13 +103,11 @@ var YouTyping = function (element, settings) {
 
 	var loadXMLDeferred;
 	var loadScoreXML = function () {
-		var settings = youTyping.settings;
-
 		// Initialize deferred
 		loadXMLDeferred = $.Deferred();
 
 		$.ajax({
-			url: settings.score,
+			url: youTyping.settings.score,
 			type: 'get',
 			datatype: 'xml',
 			timeout: 1000,
