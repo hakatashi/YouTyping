@@ -47,9 +47,9 @@ var YouTyping = function (element, settings) {
 				wmode: 'opaque' // thanks http://stackoverflow.com/questions/6826386/
 			},
 			events: {
-				'onReady': onPlayerReady,
-				'onStateChange': onPlayerStateChange,
-				'onError': onPlayerError
+				onReady: onPlayerReady,
+				onStateChange: onPlayerStateChange,
+				onError: onPlayerError
 			}
 		});
 	};
