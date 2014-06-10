@@ -244,7 +244,7 @@ var YouTyping = function (element, settings) {
 	// key-input conversion table
 	this.table = [];
 
-	this.currentNote = null;
+	this.currentNoteIndex = null;
 	this.inputBuffer = '';
 
 
@@ -316,11 +316,45 @@ var YouTyping = function (element, settings) {
 			time = youTyping.now - youTyping.zeroTime;
 		}
 
+		// hit real one note by specific key.
+		var hitNote = function (noteIndex, key) {
+			var note = youTyping.score[noteIndex];
+			var newInputBuffer = youTyping.inputBuffer + key;
+
+			// TODO: Polyfill Array.prototype.filter (IE<9)
+			var matchingRules = youTyping.table.filter(function (rule) {
+				return startsWith(rule.before, newInputBuffer);
+			}).filter(function (rule) {
+				return startsWith(note.remainingText, rule.after);
+			});
+
+			if (matchingRules.length === 0) {
+				return false;
+			} else {
+				// take the rule of minimum length (for some comforts)
+				var minimumLength = Infinity;
+				var minimumRule = null;
+				matchingRules.forEach(function (rule) {
+					if (rule.before.length < minimumLength) {
+						minimumLength = rule.before.length;
+						minimumRule = rule;
+					}
+				});
+
+				// if new input buffer equals selected rule, the rule is satisfied, and then
+				// rule.after are taken from remaining text.
+				// this can be done by just comparing their length.
+				if (newInputBuffer.length === minimumRule.before.length) {
+					youTyping.inputBuffer = '';
+				}
+			}
+		};
+
 		if (key.length !== 1) {
 			return;
 		}
 
-		if (youTyping.currentNote !== null) {
+		if (youTyping.currentNoteIndex !== null) {
 		}
 
 		// search for nearest note that matches currently passed key rule
@@ -340,6 +374,7 @@ var YouTyping = function (element, settings) {
 		if (nearestNote !== null) {
 			var hitJudge = null;
 
+			// TODO: Polyfill Array.prototype.some (IE<9)
 			youTyping.settings.judges.some(function (judge) {
 				if (judge.from <= distance && distance <= judge.to) {
 					hitJudge = judge.name;

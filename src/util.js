@@ -32,3 +32,11 @@ if (!window.performance.now){
 		return Date.now() - offset;
 	};
 }
+
+// check if a string starts with specific prefix
+var startsWith = function (string, prefix) {
+    if (string.length < prefix.length) {
+        return false;
+    }
+	return string.substring(0, prefix.length) === prefix;
+};
