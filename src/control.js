@@ -172,7 +172,7 @@ var YouTyping = function (element, settings) {
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
-		judges: [
+		judges: [ // millisecond
 			{
 				name: 'perfect',
 				from: -50,
