@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <convert name="kana">
 	<rule before="a" after="あ"/>
 	<rule before="i" after="い"/>
