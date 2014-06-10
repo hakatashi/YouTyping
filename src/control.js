@@ -125,7 +125,7 @@ var YouTyping = function (element, settings) {
 					};
 
 					if ($(this).attr('text')) {
-						tempItem.text = $(this).attr('text');
+						tempItem.text = tempItem.remainingText = $(this).attr('text');
 					}
 
 					if (tempItem.type === '+') {
@@ -244,6 +244,9 @@ var YouTyping = function (element, settings) {
 	// key-input conversion table
 	this.table = [];
 
+	this.currentNote = null;
+	this.inputBuffer = '';
+
 
 	/******************* Methods *******************/
 
@@ -310,18 +313,24 @@ var YouTyping = function (element, settings) {
 	// TODO: make HitEvent interface
 	this.hit = function (key, time) {
 		if (!time) {
-			time = youTyping.now;
+			time = youTyping.now - youTyping.zeroTime;
 		}
-		var absoluteTime = time - youTyping.zeroTime;
+
+		if (key.length !== 1) {
+			return;
+		}
+
+		if (youTyping.currentNote !== null) {
+		}
 
 		// search for nearest note that matches currently passed key rule
 		var nearestNote = null;
 		var nearestDistance = Infinity;
 		youTyping.score.forEach(function (item, index) {
 			if (item.type === '+') {
-				if (item.state === youTyping.noteState.WAITING && Math.abs(absoluteTime - item.time) < Math.abs(nearestDistance)) {
+				if (item.state === youTyping.noteState.WAITING && Math.abs(item.time - time) < Math.abs(nearestDistance)) {
 					nearestNote = item;
-					nearestDistance = item.time - absoluteTime;
+					nearestDistance = item.time - time;
 				}
 			}
 		});
