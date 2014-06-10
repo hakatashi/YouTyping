@@ -172,20 +172,23 @@ var YouTyping = function (element, settings) {
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
-		judges: {
-			perfect: {
-				from: -30,
-				to: 30
-			},
-			great: {
+		judges: [
+			{
+				name: 'perfect',
 				from: -50,
 				to: 50
 			},
-			good: {
+			{
+				name: 'great',
 				from: -70,
 				to: 70
+			},
+			{
+				name: 'good',
+				from: -100,
+				to: 100
 			}
-		}
+		]
 	};
 
 	// ZeroTime calculation
@@ -290,15 +293,13 @@ var YouTyping = function (element, settings) {
 		if (nearestNote !== null) {
 			var hitJudge = null;
 
-			for (var judgeName in youTyping.settings.judges) {
-				if (youTyping.settings.judges.hasOwnProperty(judgeName)) {
-					var judge = youTyping.settings.judges[judgeName];
-					if (judge.from <= distance && distance <= judge.to) {
-						hitJudge = judgeName;
-						break;
-					}
+			youTyping.settings.judges.some(function (judge) {
+				if (judge.from <= distance && distance <= judge.to) {
+					hitJudge = judge.name;
+					return true;
 				}
-			}
+				return false;
+			});
 
 			if (hitJudge !== null) {
 				nearestNote.state = youTyping.noteState.CLEARED;
