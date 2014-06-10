@@ -235,6 +235,16 @@ vyi	ヴぃ
 vyu	ヴゅ
 vye	ヴぇ
 vyo	ヴょ
+va	う゛ぁ
+vi	う゛ぃ
+vu	う゛
+ve	う゛ぇ
+vo	う゛ぉ
+vya	う゛ゃ
+vyi	う゛ぃ
+vyu	う゛ゅ
+vye	う゛ぇ
+vyo	う゛ょ
 va	ゔぁ
 vi	ゔぃ
 vu	ゔ
