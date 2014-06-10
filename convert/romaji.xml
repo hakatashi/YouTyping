@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<convert name="kana">
+	<rule before="a" after="あ"/>
+	<rule before="i" after="い"/>
+	<rule before="yi" after="い"/>
+	<rule before="u" after="う"/>
+	<rule before="wu" after="う"/>
+	<rule before="whu" after="う"/>
+	<rule before="e" after="え"/>
+	<rule before="o" after="お"/>
+	<rule before="la" after="ぁ"/>
+	<rule before="xa" after="ぁ"/>
+	<rule before="li" after="ぃ"/>
+	<rule before="xi" after="ぃ"/>
+	<rule before="lyi" after="ぃ"/>
+	<rule before="xyi" after="ぃ"/>
+	<rule before="lu" after="ぅ"/>
+	<rule before="xu" after="ぅ"/>
+	<rule before="le" after="ぇ"/>
+	<rule before="xe" after="ぇ"/>
+	<rule before="lye" after="ぇ"/>
+	<rule before="xye" after="ぇ"/>
+	<rule before="lo" after="ぉ"/>
+	<rule before="xo" after="ぉ"/>
+	<rule before="ye" after="いぇ"/>
+	<rule before="wha" after="わ"/>
+	<rule before="wha" after="うぁ"/>
+	<rule before="whi" after="うぃ"/>
+	<rule before="wi" after="うぃ"/>
+	<rule before="whe" after="うぇ"/>
+	<rule before="we" after="うぇ"/>
+	<rule before="who" after="うぉ"/>
+	<rule before="ka" after="か"/>
+	<rule before="ca" after="か"/>
+	<rule before="ki" after="き"/>
+	<rule before="ku" after="く"/>
+	<rule before="cu" after="く"/>
+	<rule before="qu" after="く"/>
+	<rule before="ke" after="け"/>
+	<rule before="ko" after="こ"/>
+	<rule before="co" after="こ"/>
+	<rule before="lka" after="ヵ"/>
+	<rule before="xka" after="ヵ"/>
+	<rule before="lke" after="ヶ"/>
+	<rule before="xke" after="ヶ"/>
+	<rule before="ga" after="が"/>
+	<rule before="gi" after="ぎ"/>
+	<rule before="gu" after="ぐ"/>
+	<rule before="ge" after="げ"/>
+	<rule before="go" after="ご"/>
+	<rule before="kya" after="きゃ"/>
+	<rule before="kyi" after="きぃ"/>
+	<rule before="kyu" after="きゅ"/>
+	<rule before="kye" after="きぇ"/>
+	<rule before="kyo" after="きょ"/>
+	<rule before="qya" after="くゃ"/>
+	<rule before="qyu" after="くゅ"/>
+	<rule before="qyo" after="くょ"/>
+	<rule before="qwa" after="くぁ"/>
+	<rule before="qa" after="くぁ"/>
+	<rule before="kwa" after="くぁ"/>
+	<rule before="qwi" after="くぃ"/>
+	<rule before="qi" after="くぃ"/>
+	<rule before="qyi" after="くぃ"/>
+	<rule before="kwi" after="くぃ"/>
+	<rule before="qwu" after="くぅ"/>
+	<rule before="kwu" after="くぅ"/>
+	<rule before="qwe" after="くぇ"/>
+	<rule before="qe" after="くぇ"/>
+	<rule before="qye" after="くぇ"/>
+	<rule before="kwe" after="くぇ"/>
+	<rule before="qwo" after="くぉ"/>
+	<rule before="qo" after="くぉ"/>
+	<rule before="kwo" after="くぉ"/>
+	<rule before="gya" after="ぎゃ"/>
+	<rule before="gyi" after="ぎぃ"/>
+	<rule before="gyu" after="ぎゅ"/>
+	<rule before="gye" after="ぎぇ"/>
+	<rule before="gyo" after="ぎょ"/>
+	<rule before="gwa" after="ぐぁ"/>
+	<rule before="gwi" after="ぐぃ"/>
+	<rule before="gwu" after="ぐぅ"/>
+	<rule before="gwe" after="ぐぇ"/>
+	<rule before="gwo" after="ぐぉ"/>
+	<rule before="sa" after="さ"/>
+	<rule before="si" after="し"/>
+	<rule before="ci" after="し"/>
+	<rule before="shi" after="し"/>
+	<rule before="su" after="す"/>
+	<rule before="se" after="せ"/>
+	<rule before="ce" after="せ"/>
+	<rule before="so" after="そ"/>
+	<rule before="za" after="ざ"/>
+	<rule before="zi" after="じ"/>
+	<rule before="ji" after="じ"/>
+	<rule before="zu" after="ず"/>
+	<rule before="ze" after="ぜ"/>
+	<rule before="zo" after="ぞ"/>
+	<rule before="sya" after="しゃ"/>
+	<rule before="sha" after="しゃ"/>
+	<rule before="syi" after="しぃ"/>
+	<rule before="syu" after="しゅ"/>
+	<rule before="shu" after="しゅ"/>
+	<rule before="sye" after="しぇ"/>
+	<rule before="she" after="しぇ"/>
+	<rule before="syo" after="しょ"/>
+	<rule before="sho" after="しょ"/>
+	<rule before="swa" after="すぁ"/>
+	<rule before="swi" after="すぃ"/>
+	<rule before="swu" after="すぅ"/>
+	<rule before="swe" after="すぇ"/>
+	<rule before="swo" after="すぉ"/>
+	<rule before="zya" after="じゃ"/>
+	<rule before="ja" after="じゃ"/>
+	<rule before="jya" after="じゃ"/>
+	<rule before="zyi" after="じぃ"/>
+	<rule before="jyi" after="じぃ"/>
+	<rule before="zyu" after="じゅ"/>
+	<rule before="ju" after="じゅ"/>
+	<rule before="jyu" after="じゅ"/>
+	<rule before="zye" after="じぇ"/>
+	<rule before="je" after="じぇ"/>
+	<rule before="jye" after="じぇ"/>
+	<rule before="zyo" after="じょ"/>
+	<rule before="jo" after="じょ"/>
+	<rule before="jyo" after="じょ"/>
+	<rule before="ta" after="た"/>
+	<rule before="ti" after="ち"/>
+	<rule before="chi" after="ち"/>
+	<rule before="tu" after="つ"/>
+	<rule before="tsu" after="つ"/>
+	<rule before="te" after="て"/>
+	<rule before="to" after="と"/>
+	<rule before="ltu" after="っ"/>
+	<rule before="xtu" after="っ"/>
+	<rule before="ltsu" after="っ"/>
+	<rule before="xtsu" after="っ"/>
+	<rule before="da" after="だ"/>
+	<rule before="di" after="ぢ"/>
+	<rule before="du" after="づ"/>
+	<rule before="de" after="で"/>
+	<rule before="do" after="ど"/>
+	<rule before="tya" after="ちゃ"/>
+	<rule before="cha" after="ちゃ"/>
+	<rule before="cya" after="ちゃ"/>
+	<rule before="tyi" after="ちぃ"/>
+	<rule before="cyi" after="ちぃ"/>
+	<rule before="tyu" after="ちゅ"/>
+	<rule before="chu" after="ちゅ"/>
+	<rule before="cyu" after="ちゅ"/>
+	<rule before="tye" after="ちぇ"/>
+	<rule before="che" after="ちぇ"/>
+	<rule before="cye" after="ちぇ"/>
+	<rule before="tyo" after="ちょ"/>
+	<rule before="cho" after="ちょ"/>
+	<rule before="cyo" after="ちょ"/>
+	<rule before="tsa" after="つぁ"/>
+	<rule before="tsi" after="つぃ"/>
+	<rule before="tse" after="つぇ"/>
+	<rule before="tso" after="つぉ"/>
+	<rule before="tha" after="てゃ"/>
+	<rule before="thi" after="てぃ"/>
+	<rule before="thu" after="てゅ"/>
+	<rule before="the" after="てぇ"/>
+	<rule before="tho" after="てょ"/>
+	<rule before="twa" after="とぁ"/>
+	<rule before="twi" after="とぃ"/>
+	<rule before="twu" after="とぅ"/>
+	<rule before="twe" after="とぇ"/>
+	<rule before="two" after="とぉ"/>
+	<rule before="dya" after="ぢゃ"/>
+	<rule before="dyi" after="ぢぃ"/>
+	<rule before="dyu" after="ぢゅ"/>
+	<rule before="dye" after="ぢぇ"/>
+	<rule before="dyo" after="ぢょ"/>
+	<rule before="dha" after="でゃ"/>
+	<rule before="dhi" after="でぃ"/>
+	<rule before="dhu" after="でゅ"/>
+	<rule before="dhe" after="でぇ"/>
+	<rule before="dho" after="でょ"/>
+	<rule before="dwa" after="どぁ"/>
+	<rule before="dwi" after="どぃ"/>
+	<rule before="dwu" after="どぅ"/>
+	<rule before="dwe" after="どぇ"/>
+	<rule before="dwo" after="どぉ"/>
+	<rule before="na" after="な"/>
+	<rule before="ni" after="に"/>
+	<rule before="nu" after="ぬ"/>
+	<rule before="ne" after="ね"/>
+	<rule before="no" after="の"/>
+	<rule before="nya" after="にゃ"/>
+	<rule before="nyi" after="にぃ"/>
+	<rule before="nyu" after="にゅ"/>
+	<rule before="nye" after="にぇ"/>
+	<rule before="nyo" after="にょ"/>
+	<rule before="ha" after="は"/>
+	<rule before="hi" after="ひ"/>
+	<rule before="hu" after="ふ"/>
+	<rule before="fu" after="ふ"/>
+	<rule before="he" after="へ"/>
+	<rule before="ho" after="ほ"/>
+	<rule before="ba" after="ば"/>
+	<rule before="bi" after="び"/>
+	<rule before="bu" after="ぶ"/>
+	<rule before="be" after="べ"/>
+	<rule before="bo" after="ぼ"/>
+	<rule before="pa" after="ぱ"/>
+	<rule before="pi" after="ぴ"/>
+	<rule before="pu" after="ぷ"/>
+	<rule before="pe" after="ぺ"/>
+	<rule before="po" after="ぽ"/>
+	<rule before="hya" after="ひゃ"/>
+	<rule before="hyi" after="ひぃ"/>
+	<rule before="hyu" after="ひゅ"/>
+	<rule before="hye" after="ひぇ"/>
+	<rule before="hyo" after="ひょ"/>
+	<rule before="fya" after="ふゃ"/>
+	<rule before="fyu" after="ふゅ"/>
+	<rule before="fyo" after="ふょ"/>
+	<rule before="fwa" after="ふぁ"/>
+	<rule before="fa" after="ふぁ"/>
+	<rule before="hwa" after="ふぁ"/>
+	<rule before="fwi" after="ふぃ"/>
+	<rule before="fi" after="ふぃ"/>
+	<rule before="fyi" after="ふぃ"/>
+	<rule before="hwi" after="ふぃ"/>
+	<rule before="fwu" after="ふぅ"/>
+	<rule before="fwe" after="ふぇ"/>
+	<rule before="fe" after="ふぇ"/>
+	<rule before="fye" after="ふぇ"/>
+	<rule before="hwe" after="ふぇ"/>
+	<rule before="fwo" after="ふぉ"/>
+	<rule before="fo" after="ふぉ"/>
+	<rule before="hwo" after="ふぉ"/>
+	<rule before="hwyu" after="ふゅ"/>
+	<rule before="bya" after="びゃ"/>
+	<rule before="byi" after="びぃ"/>
+	<rule before="byu" after="びゅ"/>
+	<rule before="bye" after="びぇ"/>
+	<rule before="byo" after="びょ"/>
+	<rule before="pya" after="ぴゃ"/>
+	<rule before="pyi" after="ぴぃ"/>
+	<rule before="pyu" after="ぴゅ"/>
+	<rule before="pye" after="ぴぇ"/>
+	<rule before="pyo" after="ぴょ"/>
+	<rule before="va" after="ヴぁ"/>
+	<rule before="vi" after="ヴぃ"/>
+	<rule before="vu" after="ヴ"/>
+	<rule before="ve" after="ヴぇ"/>
+	<rule before="vo" after="ヴぉ"/>
+	<rule before="vya" after="ヴゃ"/>
+	<rule before="vyi" after="ヴぃ"/>
+	<rule before="vyu" after="ヴゅ"/>
+	<rule before="vye" after="ヴぇ"/>
+	<rule before="vyo" after="ヴょ"/>
+	<rule before="va" after="う゛ぁ"/>
+	<rule before="vi" after="う゛ぃ"/>
+	<rule before="vu" after="う゛"/>
+	<rule before="ve" after="う゛ぇ"/>
+	<rule before="vo" after="う゛ぉ"/>
+	<rule before="vya" after="う゛ゃ"/>
+	<rule before="vyi" after="う゛ぃ"/>
+	<rule before="vyu" after="う゛ゅ"/>
+	<rule before="vye" after="う゛ぇ"/>
+	<rule before="vyo" after="う゛ょ"/>
+	<rule before="va" after="ゔぁ"/>
+	<rule before="vi" after="ゔぃ"/>
+	<rule before="vu" after="ゔ"/>
+	<rule before="ve" after="ゔぇ"/>
+	<rule before="vo" after="ゔぉ"/>
+	<rule before="vya" after="ゔゃ"/>
+	<rule before="vyi" after="ゔぃ"/>
+	<rule before="vyu" after="ゔゅ"/>
+	<rule before="vye" after="ゔぇ"/>
+	<rule before="vyo" after="ゔょ"/>
+	<rule before="ma" after="ま"/>
+	<rule before="mi" after="み"/>
+	<rule before="mu" after="む"/>
+	<rule before="me" after="め"/>
+	<rule before="mo" after="も"/>
+	<rule before="mya" after="みゃ"/>
+	<rule before="myi" after="みぃ"/>
+	<rule before="myu" after="みゅ"/>
+	<rule before="mye" after="みぇ"/>
+	<rule before="myo" after="みょ"/>
+	<rule before="ya" after="や"/>
+	<rule before="yu" after="ゆ"/>
+	<rule before="yo" after="よ"/>
+	<rule before="lya" after="ゃ"/>
+	<rule before="xya" after="ゃ"/>
+	<rule before="lyu" after="ゅ"/>
+	<rule before="xyu" after="ゅ"/>
+	<rule before="lyo" after="ょ"/>
+	<rule before="xyo" after="ょ"/>
+	<rule before="ra" after="ら"/>
+	<rule before="ri" after="り"/>
+	<rule before="ru" after="る"/>
+	<rule before="re" after="れ"/>
+	<rule before="ro" after="ろ"/>
+	<rule before="rya" after="りゃ"/>
+	<rule before="ryi" after="りぃ"/>
+	<rule before="ryu" after="りゅ"/>
+	<rule before="rye" after="りぇ"/>
+	<rule before="ryo" after="りょ"/>
+	<rule before="wa" after="わ"/>
+	<rule before="wi" after="ゐ"/>
+	<rule before="whi" after="ゐ"/>
+	<rule before="wyi" after="ゐ"/>
+	<rule before="we" after="ゑ"/>
+	<rule before="whe" after="ゑ"/>
+	<rule before="wye" after="ゑ"/>
+	<rule before="wo" after="を"/>
+	<rule before="nn" after="ん"/>
+	<rule before="n&apos;" after="ん"/>
+	<rule before="xn" after="ん"/>
+	<rule before="lwa" after="ゎ"/>
+	<rule before="xwa" after="ゎ"/>
+	<rule before="qq" after="っ" next="q"/>
+	<rule before="vv" after="っ" next="v"/>
+	<rule before="ll" after="っ" next="l"/>
+	<rule before="xx" after="っ" next="x"/>
+	<rule before="kk" after="っ" next="k"/>
+	<rule before="gg" after="っ" next="g"/>
+	<rule before="ss" after="っ" next="s"/>
+	<rule before="zz" after="っ" next="z"/>
+	<rule before="jj" after="っ" next="j"/>
+	<rule before="tt" after="っ" next="t"/>
+	<rule before="dd" after="っ" next="d"/>
+	<rule before="hh" after="っ" next="h"/>
+	<rule before="ff" after="っ" next="f"/>
+	<rule before="bb" after="っ" next="b"/>
+	<rule before="pp" after="っ" next="p"/>
+	<rule before="mm" after="っ" next="m"/>
+	<rule before="yy" after="っ" next="y"/>
+	<rule before="rr" after="っ" next="r"/>
+	<rule before="ww" after="っ" next="w"/>
+	<rule before="cc" after="っ" next="c"/>
+	<rule before="nb" after="ん" next="b"/>
+	<rule before="nc" after="ん" next="c"/>
+	<rule before="nd" after="ん" next="d"/>
+	<rule before="nf" after="ん" next="f"/>
+	<rule before="ng" after="ん" next="g"/>
+	<rule before="nh" after="ん" next="h"/>
+	<rule before="nj" after="ん" next="j"/>
+	<rule before="nk" after="ん" next="k"/>
+	<rule before="nl" after="ん" next="l"/>
+	<rule before="nm" after="ん" next="m"/>
+	<rule before="np" after="ん" next="p"/>
+	<rule before="nq" after="ん" next="q"/>
+	<rule before="nr" after="ん" next="r"/>
+	<rule before="ns" after="ん" next="s"/>
+	<rule before="nt" after="ん" next="t"/>
+	<rule before="nv" after="ん" next="v"/>
+	<rule before="nw" after="ん" next="w"/>
+	<rule before="nx" after="ん" next="x"/>
+	<rule before="nz" after="ん" next="z"/>
+	<rule before="n1" after="ん" next="1"/>
+	<rule before="n2" after="ん" next="2"/>
+	<rule before="n3" after="ん" next="3"/>
+	<rule before="n4" after="ん" next="4"/>
+	<rule before="n5" after="ん" next="5"/>
+	<rule before="n6" after="ん" next="6"/>
+	<rule before="n7" after="ん" next="7"/>
+	<rule before="n8" after="ん" next="8"/>
+	<rule before="n9" after="ん" next="9"/>
+	<rule before="n0" after="ん" next="0"/>
+	<rule before="n-" after="ん" next="-"/>
+	<rule before="n^" after="ん" next="^"/>
+	<rule before="n!" after="ん" next="!"/>
+	<rule before="n&quot;" after="ん" next="&quot;"/>
+	<rule before="n#" after="ん" next="#"/>
+	<rule before="n$" after="ん" next="$"/>
+	<rule before="n%" after="ん" next="%"/>
+	<rule before="n&amp;" after="ん" next="&amp;"/>
+	<rule before="n(" after="ん" next="("/>
+	<rule before="n)" after="ん" next=")"/>
+	<rule before="n=" after="ん" next="="/>
+	<rule before="n~" after="ん" next="~"/>
+	<rule before="n|" after="ん" next="|"/>
+	<rule before="n@" after="ん" next="@"/>
+	<rule before="n[" after="ん" next="["/>
+	<rule before="n`" after="ん" next="`"/>
+	<rule before="n{" after="ん" next="{"/>
+	<rule before="n;" after="ん" next=";"/>
+	<rule before="n:" after="ん" next=":"/>
+	<rule before="n]" after="ん" next="]"/>
+	<rule before="n+" after="ん" next="+"/>
+	<rule before="n*" after="ん" next="*"/>
+	<rule before="n}" after="ん" next="}"/>
+	<rule before="n," after="ん" next=","/>
+	<rule before="n." after="ん" next="."/>
+	<rule before="n/" after="ん" next="/"/>
+	<rule before="n\" after="ん" next="\"/>
+	<rule before="n&lt;" after="ん" next="&lt;"/>
+	<rule before="n&gt;" after="ん" next="&gt;"/>
+	<rule before="n?" after="ん" next="?"/>
+	<rule before="n_" after="ん" next="_"/>
+	<rule before="n@" after="ん" next="゛"/>
+	<rule before="n[" after="ん" next="゜"/>
+	<rule before="a" after="a"/>
+	<rule before="b" after="b"/>
+	<rule before="c" after="c"/>
+	<rule before="d" after="d"/>
+	<rule before="e" after="e"/>
+	<rule before="f" after="f"/>
+	<rule before="g" after="g"/>
+	<rule before="h" after="h"/>
+	<rule before="i" after="i"/>
+	<rule before="j" after="j"/>
+	<rule before="k" after="k"/>
+	<rule before="l" after="l"/>
+	<rule before="m" after="m"/>
+	<rule before="n" after="n"/>
+	<rule before="o" after="o"/>
+	<rule before="p" after="p"/>
+	<rule before="q" after="q"/>
+	<rule before="r" after="r"/>
+	<rule before="s" after="s"/>
+	<rule before="t" after="t"/>
+	<rule before="u" after="u"/>
+	<rule before="v" after="v"/>
+	<rule before="w" after="w"/>
+	<rule before="x" after="x"/>
+	<rule before="y" after="y"/>
+	<rule before="z" after="z"/>
+	<rule before="A" after="A"/>
+	<rule before="B" after="B"/>
+	<rule before="C" after="C"/>
+	<rule before="D" after="D"/>
+	<rule before="E" after="E"/>
+	<rule before="F" after="F"/>
+	<rule before="G" after="G"/>
+	<rule before="H" after="H"/>
+	<rule before="I" after="I"/>
+	<rule before="J" after="J"/>
+	<rule before="K" after="K"/>
+	<rule before="L" after="L"/>
+	<rule before="M" after="M"/>
+	<rule before="N" after="N"/>
+	<rule before="O" after="O"/>
+	<rule before="P" after="P"/>
+	<rule before="Q" after="Q"/>
+	<rule before="R" after="R"/>
+	<rule before="S" after="S"/>
+	<rule before="T" after="T"/>
+	<rule before="U" after="U"/>
+	<rule before="V" after="V"/>
+	<rule before="W" after="W"/>
+	<rule before="X" after="X"/>
+	<rule before="Y" after="Y"/>
+	<rule before="Z" after="Z"/>
+	<rule before="1" after="1"/>
+	<rule before="2" after="2"/>
+	<rule before="3" after="3"/>
+	<rule before="4" after="4"/>
+	<rule before="5" after="5"/>
+	<rule before="6" after="6"/>
+	<rule before="7" after="7"/>
+	<rule before="8" after="8"/>
+	<rule before="9" after="9"/>
+	<rule before="0" after="0"/>
+	<rule before="-" after="-"/>
+	<rule before="^" after="^"/>
+	<rule before="!" after="!"/>
+	<rule before="&quot;" after="&quot;"/>
+	<rule before="#" after="#"/>
+	<rule before="$" after="$"/>
+	<rule before="%" after="%"/>
+	<rule before="&amp;" after="&amp;"/>
+	<rule before="&apos;" after="&apos;"/>
+	<rule before="(" after="("/>
+	<rule before=")" after=")"/>
+	<rule before="=" after="="/>
+	<rule before="~" after="~"/>
+	<rule before="|" after="|"/>
+	<rule before="@" after="@"/>
+	<rule before="[" after="["/>
+	<rule before="`" after="`"/>
+	<rule before="{" after="{"/>
+	<rule before=";" after=";"/>
+	<rule before=":" after=":"/>
+	<rule before="]" after="]"/>
+	<rule before="+" after="+"/>
+	<rule before="*" after="*"/>
+	<rule before="}" after="}"/>
+	<rule before="," after=","/>
+	<rule before="." after="."/>
+	<rule before="/" after="/"/>
+	<rule before="\" after="\"/>
+	<rule before="&lt;" after="&lt;"/>
+	<rule before="&gt;" after="&gt;"/>
+	<rule before="?" after="?"/>
+	<rule before="_" after="_"/>
+	<rule before="A" after="Ａ"/>
+	<rule before="B" after="Ｂ"/>
+	<rule before="C" after="Ｃ"/>
+	<rule before="D" after="Ｄ"/>
+	<rule before="E" after="Ｅ"/>
+	<rule before="F" after="Ｆ"/>
+	<rule before="G" after="Ｇ"/>
+	<rule before="H" after="Ｈ"/>
+	<rule before="I" after="Ｉ"/>
+	<rule before="J" after="Ｊ"/>
+	<rule before="K" after="Ｋ"/>
+	<rule before="L" after="Ｌ"/>
+	<rule before="M" after="Ｍ"/>
+	<rule before="N" after="Ｎ"/>
+	<rule before="O" after="Ｏ"/>
+	<rule before="P" after="Ｐ"/>
+	<rule before="Q" after="Ｑ"/>
+	<rule before="R" after="Ｒ"/>
+	<rule before="S" after="Ｓ"/>
+	<rule before="T" after="Ｔ"/>
+	<rule before="U" after="Ｕ"/>
+	<rule before="V" after="Ｖ"/>
+	<rule before="W" after="Ｗ"/>
+	<rule before="X" after="Ｘ"/>
+	<rule before="Y" after="Ｙ"/>
+	<rule before="Z" after="Ｚ"/>
+	<rule before="a" after="ａ"/>
+	<rule before="b" after="ｂ"/>
+	<rule before="c" after="ｃ"/>
+	<rule before="d" after="ｄ"/>
+	<rule before="e" after="ｅ"/>
+	<rule before="f" after="ｆ"/>
+	<rule before="g" after="ｇ"/>
+	<rule before="h" after="ｈ"/>
+	<rule before="i" after="ｉ"/>
+	<rule before="j" after="ｊ"/>
+	<rule before="k" after="ｋ"/>
+	<rule before="l" after="ｌ"/>
+	<rule before="m" after="ｍ"/>
+	<rule before="n" after="ｎ"/>
+	<rule before="o" after="ｏ"/>
+	<rule before="p" after="ｐ"/>
+	<rule before="q" after="ｑ"/>
+	<rule before="r" after="ｒ"/>
+	<rule before="s" after="ｓ"/>
+	<rule before="t" after="ｔ"/>
+	<rule before="u" after="ｕ"/>
+	<rule before="v" after="ｖ"/>
+	<rule before="w" after="ｗ"/>
+	<rule before="x" after="ｘ"/>
+	<rule before="y" after="ｙ"/>
+	<rule before="z" after="ｚ"/>
+	<rule before="1" after="１"/>
+	<rule before="2" after="２"/>
+	<rule before="3" after="３"/>
+	<rule before="4" after="４"/>
+	<rule before="5" after="５"/>
+	<rule before="6" after="６"/>
+	<rule before="7" after="７"/>
+	<rule before="8" after="８"/>
+	<rule before="9" after="９"/>
+	<rule before="0" after="０"/>
+	<rule before="^" after="＾"/>
+	<rule before="!" after="！"/>
+	<rule before="&quot;" after="”"/>
+	<rule before="#" after="＃"/>
+	<rule before="$" after="＄"/>
+	<rule before="%" after="％"/>
+	<rule before="&amp;" after="＆"/>
+	<rule before="&apos;" after="’"/>
+	<rule before="(" after="（"/>
+	<rule before=")" after="）"/>
+	<rule before="=" after="＝"/>
+	<rule before="~" after="～"/>
+	<rule before="~" after="〜"/>
+	<rule before="|" after="｜"/>
+	<rule before="@" after="＠"/>
+	<rule before="[" after="「"/>
+	<rule before="`" after="‘"/>
+	<rule before="{" after="｛"/>
+	<rule before=";" after="；"/>
+	<rule before=":" after="："/>
+	<rule before="]" after="」"/>
+	<rule before="+" after="＋"/>
+	<rule before="*" after="＊"/>
+	<rule before="}" after="｝"/>
+	<rule before="," after="、"/>
+	<rule before="," after="，"/>
+	<rule before="." after="。"/>
+	<rule before="." after="．"/>
+	<rule before="/" after="・"/>
+	<rule before="\" after="￥"/>
+	<rule before="\" after="＼"/>
+	<rule before="&lt;" after="＜"/>
+	<rule before="&gt;" after="＞"/>
+	<rule before="?" after="？"/>
+	<rule before="_" after="＿"/>
+	<rule before="///" after="…"/>
+	<rule before="-" after="－"/>
+	<rule before="-" after="―"/>
+	<rule before="-" after="ー"/>
+	<rule before="[" after="［"/>
+	<rule before="]" after="］"/>
+	<rule before="," after="，"/>
+	<rule before="." after="．"/>
+	<rule before="/" after="／"/>
+	<rule before="@" after="゛"/>
+	<rule before="[" after="゜"/>
+	<rule before="[" after="『"/>
+	<rule before="]" after="』"/>
+	<rule before="*" after="☆"/>
+	<rule before="*" after="※"/>
+	<rule before="*" after="×"/>
+	<rule before="z/" after="・"/>
+	<rule before="z." after="…"/>
+	<rule before="z," after="‥"/>
+	<rule before="zh" after="←"/>
+	<rule before="zj" after="↓"/>
+	<rule before="zk" after="↑"/>
+	<rule before="zl" after="→"/>
+	<rule before="z-" after="〜"/>
+	<rule before="z[" after="『"/>
+	<rule before="z]" after="』"/>
+	<rule before="and" after="&amp;"/>
+	<rule before="and" after="＆"/>
+	<rule before="A" after="Α"/>
+	<rule before="B" after="Β"/>
+	<rule before="G" after="Γ"/>
+	<rule before="D" after="Δ"/>
+	<rule before="E" after="Ε"/>
+	<rule before="Z" after="Ζ"/>
+	<rule before="E" after="Η"/>
+	<rule before="H" after="Η"/>
+	<rule before="TH" after="Θ"/>
+	<rule before="U" after="Θ"/>
+	<rule before="I" after="Ι"/>
+	<rule before="K" after="Κ"/>
+	<rule before="L" after="Λ"/>
+	<rule before="M" after="Μ"/>
+	<rule before="N" after="Ν"/>
+	<rule before="KS" after="Ξ"/>
+	<rule before="X" after="Ξ"/>
+	<rule before="J" after="Ξ"/>
+	<rule before="O" after="Ο"/>
+	<rule before="P" after="Π"/>
+	<rule before="R" after="Ρ"/>
+	<rule before="S" after="Σ"/>
+	<rule before="T" after="Τ"/>
+	<rule before="U" after="Υ"/>
+	<rule before="Y" after="Υ"/>
+	<rule before="PH" after="Φ"/>
+	<rule before="F" after="Φ"/>
+	<rule before="KH" after="Χ"/>
+	<rule before="CH" after="Χ"/>
+	<rule before="X" after="Χ"/>
+	<rule before="PS" after="Ψ"/>
+	<rule before="C" after="Ψ"/>
+	<rule before="O" after="Ω"/>
+	<rule before="V" after="Ω"/>
+	<rule before="a" after="α"/>
+	<rule before="b" after="β"/>
+	<rule before="g" after="γ"/>
+	<rule before="d" after="δ"/>
+	<rule before="e" after="ε"/>
+	<rule before="z" after="ζ"/>
+	<rule before="e" after="η"/>
+	<rule before="h" after="η"/>
+	<rule before="th" after="θ"/>
+	<rule before="u" after="θ"/>
+	<rule before="i" after="ι"/>
+	<rule before="k" after="κ"/>
+	<rule before="l" after="λ"/>
+	<rule before="m" after="μ"/>
+	<rule before="n" after="ν"/>
+	<rule before="ks" after="ξ"/>
+	<rule before="x" after="ξ"/>
+	<rule before="j" after="ξ"/>
+	<rule before="o" after="ο"/>
+	<rule before="p" after="π"/>
+	<rule before="r" after="ρ"/>
+	<rule before="s" after="σ"/>
+	<rule before="t" after="τ"/>
+	<rule before="u" after="υ"/>
+	<rule before="y" after="υ"/>
+	<rule before="ph" after="φ"/>
+	<rule before="f" after="φ"/>
+	<rule before="kh" after="χ"/>
+	<rule before="ch" after="χ"/>
+	<rule before="x" after="χ"/>
+	<rule before="ps" after="ψ"/>
+	<rule before="c" after="ψ"/>
+	<rule before="o" after="ω"/>
+	<rule before="v" after="ω"/>
+</convert>
