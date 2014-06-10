@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<convert name="kana">
+<table name="kana">
 	<rule before="a" after="あ"/>
 	<rule before="i" after="い"/>
 	<rule before="yi" after="い"/>
@@ -684,4 +684,4 @@
 	<rule before="c" after="ψ"/>
 	<rule before="o" after="ω"/>
 	<rule before="v" after="ω"/>
-</convert>
+</table>

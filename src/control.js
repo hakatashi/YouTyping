@@ -146,6 +146,40 @@ var YouTyping = function (element, settings) {
 		return loadXMLDeferred.promise();
 	};
 
+	var loadTableDeferred;
+	var loadTable = function () {
+		// initialize deferred
+		loadTableDeferred = $.Deferred();
+
+		$.ajax({
+			url: youTyping.settings.tableFile,
+			type: 'get',
+			datatype: 'xml',
+			timeout: 1000,
+			success: function (data, textStatus, jqXHR) {
+				youTyping.table = [];
+
+				$(data).find('table').find('rule').each(function () {
+					youTyping.table.push({
+						before: $(this).attr('before'),
+						after: $(this).attr('after'),
+						next: $(this).attr('next')
+					});
+				});
+
+				logTrace('Loaded Table File.');
+
+				loadTableDeferred.resolve();
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				logTrace('ERROR: Table File Loading Failed: ' + errorThrown);
+				loadTableDeferred.reject();
+			}
+		});
+
+		return loadTableDeferred.promise();
+	};
+
 
 	/******************* properties *******************/
 
@@ -188,7 +222,8 @@ var YouTyping = function (element, settings) {
 				from: -100,
 				to: 100
 			}
-		]
+		],
+		tableFile: 'convert/romaji.xml'
 	};
 
 	// ZeroTime calculation
@@ -205,6 +240,9 @@ var YouTyping = function (element, settings) {
 			return window.performance.now();
 		}
 	});
+
+	// key-input conversion table
+	this.table = [];
 
 
 	/******************* Methods *******************/
@@ -372,6 +410,7 @@ var YouTyping = function (element, settings) {
 			loadScoreXML(),
 			$.Deferred(this.screen.setup).promise()
 		).done(this.screen.load),
+		loadTable(),
 		setupPlayer()
 	).done(this.screen.ready)
 	.fail(function () {
