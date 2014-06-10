@@ -107,6 +107,8 @@ var Screen = function (canvas, youTyping) {
 
 		var triggerHitNote = function (event) {
 			if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
+				// suspend default operation on browser by keydown
+				event.preventDefault();
 				youTyping.hit(event.key);
 			}
 		};
