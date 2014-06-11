@@ -316,7 +316,7 @@ var YouTyping = function (element, settings) {
 			time = youTyping.now - youTyping.zeroTime;
 		}
 
-		// check hit-ability of note by specific key.
+		// check hit-ability of note by passed key.
 		// return false when un-hit-able, and info about new note when hit-able
 		var preHitNote = function (noteIndex) {
 			var note = youTyping.score[noteIndex];
@@ -337,7 +337,9 @@ var YouTyping = function (element, settings) {
 			if (matchingRules.length === 0) {
 				return false;
 			} else {
-				var newNoteInfo = {};
+				var newNoteInfo = {
+					noteIndex: noteIndex
+				};
 
 				// take the rule of minimum length (for some comforts)
 				var minimumLength = Infinity;
@@ -364,11 +366,31 @@ var YouTyping = function (element, settings) {
 			}
 		};
 
+		// hit note by passed key
+		var hitNote = function (newNoteInfo) {
+			var note = youTyping.score[newNoteInfo.noteIndex];
+
+			if (newNoteInfo.remainingText === '') {
+				note.state = youTyping.noteState.CLEARED;
+				youTyping.inputBuffer = '';
+			} else {
+				note.state = youTyping.noteState.HITTING;
+				note.remainingText = newNoteInfo.remainingText;
+				youTyping.inputBuffer = newNoteInfo.inputBuffer;
+			}
+		};
+
 		if (key.length !== 1) {
 			return;
 		}
 
 		if (youTyping.currentNoteIndex !== null) {
+			var newNoteInfo = preHitNote(youTyping.currentNoteIndex);
+
+			if (newNoteInfo) { // if current note is hit-able
+				hitNote(newNoteInfo);
+				return;
+			}
 		}
 
 		// search for nearest note that matches currently passed key rule
