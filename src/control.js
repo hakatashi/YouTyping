@@ -327,7 +327,12 @@ var YouTyping = function (element, settings) {
 		// return false when un-hit-able, and info about new note when hit-able
 		var preHitNote = function (noteIndex) {
 			var note = youTyping.score[noteIndex];
-			var newInputBuffer = youTyping.inputBuffer + key;
+			var newInputBuffer = '';
+			if (noteIndex === youTyping.currentNoteIndex) {
+				newInputBuffer = youTyping.inputBuffer + key;
+			} else { // discard input buffer if not hitting current note
+				newInputBuffer = key;
+			}
 
 			// TODO: Polyfill Array.prototype.filter (IE<9)
 			var matchingRules = youTyping.table.filter(function (rule) {
@@ -370,7 +375,7 @@ var YouTyping = function (element, settings) {
 					newNoteInfo.inputBuffer = '';
 				} else {
 					newNoteInfo.remainingText = note.remainingText;
-					newNoteInfo.inputBuffer = youTyping.inputBuffer + key;
+					newNoteInfo.inputBuffer = newInputBuffer;
 				}
 
 				return newNoteInfo;
@@ -388,6 +393,7 @@ var YouTyping = function (element, settings) {
 				note.state = youTyping.noteState.CLEARED;
 				note.remainingText = '';
 				youTyping.inputBuffer = '';
+				youTyping.currentNoteIndex = null;
 			} else {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
@@ -416,7 +422,7 @@ var YouTyping = function (element, settings) {
 		youTyping.score.forEach(function (item, index) {
 			if (item.type === '+') {
 				if (
-					index > youTyping.currentNoteIndex &&
+					index > youTyping.currentNoteIndex && // Luckily `positive number` > null is always true :)
 					item.state === youTyping.noteState.WAITING &&
 					Math.abs(item.time - time) < Math.abs(nearestDistance)
 				) {
@@ -457,7 +463,6 @@ var YouTyping = function (element, settings) {
 
 				console.log(distance, hitJudge);
 			}
-
 		}
 	};
 

@@ -174,6 +174,27 @@ var Screen = function (canvas, youTyping) {
 				}));
 				// custom property
 				items[index].state = item.state;
+			} else if (item.state === youTyping.noteState.HITTING || item.state === youTyping.noteState.HITTINGFAILED) {
+				// note
+				items[index].addChild(new paper.Path.Circle({
+					center: [position, setting.scoreYpos * setting.height],
+					radius: setting.noteSize,
+					strokeWidth: 1,
+					strokeColor: '#aaa',
+					fillColor: 'red',
+					opacity: 0.5
+				}));
+				// lyric
+				items[index].addChild(new paper.PointText({
+					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+					content: item.remainingText,
+					fillColor: 'white',
+					justification: 'center',
+					fontSize: 20,
+					fontFamily: 'sans-serif'
+				}));
+				// custom property
+				items[index].state = item.state;
 			} else if (item.state === youTyping.noteState.CLEARED) {
 			}
 		}
