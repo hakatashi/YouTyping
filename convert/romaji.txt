@@ -1,0 +1,684 @@
+a	あ
+i	い
+yi	い
+u	う
+wu	う
+whu	う
+e	え
+o	お
+la	ぁ
+xa	ぁ
+li	ぃ
+xi	ぃ
+lyi	ぃ
+xyi	ぃ
+lu	ぅ
+xu	ぅ
+le	ぇ
+xe	ぇ
+lye	ぇ
+xye	ぇ
+lo	ぉ
+xo	ぉ
+ye	いぇ
+wha	わ
+wha	うぁ
+whi	うぃ
+wi	うぃ
+whe	うぇ
+we	うぇ
+who	うぉ
+ka	か
+ca	か
+ki	き
+ku	く
+cu	く
+qu	く
+ke	け
+ko	こ
+co	こ
+lka	ヵ
+xka	ヵ
+lke	ヶ
+xke	ヶ
+ga	が
+gi	ぎ
+gu	ぐ
+ge	げ
+go	ご
+kya	きゃ
+kyi	きぃ
+kyu	きゅ
+kye	きぇ
+kyo	きょ
+qya	くゃ
+qyu	くゅ
+qyo	くょ
+qwa	くぁ
+qa	くぁ
+kwa	くぁ
+qwi	くぃ
+qi	くぃ
+qyi	くぃ
+kwi	くぃ
+qwu	くぅ
+kwu	くぅ
+qwe	くぇ
+qe	くぇ
+qye	くぇ
+kwe	くぇ
+qwo	くぉ
+qo	くぉ
+kwo	くぉ
+gya	ぎゃ
+gyi	ぎぃ
+gyu	ぎゅ
+gye	ぎぇ
+gyo	ぎょ
+gwa	ぐぁ
+gwi	ぐぃ
+gwu	ぐぅ
+gwe	ぐぇ
+gwo	ぐぉ
+sa	さ
+si	し
+ci	し
+shi	し
+su	す
+se	せ
+ce	せ
+so	そ
+za	ざ
+zi	じ
+ji	じ
+zu	ず
+ze	ぜ
+zo	ぞ
+sya	しゃ
+sha	しゃ
+syi	しぃ
+syu	しゅ
+shu	しゅ
+sye	しぇ
+she	しぇ
+syo	しょ
+sho	しょ
+swa	すぁ
+swi	すぃ
+swu	すぅ
+swe	すぇ
+swo	すぉ
+zya	じゃ
+ja	じゃ
+jya	じゃ
+zyi	じぃ
+jyi	じぃ
+zyu	じゅ
+ju	じゅ
+jyu	じゅ
+zye	じぇ
+je	じぇ
+jye	じぇ
+zyo	じょ
+jo	じょ
+jyo	じょ
+ta	た
+ti	ち
+chi	ち
+tu	つ
+tsu	つ
+te	て
+to	と
+ltu	っ
+xtu	っ
+ltsu	っ
+xtsu	っ
+da	だ
+di	ぢ
+du	づ
+de	で
+do	ど
+tya	ちゃ
+cha	ちゃ
+cya	ちゃ
+tyi	ちぃ
+cyi	ちぃ
+tyu	ちゅ
+chu	ちゅ
+cyu	ちゅ
+tye	ちぇ
+che	ちぇ
+cye	ちぇ
+tyo	ちょ
+cho	ちょ
+cyo	ちょ
+tsa	つぁ
+tsi	つぃ
+tse	つぇ
+tso	つぉ
+tha	てゃ
+thi	てぃ
+thu	てゅ
+the	てぇ
+tho	てょ
+twa	とぁ
+twi	とぃ
+twu	とぅ
+twe	とぇ
+two	とぉ
+dya	ぢゃ
+dyi	ぢぃ
+dyu	ぢゅ
+dye	ぢぇ
+dyo	ぢょ
+dha	でゃ
+dhi	でぃ
+dhu	でゅ
+dhe	でぇ
+dho	でょ
+dwa	どぁ
+dwi	どぃ
+dwu	どぅ
+dwe	どぇ
+dwo	どぉ
+na	な
+ni	に
+nu	ぬ
+ne	ね
+no	の
+nya	にゃ
+nyi	にぃ
+nyu	にゅ
+nye	にぇ
+nyo	にょ
+ha	は
+hi	ひ
+hu	ふ
+fu	ふ
+he	へ
+ho	ほ
+ba	ば
+bi	び
+bu	ぶ
+be	べ
+bo	ぼ
+pa	ぱ
+pi	ぴ
+pu	ぷ
+pe	ぺ
+po	ぽ
+hya	ひゃ
+hyi	ひぃ
+hyu	ひゅ
+hye	ひぇ
+hyo	ひょ
+fya	ふゃ
+fyu	ふゅ
+fyo	ふょ
+fwa	ふぁ
+fa	ふぁ
+hwa	ふぁ
+fwi	ふぃ
+fi	ふぃ
+fyi	ふぃ
+hwi	ふぃ
+fwu	ふぅ
+fwe	ふぇ
+fe	ふぇ
+fye	ふぇ
+hwe	ふぇ
+fwo	ふぉ
+fo	ふぉ
+hwo	ふぉ
+hwyu	ふゅ
+bya	びゃ
+byi	びぃ
+byu	びゅ
+bye	びぇ
+byo	びょ
+pya	ぴゃ
+pyi	ぴぃ
+pyu	ぴゅ
+pye	ぴぇ
+pyo	ぴょ
+va	ヴぁ
+vi	ヴぃ
+vu	ヴ
+ve	ヴぇ
+vo	ヴぉ
+vya	ヴゃ
+vyi	ヴぃ
+vyu	ヴゅ
+vye	ヴぇ
+vyo	ヴょ
+va	う゛ぁ
+vi	う゛ぃ
+vu	う゛
+ve	う゛ぇ
+vo	う゛ぉ
+vya	う゛ゃ
+vyi	う゛ぃ
+vyu	う゛ゅ
+vye	う゛ぇ
+vyo	う゛ょ
+va	ゔぁ
+vi	ゔぃ
+vu	ゔ
+ve	ゔぇ
+vo	ゔぉ
+vya	ゔゃ
+vyi	ゔぃ
+vyu	ゔゅ
+vye	ゔぇ
+vyo	ゔょ
+ma	ま
+mi	み
+mu	む
+me	め
+mo	も
+mya	みゃ
+myi	みぃ
+myu	みゅ
+mye	みぇ
+myo	みょ
+ya	や
+yu	ゆ
+yo	よ
+lya	ゃ
+xya	ゃ
+lyu	ゅ
+xyu	ゅ
+lyo	ょ
+xyo	ょ
+ra	ら
+ri	り
+ru	る
+re	れ
+ro	ろ
+rya	りゃ
+ryi	りぃ
+ryu	りゅ
+rye	りぇ
+ryo	りょ
+wa	わ
+wi	ゐ
+whi	ゐ
+wyi	ゐ
+we	ゑ
+whe	ゑ
+wye	ゑ
+wo	を
+nn	ん
+n'	ん
+xn	ん
+lwa	ゎ
+xwa	ゎ
+qq	っ	q
+vv	っ	v
+ll	っ	l
+xx	っ	x
+kk	っ	k
+gg	っ	g
+ss	っ	s
+zz	っ	z
+jj	っ	j
+tt	っ	t
+dd	っ	d
+hh	っ	h
+ff	っ	f
+bb	っ	b
+pp	っ	p
+mm	っ	m
+yy	っ	y
+rr	っ	r
+ww	っ	w
+cc	っ	c
+nb	ん	b
+nc	ん	c
+nd	ん	d
+nf	ん	f
+ng	ん	g
+nh	ん	h
+nj	ん	j
+nk	ん	k
+nl	ん	l
+nm	ん	m
+np	ん	p
+nq	ん	q
+nr	ん	r
+ns	ん	s
+nt	ん	t
+nv	ん	v
+nw	ん	w
+nx	ん	x
+nz	ん	z
+n1	ん	1
+n2	ん	2
+n3	ん	3
+n4	ん	4
+n5	ん	5
+n6	ん	6
+n7	ん	7
+n8	ん	8
+n9	ん	9
+n0	ん	0
+n-	ん	-
+n^	ん	^
+n!	ん	!
+n"	ん	"
+n#	ん	#
+n$	ん	$
+n%	ん	%
+n&	ん	&
+n(	ん	(
+n)	ん	)
+n=	ん	=
+n~	ん	~
+n|	ん	|
+n@	ん	@
+n[	ん	[
+n`	ん	`
+n{	ん	{
+n;	ん	;
+n:	ん	:
+n]	ん	]
+n+	ん	+
+n*	ん	*
+n}	ん	}
+n,	ん	,
+n.	ん	.
+n/	ん	/
+n\	ん	\
+n<	ん	<
+n>	ん	>
+n?	ん	?
+n_	ん	_
+n@	ん	゛
+n[	ん	゜
+a	a
+b	b
+c	c
+d	d
+e	e
+f	f
+g	g
+h	h
+i	i
+j	j
+k	k
+l	l
+m	m
+n	n
+o	o
+p	p
+q	q
+r	r
+s	s
+t	t
+u	u
+v	v
+w	w
+x	x
+y	y
+z	z
+A	A
+B	B
+C	C
+D	D
+E	E
+F	F
+G	G
+H	H
+I	I
+J	J
+K	K
+L	L
+M	M
+N	N
+O	O
+P	P
+Q	Q
+R	R
+S	S
+T	T
+U	U
+V	V
+W	W
+X	X
+Y	Y
+Z	Z
+1	1
+2	2
+3	3
+4	4
+5	5
+6	6
+7	7
+8	8
+9	9
+0	0
+-	-
+^	^
+!	!
+"	"
+#	#
+$	$
+%	%
+&	&
+'	'
+(	(
+)	)
+=	=
+~	~
+|	|
+@	@
+[	[
+`	`
+{	{
+;	;
+:	:
+]	]
++	+
+*	*
+}	}
+,	,
+.	.
+/	/
+\	\
+<	<
+>	>
+?	?
+_	_
+A	Ａ
+B	Ｂ
+C	Ｃ
+D	Ｄ
+E	Ｅ
+F	Ｆ
+G	Ｇ
+H	Ｈ
+I	Ｉ
+J	Ｊ
+K	Ｋ
+L	Ｌ
+M	Ｍ
+N	Ｎ
+O	Ｏ
+P	Ｐ
+Q	Ｑ
+R	Ｒ
+S	Ｓ
+T	Ｔ
+U	Ｕ
+V	Ｖ
+W	Ｗ
+X	Ｘ
+Y	Ｙ
+Z	Ｚ
+a	ａ
+b	ｂ
+c	ｃ
+d	ｄ
+e	ｅ
+f	ｆ
+g	ｇ
+h	ｈ
+i	ｉ
+j	ｊ
+k	ｋ
+l	ｌ
+m	ｍ
+n	ｎ
+o	ｏ
+p	ｐ
+q	ｑ
+r	ｒ
+s	ｓ
+t	ｔ
+u	ｕ
+v	ｖ
+w	ｗ
+x	ｘ
+y	ｙ
+z	ｚ
+1	１
+2	２
+3	３
+4	４
+5	５
+6	６
+7	７
+8	８
+9	９
+0	０
+^	＾
+!	！
+"	”
+#	＃
+$	＄
+%	％
+&	＆
+'	’
+(	（
+)	）
+=	＝
+~	～
+~	〜
+|	｜
+@	＠
+[	「
+`	‘
+{	｛
+;	；
+:	：
+]	」
++	＋
+*	＊
+}	｝
+,	、
+,	，
+.	。
+.	．
+/	・
+\	￥
+\	＼
+<	＜
+>	＞
+?	？
+_	＿
+///	…
+-	－
+-	―
+-	ー
+[	［
+]	］
+,	，
+.	．
+/	／
+@	゛
+[	゜
+[	『
+]	』
+*	☆
+*	※
+*	×
+z/	・
+z.	…
+z,	‥
+zh	←
+zj	↓
+zk	↑
+zl	→
+z-	〜
+z[	『
+z]	』
+and	&
+and	＆
+A	Α
+B	Β
+G	Γ
+D	Δ
+E	Ε
+Z	Ζ
+E	Η
+H	Η
+TH	Θ
+U	Θ
+I	Ι
+K	Κ
+L	Λ
+M	Μ
+N	Ν
+KS	Ξ
+X	Ξ
+J	Ξ
+O	Ο
+P	Π
+R	Ρ
+S	Σ
+T	Τ
+U	Υ
+Y	Υ
+PH	Φ
+F	Φ
+KH	Χ
+CH	Χ
+X	Χ
+PS	Ψ
+C	Ψ
+O	Ω
+V	Ω
+a	α
+b	β
+g	γ
+d	δ
+e	ε
+z	ζ
+e	η
+h	η
+th	θ
+u	θ
+i	ι
+k	κ
+l	λ
+m	μ
+n	ν
+ks	ξ
+x	ξ
+j	ξ
+o	ο
+p	π
+r	ρ
+s	σ
+t	τ
+u	υ
+y	υ
+ph	φ
+f	φ
+kh	χ
+ch	χ
+x	χ
+ps	ψ
+c	ψ
+o	ω
+v	ω

@@ -26,6 +26,14 @@ var Screen = function (canvas, youTyping) {
 			screen.debugText.fillColor = 'white';
 		}
 
+		screen.bufferText = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.bufferTextPosition),
+			content: '',
+			fillColor: 'white',
+			justification: 'left',
+			fontSize: 24
+		});
+
 		setInterval(function () {
 			screen.debugTexts[0].content = 'FPS: ' + FPS;
 			FPS = 0;
@@ -100,6 +108,7 @@ var Screen = function (canvas, youTyping) {
 			screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
 			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
+			screen.bufferText.content = youTyping.inputBuffer;
 			FPS++;
 		};
 
@@ -107,6 +116,8 @@ var Screen = function (canvas, youTyping) {
 
 		var triggerHitNote = function (event) {
 			if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
+				// suspend default operation on browser by keydown
+				event.preventDefault();
 				youTyping.hit(event.key);
 			}
 		};
@@ -155,7 +166,28 @@ var Screen = function (canvas, youTyping) {
 				// lyric
 				items[index].addChild(new paper.PointText({
 					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-					content: item.text,
+					content: item.remainingText,
+					fillColor: 'white',
+					justification: 'center',
+					fontSize: 20,
+					fontFamily: 'sans-serif'
+				}));
+				// custom property
+				items[index].state = item.state;
+			} else if (item.state === youTyping.noteState.HITTING || item.state === youTyping.noteState.HITTINGFAILED) {
+				// note
+				items[index].addChild(new paper.Path.Circle({
+					center: [position, setting.scoreYpos * setting.height],
+					radius: setting.noteSize,
+					strokeWidth: 1,
+					strokeColor: '#aaa',
+					fillColor: 'red',
+					opacity: 0.5
+				}));
+				// lyric
+				items[index].addChild(new paper.PointText({
+					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+					content: item.remainingText,
 					fillColor: 'white',
 					justification: 'center',
 					fontSize: 20,

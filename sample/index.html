@@ -9,7 +9,10 @@
     <script>
         $(document).ready(function () {
             // logTrace('Document is Ready.');
-            youTyping = new YouTyping($('#youtyping'), $.deparam(location.search.slice(1)));
+			var settings = $.deparam(location.search.slice(1));
+			settings.videoId = 'fQ_m5VLhqNg';
+			settings.tableFile = '../convert/romaji.xml';
+            youTyping = new YouTyping($('#youtyping'), settings);
         });
     </script>
 	<link rel="stylesheet" type="text/css" href="style.css">
