@@ -5,7 +5,8 @@ var YouTyping = function (element, settings) {
 		WAITING: 0,
 		HITTING: 1,
 		CLEARED: 2,
-		FAILED: 3
+		HITTINGFAILED: 3,
+		FAILED: 4
 	};
 
 	/******************* Internal functions *******************/
@@ -61,42 +62,42 @@ var YouTyping = function (element, settings) {
 
 	var onPlayerStateChange = function (event) {
 		switch (event.data) {
-			case YT.PlayerState.ENDED:
-				logTrace('Player Ended.');
-				break;
-			case YT.PlayerState.PLAYING:
-				logTrace('Player Started.');
-				break;
-			case YT.PlayerState.PAUSED:
-				logTrace('Player Paused.');
-				break;
-			case YT.PlayerState.BUFFERING:
-				logTrace('Player Buffering.');
-				break;
-			case YT.PlayerState.CUED:
-				logTrace('Player Cued.');
-				break;
+		case YT.PlayerState.ENDED:
+			logTrace('Player Ended.');
+			break;
+		case YT.PlayerState.PLAYING:
+			logTrace('Player Started.');
+			break;
+		case YT.PlayerState.PAUSED:
+			logTrace('Player Paused.');
+			break;
+		case YT.PlayerState.BUFFERING:
+			logTrace('Player Buffering.');
+			break;
+		case YT.PlayerState.CUED:
+			logTrace('Player Cued.');
+			break;
 		}
 	};
 
 	var onPlayerError = function (event) {
 		// from https://developers.google.com/youtube/iframe_api_reference
 		switch (event.data) {
-			case 2:
-				logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
-				break;
-			case 5:
-				logTrace('ERROR: The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.');
-				break;
-			case 100:
-				logTrace('ERROR: The video requested was not found. This error occurs when a video has been removed (for any reason) or has been marked as private.');
-				break;
-			case 101:
-				logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
-				break;
-			case 150:
-				logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
-				break;
+		case 2:
+			logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
+			break;
+		case 5:
+			logTrace('ERROR: The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.');
+			break;
+		case 100:
+			logTrace('ERROR: The video requested was not found. This error occurs when a video has been removed (for any reason) or has been marked as private.');
+			break;
+		case 101:
+			logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
+			break;
+		case 150:
+			logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
+			break;
 		}
 		setupPlayerDeferred.reject();
 	};
@@ -206,22 +207,28 @@ var YouTyping = function (element, settings) {
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
+		bufferTextPosition: [0.2, 0.8], // ratio in screen
 		judges: [ // millisecond
-			{
-				name: 'perfect',
-				from: -50,
-				to: 50
-			},
-			{
-				name: 'great',
-				from: -70,
-				to: 70
-			},
-			{
-				name: 'good',
-				from: -100,
-				to: 100
-			}
+		{
+			name: 'perfect',
+			from: -50,
+			to: 50
+		},
+		{
+			name: 'great',
+			from: -70,
+			to: 70
+		},
+		{
+			name: 'good',
+			from: -100,
+			to: 100
+		},
+		{
+			name: 'bad',
+			from: -Infinity,
+			to: 150
+		}
 		],
 		tableFile: 'convert/romaji.xml'
 	};
@@ -332,6 +339,8 @@ var YouTyping = function (element, settings) {
 				}
 
 				// TODO: when rule has next key
+
+				return true;
 			});
 
 			if (matchingRules.length === 0) {
@@ -370,6 +379,9 @@ var YouTyping = function (element, settings) {
 		var hitNote = function (newNoteInfo) {
 			var note = youTyping.score[newNoteInfo.noteIndex];
 
+			// update current note index
+			youTyping.currentNoteIndex = newNoteInfo.noteIndex;
+
 			if (newNoteInfo.remainingText === '') {
 				note.state = youTyping.noteState.CLEARED;
 				youTyping.inputBuffer = '';
@@ -384,6 +396,7 @@ var YouTyping = function (element, settings) {
 			return;
 		}
 
+		// if currently hitting some note, try to hit it to complete
 		if (youTyping.currentNoteIndex !== null) {
 			var newNoteInfo = preHitNote(youTyping.currentNoteIndex);
 
@@ -395,12 +408,18 @@ var YouTyping = function (element, settings) {
 
 		// search for nearest note that matches currently passed key rule
 		var nearestNote = null;
+		var nearestNewNote = null;
 		var nearestDistance = Infinity;
 		youTyping.score.forEach(function (item, index) {
 			if (item.type === '+') {
 				if (item.state === youTyping.noteState.WAITING && Math.abs(item.time - time) < Math.abs(nearestDistance)) {
-					nearestNote = item;
-					nearestDistance = item.time - time;
+					var newNoteInfo = preHitNote(index);
+
+					if (newNoteInfo) {
+						nearestNote = item;
+						nearestNewNote = newNoteInfo;
+						nearestDistance = item.time - time;
+					}
 				}
 			}
 		});
@@ -408,6 +427,7 @@ var YouTyping = function (element, settings) {
 		var distance = nearestDistance;
 
 		if (nearestNote !== null) {
+			// timing judgement
 			var hitJudge = null;
 
 			// TODO: Polyfill Array.prototype.some (IE<9)
@@ -420,9 +440,17 @@ var YouTyping = function (element, settings) {
 			});
 
 			if (hitJudge !== null) {
-				nearestNote.state = youTyping.noteState.CLEARED;
+				// if currently hitting other note now, it will be marked as HITTINGFAILED
+				if (youTyping.currentNoteIndex !== null) {
+					var previousNote = youTyping.score[youTyping.currentNoteIndex];
+					previousNote.state = youTyping.noteState.HITTINGFAILED;
+				}
+
+				hitNote(nearestNewNote);
+
 				console.log(distance, hitJudge);
 			}
+
 		}
 	};
 
@@ -444,10 +472,10 @@ var YouTyping = function (element, settings) {
 
 	// setup DOM
 	/*
-	 * div(this.DOM.wrap)
-	 * |-div#youtyping-player(this.DOM.player)
-	 * \-canvas#youtyping-screen(this.DOM.screen)
-	 */
+	* div(this.DOM.wrap)
+	* |-div#youtyping-player(this.DOM.player)
+	* \-canvas#youtyping-screen(this.DOM.screen)
+	*/
 	this.DOM = {
 		wrap: element.css({
 			width: this.settings.width + 'px',

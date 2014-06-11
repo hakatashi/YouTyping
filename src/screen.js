@@ -26,6 +26,14 @@ var Screen = function (canvas, youTyping) {
 			screen.debugText.fillColor = 'white';
 		}
 
+		screen.bufferText = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.bufferTextPosition),
+			content: '',
+			fillColor: 'white',
+			justification: 'left',
+			fontSize: 24
+		});
+
 		setInterval(function () {
 			screen.debugTexts[0].content = 'FPS: ' + FPS;
 			FPS = 0;
@@ -100,6 +108,7 @@ var Screen = function (canvas, youTyping) {
 			screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
 			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
+			screen.bufferText.content = youTyping.inputBuffer;
 			FPS++;
 		};
 
@@ -157,7 +166,7 @@ var Screen = function (canvas, youTyping) {
 				// lyric
 				items[index].addChild(new paper.PointText({
 					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-					content: item.text,
+					content: item.remainingText,
 					fillColor: 'white',
 					justification: 'center',
 					fontSize: 20,
