@@ -360,11 +360,13 @@ var YouTyping = function (element, settings) {
 					}
 				});
 
+				newNoteInfo.appliedRule = minimumRule;
+
 				// if new input buffer equals selected rule, the rule is satisfied, and then
 				// rule.after are taken from remaining text.
 				// this can be done by just comparing their length.
 				if (newInputBuffer.length === minimumRule.before.length) {
-					newNoteInfo.remainingText = note.remainingText.substr(newInputBuffer.length);
+					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
 					newNoteInfo.inputBuffer = '';
 				} else {
 					newNoteInfo.remainingText = note.remainingText;
@@ -384,6 +386,7 @@ var YouTyping = function (element, settings) {
 
 			if (newNoteInfo.remainingText === '') {
 				note.state = youTyping.noteState.CLEARED;
+				note.remainingText = '';
 				youTyping.inputBuffer = '';
 			} else {
 				note.state = youTyping.noteState.HITTING;
@@ -412,7 +415,11 @@ var YouTyping = function (element, settings) {
 		var nearestDistance = Infinity;
 		youTyping.score.forEach(function (item, index) {
 			if (item.type === '+') {
-				if (item.state === youTyping.noteState.WAITING && Math.abs(item.time - time) < Math.abs(nearestDistance)) {
+				if (
+					index > youTyping.currentNoteIndex &&
+					item.state === youTyping.noteState.WAITING &&
+					Math.abs(item.time - time) < Math.abs(nearestDistance)
+				) {
 					var newNoteInfo = preHitNote(index);
 
 					if (newNoteInfo) {
