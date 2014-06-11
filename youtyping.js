@@ -1,4 +1,4 @@
-/* youtyping.js 06-08-2014 */
+/* youtyping.js 06-12-2014 */
 
 var YouTyping = (function(){
 var YouTyping = function (element, settings) {
@@ -8,7 +8,8 @@ var YouTyping = function (element, settings) {
 		WAITING: 0,
 		HITTING: 1,
 		CLEARED: 2,
-		FAILED: 3
+		HITTINGFAILED: 3,
+		FAILED: 4
 	};
 
 	/******************* Internal functions *******************/
@@ -50,9 +51,9 @@ var YouTyping = function (element, settings) {
 				wmode: 'opaque' // thanks http://stackoverflow.com/questions/6826386/
 			},
 			events: {
-				'onReady': onPlayerReady,
-				'onStateChange': onPlayerStateChange,
-				'onError': onPlayerError
+				onReady: onPlayerReady,
+				onStateChange: onPlayerStateChange,
+				onError: onPlayerError
 			}
 		});
 	};
@@ -64,55 +65,53 @@ var YouTyping = function (element, settings) {
 
 	var onPlayerStateChange = function (event) {
 		switch (event.data) {
-			case YT.PlayerState.ENDED:
-				logTrace('Player Ended.');
-				break;
-			case YT.PlayerState.PLAYING:
-				logTrace('Player Started.');
-				break;
-			case YT.PlayerState.PAUSED:
-				logTrace('Player Paused.');
-				break;
-			case YT.PlayerState.BUFFERING:
-				logTrace('Player Buffering.');
-				break;
-			case YT.PlayerState.CUED:
-				logTrace('Player Cued.');
-				break;
+		case YT.PlayerState.ENDED:
+			logTrace('Player Ended.');
+			break;
+		case YT.PlayerState.PLAYING:
+			logTrace('Player Started.');
+			break;
+		case YT.PlayerState.PAUSED:
+			logTrace('Player Paused.');
+			break;
+		case YT.PlayerState.BUFFERING:
+			logTrace('Player Buffering.');
+			break;
+		case YT.PlayerState.CUED:
+			logTrace('Player Cued.');
+			break;
 		}
 	};
 
 	var onPlayerError = function (event) {
 		// from https://developers.google.com/youtube/iframe_api_reference
 		switch (event.data) {
-			case 2:
-				logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
-				break;
-			case 5:
-				logTrace('ERROR: The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.');
-				break;
-			case 100:
-				logTrace('ERROR: The video requested was not found. This error occurs when a video has been removed (for any reason) or has been marked as private.');
-				break;
-			case 101:
-				logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
-				break;
-			case 150:
-				logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
-				break;
+		case 2:
+			logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
+			break;
+		case 5:
+			logTrace('ERROR: The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.');
+			break;
+		case 100:
+			logTrace('ERROR: The video requested was not found. This error occurs when a video has been removed (for any reason) or has been marked as private.');
+			break;
+		case 101:
+			logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
+			break;
+		case 150:
+			logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
+			break;
 		}
 		setupPlayerDeferred.reject();
 	};
 
 	var loadXMLDeferred;
 	var loadScoreXML = function () {
-		var settings = youTyping.settings;
-
 		// Initialize deferred
 		loadXMLDeferred = $.Deferred();
 
 		$.ajax({
-			url: settings.score,
+			url: youTyping.settings.score,
 			type: 'get',
 			datatype: 'xml',
 			timeout: 1000,
@@ -130,7 +129,7 @@ var YouTyping = function (element, settings) {
 					};
 
 					if ($(this).attr('text')) {
-						tempItem.text = $(this).attr('text');
+						tempItem.text = tempItem.remainingText = $(this).attr('text');
 					}
 
 					if (tempItem.type === '+') {
@@ -149,6 +148,40 @@ var YouTyping = function (element, settings) {
 		});
 
 		return loadXMLDeferred.promise();
+	};
+
+	var loadTableDeferred;
+	var loadTable = function () {
+		// initialize deferred
+		loadTableDeferred = $.Deferred();
+
+		$.ajax({
+			url: youTyping.settings.tableFile,
+			type: 'get',
+			datatype: 'xml',
+			timeout: 1000,
+			success: function (data, textStatus, jqXHR) {
+				youTyping.table = [];
+
+				$(data).find('table').find('rule').each(function () {
+					youTyping.table.push({
+						before: $(this).attr('before'),
+						after: $(this).attr('after'),
+						next: $(this).attr('next')
+					});
+				});
+
+				logTrace('Loaded Table File.');
+
+				loadTableDeferred.resolve();
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				logTrace('ERROR: Table File Loading Failed: ' + errorThrown);
+				loadTableDeferred.reject();
+			}
+		});
+
+		return loadTableDeferred.promise();
 	};
 
 
@@ -177,20 +210,30 @@ var YouTyping = function (element, settings) {
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
-		judges: {
-			perfect: {
-				from: -30,
-				to: 30
-			},
-			great: {
-				from: -50,
-				to: 50
-			},
-			good: {
-				from: -70,
-				to: 70
-			}
+		bufferTextPosition: [0.2, 0.8], // ratio in screen
+		judges: [ // millisecond
+		{
+			name: 'perfect',
+			from: -50,
+			to: 50
+		},
+		{
+			name: 'great',
+			from: -70,
+			to: 70
+		},
+		{
+			name: 'good',
+			from: -100,
+			to: 100
+		},
+		{
+			name: 'bad',
+			from: -Infinity,
+			to: 150
 		}
+		],
+		tableFile: 'convert/romaji.xml'
 	};
 
 	// ZeroTime calculation
@@ -207,6 +250,12 @@ var YouTyping = function (element, settings) {
 			return window.performance.now();
 		}
 	});
+
+	// key-input conversion table
+	this.table = [];
+
+	this.currentNoteIndex = null;
+	this.inputBuffer = '';
 
 
 	/******************* Methods *******************/
@@ -274,18 +323,119 @@ var YouTyping = function (element, settings) {
 	// TODO: make HitEvent interface
 	this.hit = function (key, time) {
 		if (!time) {
-			time = youTyping.now;
+			time = youTyping.now - youTyping.zeroTime;
 		}
-		var absoluteTime = time - youTyping.zeroTime;
+
+		// check hit-ability of note by passed key.
+		// return false when un-hit-able, and info about new note when hit-able
+		var preHitNote = function (noteIndex) {
+			var note = youTyping.score[noteIndex];
+			var newInputBuffer = '';
+			if (noteIndex === youTyping.currentNoteIndex) {
+				newInputBuffer = youTyping.inputBuffer + key;
+			} else { // discard input buffer if not hitting current note
+				newInputBuffer = key;
+			}
+
+			// TODO: Polyfill Array.prototype.filter (IE<9)
+			var matchingRules = youTyping.table.filter(function (rule) {
+				if (!startsWith(rule.before, newInputBuffer)) {
+					return false;
+				}
+				if (!startsWith(note.remainingText, rule.after)) {
+					return false;
+				}
+
+				// TODO: when rule has next key
+
+				return true;
+			});
+
+			if (matchingRules.length === 0) {
+				return false;
+			} else {
+				var newNoteInfo = {
+					noteIndex: noteIndex
+				};
+
+				// take the rule of minimum length (for some comforts)
+				var minimumLength = Infinity;
+				var minimumRule = null;
+				matchingRules.forEach(function (rule) {
+					if (rule.before.length < minimumLength) {
+						minimumLength = rule.before.length;
+						minimumRule = rule;
+					}
+				});
+
+				newNoteInfo.appliedRule = minimumRule;
+
+				// if new input buffer equals selected rule, the rule is satisfied, and then
+				// rule.after are taken from remaining text.
+				// this can be done by just comparing their length.
+				if (newInputBuffer.length === minimumRule.before.length) {
+					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
+					newNoteInfo.inputBuffer = '';
+				} else {
+					newNoteInfo.remainingText = note.remainingText;
+					newNoteInfo.inputBuffer = newInputBuffer;
+				}
+
+				return newNoteInfo;
+			}
+		};
+
+		// hit note by passed key
+		var hitNote = function (newNoteInfo) {
+			var note = youTyping.score[newNoteInfo.noteIndex];
+
+			// update current note index
+			youTyping.currentNoteIndex = newNoteInfo.noteIndex;
+
+			if (newNoteInfo.remainingText === '') {
+				note.state = youTyping.noteState.CLEARED;
+				note.remainingText = '';
+				youTyping.inputBuffer = '';
+				youTyping.currentNoteIndex = null;
+			} else {
+				note.state = youTyping.noteState.HITTING;
+				note.remainingText = newNoteInfo.remainingText;
+				youTyping.inputBuffer = newNoteInfo.inputBuffer;
+			}
+		};
+
+		if (key.length !== 1) {
+			return;
+		}
+
+		// if currently hitting some note, try to hit it to complete
+		if (youTyping.currentNoteIndex !== null) {
+			var newNoteInfo = preHitNote(youTyping.currentNoteIndex);
+
+			if (newNoteInfo) { // if current note is hit-able
+				hitNote(newNoteInfo);
+				return;
+			}
+		}
 
 		// search for nearest note that matches currently passed key rule
 		var nearestNote = null;
+		var nearestNewNote = null;
 		var nearestDistance = Infinity;
 		youTyping.score.forEach(function (item, index) {
 			if (item.type === '+') {
-				if (item.state === youTyping.noteState.WAITING && Math.abs(absoluteTime - item.time) < Math.abs(nearestDistance)) {
-					nearestNote = item;
-					nearestDistance = item.time - absoluteTime;
+				if (
+					index > youTyping.currentNoteIndex && // Luckily `positive number` > null is always true :)
+					item.state === youTyping.noteState.WAITING &&
+					Math.abs(item.time - time) < Math.abs(nearestDistance)
+				) {
+					var newNoteInfo = preHitNote(index);
+
+					if (newNoteInfo) {
+						nearestNote = item;
+						nearestNewNote = newNoteInfo;
+						nearestDistance = item.time - time;
+					}
 				}
 			}
 		});
@@ -293,20 +443,27 @@ var YouTyping = function (element, settings) {
 		var distance = nearestDistance;
 
 		if (nearestNote !== null) {
+			// timing judgement
 			var hitJudge = null;
 
-			for (var judgeName in youTyping.settings.judges) {
-				if (youTyping.settings.judges.hasOwnProperty(judgeName)) {
-					var judge = youTyping.settings.judges[judgeName];
-					if (judge.from <= distance && distance <= judge.to) {
-						hitJudge = judgeName;
-						break;
-					}
+			// TODO: Polyfill Array.prototype.some (IE<9)
+			youTyping.settings.judges.some(function (judge) {
+				if (judge.from <= distance && distance <= judge.to) {
+					hitJudge = judge.name;
+					return true;
 				}
-			}
+				return false;
+			});
 
 			if (hitJudge !== null) {
-				nearestNote.state = youTyping.noteState.CLEARED;
+				// if currently hitting other note now, it will be marked as HITTINGFAILED
+				if (youTyping.currentNoteIndex !== null) {
+					var previousNote = youTyping.score[youTyping.currentNoteIndex];
+					previousNote.state = youTyping.noteState.HITTINGFAILED;
+				}
+
+				hitNote(nearestNewNote);
+
 				console.log(distance, hitJudge);
 			}
 		}
@@ -330,10 +487,10 @@ var YouTyping = function (element, settings) {
 
 	// setup DOM
 	/*
-	 * div(this.DOM.wrap)
-	 * |-div#youtyping-player(this.DOM.player)
-	 * \-canvas#youtyping-screen(this.DOM.screen)
-	 */
+	* div(this.DOM.wrap)
+	* |-div#youtyping-player(this.DOM.player)
+	* \-canvas#youtyping-screen(this.DOM.screen)
+	*/
 	this.DOM = {
 		wrap: element.css({
 			width: this.settings.width + 'px',
@@ -376,6 +533,7 @@ var YouTyping = function (element, settings) {
 			loadScoreXML(),
 			$.Deferred(this.screen.setup).promise()
 		).done(this.screen.load),
+		loadTable(),
 		setupPlayer()
 	).done(this.screen.ready)
 	.fail(function () {
@@ -411,6 +569,14 @@ var Screen = function (canvas, youTyping) {
 			screen.debugText.justification = 'left';
 			screen.debugText.fillColor = 'white';
 		}
+
+		screen.bufferText = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.bufferTextPosition),
+			content: '',
+			fillColor: 'white',
+			justification: 'left',
+			fontSize: 24
+		});
 
 		setInterval(function () {
 			screen.debugTexts[0].content = 'FPS: ' + FPS;
@@ -486,6 +652,7 @@ var Screen = function (canvas, youTyping) {
 			screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
 			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
+			screen.bufferText.content = youTyping.inputBuffer;
 			FPS++;
 		};
 
@@ -493,6 +660,8 @@ var Screen = function (canvas, youTyping) {
 
 		var triggerHitNote = function (event) {
 			if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
+				// suspend default operation on browser by keydown
+				event.preventDefault();
 				youTyping.hit(event.key);
 			}
 		};
@@ -541,7 +710,28 @@ var Screen = function (canvas, youTyping) {
 				// lyric
 				items[index].addChild(new paper.PointText({
 					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-					content: item.text,
+					content: item.remainingText,
+					fillColor: 'white',
+					justification: 'center',
+					fontSize: 20,
+					fontFamily: 'sans-serif'
+				}));
+				// custom property
+				items[index].state = item.state;
+			} else if (item.state === youTyping.noteState.HITTING || item.state === youTyping.noteState.HITTINGFAILED) {
+				// note
+				items[index].addChild(new paper.Path.Circle({
+					center: [position, setting.scoreYpos * setting.height],
+					radius: setting.noteSize,
+					strokeWidth: 1,
+					strokeColor: '#aaa',
+					fillColor: 'red',
+					opacity: 0.5
+				}));
+				// lyric
+				items[index].addChild(new paper.PointText({
+					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+					content: item.remainingText,
 					fillColor: 'white',
 					justification: 'center',
 					fontSize: 20,
@@ -618,6 +808,40 @@ if (!window.performance.now){
 		return Date.now() - offset;
 	};
 }
+
+// check if a string starts with specific prefix
+var startsWith = function (string, prefix) {
+	if (string.length < prefix.length) {
+		return false;
+	}
+	return string.substring(0, prefix.length) === prefix;
+};
+
+// equivalent to jQuery.extend(true)
+// http://youmightnotneedjquery.com/
+var deepExtend = function (out) {
+	out = out || {};
+
+	for (var i = 1; i < arguments.length; i++) {
+		var obj = arguments[i];
+
+		if (!obj) {
+			continue;
+		}
+
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				if (typeof obj[key] === 'object') {
+					deepExtend(out[key], obj[key]);
+				} else {
+					out[key] = obj[key];
+				}
+			}
+		}
+	}
+
+	return out;
+};
 
 
 return YouTyping;
