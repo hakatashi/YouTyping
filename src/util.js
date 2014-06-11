@@ -35,8 +35,34 @@ if (!window.performance.now){
 
 // check if a string starts with specific prefix
 var startsWith = function (string, prefix) {
-    if (string.length < prefix.length) {
-        return false;
-    }
+	if (string.length < prefix.length) {
+		return false;
+	}
 	return string.substring(0, prefix.length) === prefix;
+};
+
+// equivalent to jQuery.extend(true)
+// http://youmightnotneedjquery.com/
+var deepExtend = function (out) {
+	out = out || {};
+
+	for (var i = 1; i < arguments.length; i++) {
+		var obj = arguments[i];
+
+		if (!obj) {
+			continue;
+		}
+
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				if (typeof obj[key] === 'object') {
+					deepExtend(out[key], obj[key]);
+				} else {
+					out[key] = obj[key];
+				}
+			}
+		}
+	}
+
+	return out;
 };

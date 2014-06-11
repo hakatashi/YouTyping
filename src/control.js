@@ -316,21 +316,29 @@ var YouTyping = function (element, settings) {
 			time = youTyping.now - youTyping.zeroTime;
 		}
 
-		// hit real one note by specific key.
-		var hitNote = function (noteIndex, key) {
+		// check hit-ability of note by specific key.
+		// return false when un-hit-able, and info about new note when hit-able
+		var preHitNote = function (noteIndex) {
 			var note = youTyping.score[noteIndex];
 			var newInputBuffer = youTyping.inputBuffer + key;
 
 			// TODO: Polyfill Array.prototype.filter (IE<9)
 			var matchingRules = youTyping.table.filter(function (rule) {
-				return startsWith(rule.before, newInputBuffer);
-			}).filter(function (rule) {
-				return startsWith(note.remainingText, rule.after);
+				if (!startsWith(rule.before, newInputBuffer)) {
+					return false;
+				}
+				if (!startsWith(note.remainingText, rule.after)) {
+					return false;
+				}
+
+				// TODO: when rule has next key
 			});
 
 			if (matchingRules.length === 0) {
 				return false;
 			} else {
+				var newNoteInfo = {};
+
 				// take the rule of minimum length (for some comforts)
 				var minimumLength = Infinity;
 				var minimumRule = null;
@@ -345,8 +353,14 @@ var YouTyping = function (element, settings) {
 				// rule.after are taken from remaining text.
 				// this can be done by just comparing their length.
 				if (newInputBuffer.length === minimumRule.before.length) {
-					youTyping.inputBuffer = '';
+					newNoteInfo.remainingText = note.remainingText.substr(newInputBuffer.length);
+					newNoteInfo.inputBuffer = '';
+				} else {
+					newNoteInfo.remainingText = note.remainingText;
+					newNoteInfo.inputBuffer = youTyping.inputBuffer + key;
 				}
+
+				return newNoteInfo;
 			}
 		};
 
