@@ -124,82 +124,6 @@ var Screen = function (canvas, youTyping) {
 		paper.tool.onKeyDown = triggerHitNote;
 	};
 
-	// not good three arguments
-	var createItem = function (item, index, position) {
-		var items = screen.items;
-		var setting = youTyping.settings;
-
-		if (items[index]) {
-			items[index].remove();
-		}
-
-		items[index] = new paper.Group();
-
-		// long line which devides score to measures
-		if (item.type === '=') {
-			items[index].addChild(new paper.Path.Line({
-				from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
-				to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
-				strokeColor: 'white',
-				strokeWidth: 2
-			}));
-		}
-		// small line
-		if (item.type === '-') {
-			items[index].addChild(new paper.Path.Line({
-				from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
-				to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
-				strokeColor: 'white',
-				strokeWidth: 1
-			}));
-		}
-		if (item.type === '+') {
-			if (item.state === youTyping.noteState.WAITING) {
-				// note
-				items[index].addChild(new paper.Path.Circle({
-					center: [position, setting.scoreYpos * setting.height],
-					radius: setting.noteSize,
-					strokeWidth: 1,
-					strokeColor: '#aaa',
-					fillColor: 'red'
-				}));
-				// lyric
-				items[index].addChild(new paper.PointText({
-					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-					content: item.remainingText,
-					fillColor: 'white',
-					justification: 'center',
-					fontSize: 20,
-					fontFamily: 'sans-serif'
-				}));
-				// custom property
-				items[index].state = item.state;
-			} else if (item.state === youTyping.noteState.HITTING || item.state === youTyping.noteState.HITTINGFAILED) {
-				// note
-				items[index].addChild(new paper.Path.Circle({
-					center: [position, setting.scoreYpos * setting.height],
-					radius: setting.noteSize,
-					strokeWidth: 1,
-					strokeColor: '#aaa',
-					fillColor: 'red',
-					opacity: 0.5
-				}));
-				// lyric
-				items[index].addChild(new paper.PointText({
-					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-					content: item.remainingText,
-					fillColor: 'white',
-					justification: 'center',
-					fontSize: 20,
-					fontFamily: 'sans-serif'
-				}));
-				// custom property
-				items[index].state = item.state;
-			} else if (item.state === youTyping.noteState.CLEARED) {
-			}
-		}
-	};
-
 	// layout notes and lines fitting to current time
 	this.update = function () {
 		var setting = youTyping.settings;
@@ -209,20 +133,98 @@ var Screen = function (canvas, youTyping) {
 		var runTime = now - youTyping.zeroTime;
 
 		youTyping.score.forEach(function (item, index) {
-			var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
+			// X position of the item
+			var position = (item.time - runTime) * setting.speed + setting.hitPosition;
+
+			// create item in position
+			var createItem = function () {
+				var items = screen.items;
+				var setting = youTyping.settings;
+
+				if (items[index]) {
+					items[index].remove();
+				}
+
+				items[index] = new paper.Group();
+
+				// long line which devides score to measures
+				if (item.type === '=') {
+					items[index].addChild(new paper.Path.Line({
+						from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
+						to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
+						strokeColor: 'white',
+						strokeWidth: 2
+					}));
+				}
+				// small line
+				if (item.type === '-') {
+					items[index].addChild(new paper.Path.Line({
+						from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
+						to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
+						strokeColor: 'white',
+						strokeWidth: 1
+					}));
+				}
+				if (item.type === '+') {
+					if (item.state === youTyping.noteState.WAITING) {
+						// note
+						items[index].addChild(new paper.Path.Circle({
+							center: [position, setting.scoreYpos * setting.height],
+							radius: setting.noteSize,
+							strokeWidth: 1,
+							strokeColor: '#aaa',
+							fillColor: 'red'
+						}));
+						// lyric
+						items[index].addChild(new paper.PointText({
+							position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+							content: item.remainingText,
+							fillColor: 'white',
+							justification: 'center',
+							fontSize: 20,
+							fontFamily: 'sans-serif'
+						}));
+						// custom property
+						items[index].state = item.state;
+					} else if (item.state === youTyping.noteState.HITTING || item.state === youTyping.noteState.HITTINGFAILED) {
+						// note
+						items[index].addChild(new paper.Path.Circle({
+							center: [position, setting.scoreYpos * setting.height],
+							radius: setting.noteSize,
+							strokeWidth: 1,
+							strokeColor: '#aaa',
+							fillColor: 'red',
+							opacity: 0.5
+						}));
+						// lyric
+						items[index].addChild(new paper.PointText({
+							position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+							content: item.remainingText,
+							fillColor: 'white',
+							justification: 'center',
+							fontSize: 20,
+							fontFamily: 'sans-serif'
+						}));
+						// custom property
+						items[index].state = item.state;
+					} else if (item.state === youTyping.noteState.CLEARED) {
+					}
+				}
+			};
+
 			if (index in items) { // if index-th item exists in screen
 				if (item.emergeTime > runTime || item.vanishTime < runTime) {
 					items[index].remove();
 					delete items[index];
 				} else if (item.type === '+' && item.state !== items[index].state) {
 					// if state of note has changed, this recreates the note
-					createItem(item, index, Xpos);
+					createItem();
 				} else {
-					items[index].position.x = Xpos;
+					items[index].position.x = position;
 				}
 			} else { // if index-th item doesn't exist in screen
 				if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
-					createItem(item, index, Xpos);
+					createItem();
 				}
 			}
 		});
