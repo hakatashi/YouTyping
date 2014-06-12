@@ -48,7 +48,6 @@ module.exports = function (grunt) {
 					devel: true,
 					globals: {
 						// YouTube Iframe Player API
-						onYouTubeIframeAPIReady: true,
 						YT: false,
 						// paper.js
 						paper: false

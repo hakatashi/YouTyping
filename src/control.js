@@ -25,7 +25,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	// callback function used by YouTube IFrame Player API. must be global
-	onYouTubeIframeAPIReady = function () {
+	window.onYouTubeIframeAPIReady = function () {
 		var settings = youTyping.settings;
 
 		logTrace('Player API is Ready.');
