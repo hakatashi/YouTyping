@@ -476,7 +476,7 @@ var YouTyping = function (element, settings) {
 				this.settings[param] = settings[param];
 			} else if (typeof this.settings[param] === 'number') {
 				this.settings[param] = parseInt(settings[param], 10);
-			} else {
+			} else if (typeof this.settings[param] === 'string') {
 				this.settings[param] = settings[param];
 			}
 		}
