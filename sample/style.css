@@ -8,6 +8,8 @@ h1 {
 
 textarea#debug {
 	display: block;
+	font-family: monospace;
+	font-size: 12px;
 	margin: 0 auto;
 	width: 480px;
 	height: 180px;

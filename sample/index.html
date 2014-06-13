@@ -4,23 +4,54 @@
 	<title>YouTyping test page</title>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.12/paper-full.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
-    <script src="../youtyping.js"></script>
-    <script src="jquery-deparam.js"></script>
-    <script>
-        $(document).ready(function () {
-            // logTrace('Document is Ready.');
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="../youtyping.js"></script>
+	<script src="jquery-deparam.js"></script>
+	<script>
+		var choices = [
+		{
+			videoId: 'fQ_m5VLhqNg',
+			title: 'とまどい→レシピ'
+		},
+		{
+			videoId: 'a_mWyahWoUA',
+			title: '優しい忘却'
+		}
+		]
+
+		$(document).ready(function () {
 			var settings = $.deparam(location.search.slice(1));
-			settings.videoId = 'fQ_m5VLhqNg';
+
+			if (!settings.videoId) settings.videoId = choices[0].videoId;
+
+			// render choices
+			choices.forEach(function (choice) {
+				$('<a>', {
+					href: './?videoId=' + choice.videoId,
+					text: choice.title
+				})
+				.addClass('btn')
+				.addClass('btn-lg')
+				.addClass(settings.videoId === choice.videoId ? 'btn-primary' : 'btn-default')
+				.appendTo('#choices');
+				console.log(choice.videoId);
+			});
+
+			settings.score = settings.videoId + '.utfx';
 			settings.tableFile = '../convert/romaji.xml';
-            youTyping = new YouTyping($('#youtyping'), settings);
-        });
-    </script>
+			youTyping = new YouTyping($('#youtyping'), settings);
+		});
+	</script>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 	<h1>YouTyping Test Page</h1>
 	<p><a href="./">default</a> is adfree. non-adfree version is <a href="./?sandbox=true">./?sandbox=true</a></p>
 	<div id="youtyping"></div>
+	<div class="text-center">
+		<div id="choices" style="display: inline-block;"></div>
+	</div>
 	<p>Setting can be overrided by URI query e.g. <a href="./?speed=1.0&amp;noteSize=30">./?speed=1.0&amp;noteSize=30</a></p>
 	<p>Powered by <a href="https://www.youtube.com/">YouTube</a></p>
 	<textarea id="debug"></textarea>

@@ -1,12 +1,14 @@
 YouTyping
 =========
 
-Solution for UTyping by Canvas and YouTube.
+UTyping on browser.
 
 Test is running [here](http://hakatashi.github.io/YouTyping/sample/).
 
-# Concept
+# Features
 
+* Full unicode support
+* Work on every modern browser and OS
 * Modulize UI functionarity to make replacement easy
 
 # Build
