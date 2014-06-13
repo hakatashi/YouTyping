@@ -158,19 +158,30 @@ var YouTyping = function (element, settings) {
 			datatype: 'xml',
 			timeout: 1000,
 			success: function (data, textStatus, jqXHR) {
-				youTyping.table = [];
+				try {
+					youTyping.table = [];
 
-				$(data).find('table').find('rule').each(function () {
-					youTyping.table.push({
-						before: $(this).attr('before'),
-						after: $(this).attr('after'),
-						next: $(this).attr('next')
+					$(data).find('table').find('rule').each(function (index) {
+						youTyping.table.push({
+							before: $(this).attr('before'),
+							after: $(this).attr('after'),
+							next: $(this).attr('next')
+						});
+
+						if ($(this).attr('next')) {
+							if ($(this).attr('next').length !== 1) {
+								throw 'Rule ' + index + ': next string must be one character';
+							}
+						}
 					});
-				});
 
-				logTrace('Loaded Table File.');
+					logTrace('Loaded Table File.');
 
-				loadTableDeferred.resolve();
+					loadTableDeferred.resolve();
+				} catch (error) {
+					logTrace('ERROR: Table File Parsing Failed: ' + error);
+					loadTableDeferred.reject();
+				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				logTrace('ERROR: Table File Loading Failed: ' + errorThrown);
@@ -343,7 +354,9 @@ var YouTyping = function (element, settings) {
 					return false;
 				}
 
-				// TODO: when rule has next key
+				// if rule has next character
+				if (rule.next) {
+				}
 
 				return true;
 			});
