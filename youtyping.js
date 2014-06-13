@@ -1,4 +1,4 @@
-/* youtyping.js 06-12-2014 */
+/* youtyping.js 06-13-2014 */
 
 var YouTyping = (function(){
 var YouTyping = function (element, settings) {
@@ -28,7 +28,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	// callback function used by YouTube IFrame Player API. must be global
-	onYouTubeIframeAPIReady = function () {
+	window.onYouTubeIframeAPIReady = function () {
 		var settings = youTyping.settings;
 
 		logTrace('Player API is Ready.');
@@ -161,19 +161,30 @@ var YouTyping = function (element, settings) {
 			datatype: 'xml',
 			timeout: 1000,
 			success: function (data, textStatus, jqXHR) {
-				youTyping.table = [];
+				try {
+					youTyping.table = [];
 
-				$(data).find('table').find('rule').each(function () {
-					youTyping.table.push({
-						before: $(this).attr('before'),
-						after: $(this).attr('after'),
-						next: $(this).attr('next')
+					$(data).find('table').find('rule').each(function (index) {
+						youTyping.table.push({
+							before: $(this).attr('before'),
+							after: $(this).attr('after'),
+							next: $(this).attr('next')
+						});
+
+						if ($(this).attr('next')) {
+							if ($(this).attr('next').length !== 1) {
+								throw 'Rule ' + index + ': next string must be one character';
+							}
+						}
 					});
-				});
 
-				logTrace('Loaded Table File.');
+					logTrace('Loaded Table File.');
 
-				loadTableDeferred.resolve();
+					loadTableDeferred.resolve();
+				} catch (error) {
+					logTrace('ERROR: Table File Parsing Failed: ' + error);
+					loadTableDeferred.reject();
+				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				logTrace('ERROR: Table File Loading Failed: ' + errorThrown);
@@ -182,6 +193,21 @@ var YouTyping = function (element, settings) {
 		});
 
 		return loadTableDeferred.promise();
+	};
+
+	// return next valid note
+	var findNextNote = function (noteIndex) {
+		var nextNote = null;
+
+		for (var i = noteIndex + 1; i < youTyping.score.length; i++) {
+			var item = youTyping.score[i];
+			if (item.type === '+') {
+				nextNote = i;
+				break;
+			}
+		}
+
+		return nextNote;
 	};
 
 
@@ -321,20 +347,25 @@ var YouTyping = function (element, settings) {
 
 	// hit key
 	// TODO: make HitEvent interface
-	this.hit = function (key, time) {
+	this.hit = function (key, time, forceHit) {
 		if (!time) {
 			time = youTyping.now - youTyping.zeroTime;
 		}
 
 		// check hit-ability of note by passed key.
 		// return false when un-hit-able, and info about new note when hit-able
-		var preHitNote = function (noteIndex) {
+		var preHitNote = function (noteIndex, hitKey) {
 			var note = youTyping.score[noteIndex];
 			var newInputBuffer = '';
+
 			if (noteIndex === youTyping.currentNoteIndex) {
 				newInputBuffer = youTyping.inputBuffer + key;
 			} else { // discard input buffer if not hitting current note
 				newInputBuffer = key;
+			}
+
+			if (!hitKey) {
+				hitKey = key;
 			}
 
 			// TODO: Polyfill Array.prototype.filter (IE<9)
@@ -346,16 +377,33 @@ var YouTyping = function (element, settings) {
 					return false;
 				}
 
-				// TODO: when rule has next key
+				// if rule has next character
+				if (rule.next) {
+					// check for hittability of next note by next character.
+					var nextNoteIndex;
+					if ((nextNoteIndex = findNextNote(noteIndex)) !== null) { // if next note exists
+						var nextNoteInfo = preHitNote(nextNoteIndex, rule.next);
+
+						// if next note is hittable, return true.
+						if (nextNoteInfo) {
+							return true;
+						} else {
+							return false;
+						}
+					} else { // if next note doesn't exist
+						return false;
+					}
+				}
 
 				return true;
 			});
 
-			if (matchingRules.length === 0) {
+			if (matchingRules.length === 0) { // if no rule matches
 				return false;
-			} else {
+			} else { // if any rule matches
 				var newNoteInfo = {
-					noteIndex: noteIndex
+					noteIndex: noteIndex,
+					forcedHit: null
 				};
 
 				// take the rule of minimum length (for some comforts)
@@ -376,6 +424,11 @@ var YouTyping = function (element, settings) {
 				if (newInputBuffer.length === minimumRule.before.length) {
 					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
 					newNoteInfo.inputBuffer = '';
+
+					if (minimumRule.next) {
+						// https://github.com/hakatashi/YouTyping/wiki/Forced-hit
+						newNoteInfo.forcedHit = minimumRule.next;
+					}
 				} else {
 					newNoteInfo.remainingText = note.remainingText;
 					newNoteInfo.inputBuffer = newInputBuffer;
@@ -401,6 +454,11 @@ var YouTyping = function (element, settings) {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
 				youTyping.inputBuffer = newNoteInfo.inputBuffer;
+			}
+
+			// force hit
+			if (newNoteInfo.forcedHit) {
+				youTyping.hit(newNoteInfo.forcedHit, time, true);
 			}
 		};
 
@@ -455,6 +513,12 @@ var YouTyping = function (element, settings) {
 				return false;
 			});
 
+			// force hit
+			if (forceHit && hitJudge === null) {
+				// apply the most 'baaad' judge
+				hitJudge = youTyping.judges[youTyping.judges.length - 1].name;
+			}
+
 			if (hitJudge !== null) {
 				// if currently hitting other note now, it will be marked as HITTINGFAILED
 				if (youTyping.currentNoteIndex !== null) {
@@ -479,7 +543,7 @@ var YouTyping = function (element, settings) {
 				this.settings[param] = settings[param];
 			} else if (typeof this.settings[param] === 'number') {
 				this.settings[param] = parseInt(settings[param], 10);
-			} else {
+			} else if (typeof this.settings[param] === 'string') {
 				this.settings[param] = settings[param];
 			}
 		}
@@ -668,82 +732,6 @@ var Screen = function (canvas, youTyping) {
 		paper.tool.onKeyDown = triggerHitNote;
 	};
 
-	// not good three arguments
-	var createItem = function (item, index, position) {
-		var items = screen.items;
-		var setting = youTyping.settings;
-
-		if (items[index]) {
-			items[index].remove();
-		}
-
-		items[index] = new paper.Group();
-
-		// long line which devides score to measures
-		if (item.type === '=') {
-			items[index].addChild(new paper.Path.Line({
-				from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
-				to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
-				strokeColor: 'white',
-				strokeWidth: 2
-			}));
-		}
-		// small line
-		if (item.type === '-') {
-			items[index].addChild(new paper.Path.Line({
-				from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
-				to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
-				strokeColor: 'white',
-				strokeWidth: 1
-			}));
-		}
-		if (item.type === '+') {
-			if (item.state === youTyping.noteState.WAITING) {
-				// note
-				items[index].addChild(new paper.Path.Circle({
-					center: [position, setting.scoreYpos * setting.height],
-					radius: setting.noteSize,
-					strokeWidth: 1,
-					strokeColor: '#aaa',
-					fillColor: 'red'
-				}));
-				// lyric
-				items[index].addChild(new paper.PointText({
-					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-					content: item.remainingText,
-					fillColor: 'white',
-					justification: 'center',
-					fontSize: 20,
-					fontFamily: 'sans-serif'
-				}));
-				// custom property
-				items[index].state = item.state;
-			} else if (item.state === youTyping.noteState.HITTING || item.state === youTyping.noteState.HITTINGFAILED) {
-				// note
-				items[index].addChild(new paper.Path.Circle({
-					center: [position, setting.scoreYpos * setting.height],
-					radius: setting.noteSize,
-					strokeWidth: 1,
-					strokeColor: '#aaa',
-					fillColor: 'red',
-					opacity: 0.5
-				}));
-				// lyric
-				items[index].addChild(new paper.PointText({
-					position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-					content: item.remainingText,
-					fillColor: 'white',
-					justification: 'center',
-					fontSize: 20,
-					fontFamily: 'sans-serif'
-				}));
-				// custom property
-				items[index].state = item.state;
-			} else if (item.state === youTyping.noteState.CLEARED) {
-			}
-		}
-	};
-
 	// layout notes and lines fitting to current time
 	this.update = function () {
 		var setting = youTyping.settings;
@@ -753,20 +741,98 @@ var Screen = function (canvas, youTyping) {
 		var runTime = now - youTyping.zeroTime;
 
 		youTyping.score.forEach(function (item, index) {
-			var Xpos = (item.time - runTime) * setting.speed + setting.hitPosition;
+			// X position of the item
+			var position = (item.time - runTime) * setting.speed + setting.hitPosition;
+
+			// create item in position
+			var createItem = function () {
+				var items = screen.items;
+				var setting = youTyping.settings;
+
+				if (items[index]) {
+					items[index].remove();
+				}
+
+				items[index] = new paper.Group();
+
+				// long line which devides score to measures
+				if (item.type === '=') {
+					items[index].addChild(new paper.Path.Line({
+						from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
+						to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
+						strokeColor: 'white',
+						strokeWidth: 2
+					}));
+				}
+				// small line
+				if (item.type === '-') {
+					items[index].addChild(new paper.Path.Line({
+						from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
+						to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
+						strokeColor: 'white',
+						strokeWidth: 1
+					}));
+				}
+				if (item.type === '+') {
+					if (item.state === youTyping.noteState.WAITING) {
+						// note
+						items[index].addChild(new paper.Path.Circle({
+							center: [position, setting.scoreYpos * setting.height],
+							radius: setting.noteSize,
+							strokeWidth: 1,
+							strokeColor: '#aaa',
+							fillColor: 'red'
+						}));
+						// lyric
+						items[index].addChild(new paper.PointText({
+							position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+							content: item.remainingText,
+							fillColor: 'white',
+							justification: 'center',
+							fontSize: 20,
+							fontFamily: 'sans-serif'
+						}));
+						// custom property
+						items[index].state = item.state;
+					} else if (item.state === youTyping.noteState.HITTING || item.state === youTyping.noteState.HITTINGFAILED) {
+						// note
+						items[index].addChild(new paper.Path.Circle({
+							center: [position, setting.scoreYpos * setting.height],
+							radius: setting.noteSize,
+							strokeWidth: 1,
+							strokeColor: '#aaa',
+							fillColor: 'red',
+							opacity: 0.5
+						}));
+						// lyric
+						items[index].addChild(new paper.PointText({
+							position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+							content: item.remainingText,
+							fillColor: 'white',
+							justification: 'center',
+							fontSize: 20,
+							fontFamily: 'sans-serif'
+						}));
+						// custom property
+						items[index].state = item.state;
+					} else if (item.state === youTyping.noteState.CLEARED) {
+					}
+				}
+			};
+
 			if (index in items) { // if index-th item exists in screen
 				if (item.emergeTime > runTime || item.vanishTime < runTime) {
 					items[index].remove();
 					delete items[index];
 				} else if (item.type === '+' && item.state !== items[index].state) {
 					// if state of note has changed, this recreates the note
-					createItem(item, index, Xpos);
+					createItem();
 				} else {
-					items[index].position.x = Xpos;
+					items[index].position.x = position;
 				}
 			} else { // if index-th item doesn't exist in screen
 				if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
-					createItem(item, index, Xpos);
+					createItem();
 				}
 			}
 		});
