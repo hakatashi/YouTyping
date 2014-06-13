@@ -1,4 +1,4 @@
-/* youtyping.js 06-13-2014 */
+/* youtyping.js 06-14-2014 */
 
 var YouTyping = (function(){
 var YouTyping = function (element, settings) {
