@@ -136,96 +136,85 @@ var Screen = function (canvas, youTyping) {
 			// X position of the item
 			var position = (item.time - runTime) * setting.speed + setting.hitPosition;
 
-			// create item in position
-			var createItem = function () {
-				var items = screen.items;
-				var setting = youTyping.settings;
+			// if index-th item doesn't exists in screen
+			if (!(index in items)) {
+				if (item.emergeTime <= runTime && runTime <= item.vanishTime) {
+					// create item
+					items[index] = new paper.Group();
 
-				if (items[index]) {
-					items[index].remove();
-				}
-
-				items[index] = new paper.Group();
-
-				// long line which devides score to measures
-				if (item.type === '=') {
-					items[index].addChild(new paper.Path.Line({
-						from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
-						to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
-						strokeColor: 'white',
-						strokeWidth: 2
-					}));
-				}
-				// small line
-				if (item.type === '-') {
-					items[index].addChild(new paper.Path.Line({
-						from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
-						to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
-						strokeColor: 'white',
-						strokeWidth: 1
-					}));
-				}
-				if (item.type === '+') {
-					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
-						// note
-						items[index].addChild(new paper.Path.Circle({
-							center: [position, setting.scoreYpos * setting.height],
-							radius: setting.noteSize,
-							strokeWidth: 1,
-							strokeColor: '#aaa',
-							fillColor: 'red',
-							opacity: item.state === youTyping.noteState.WAITING ? 1 : 0.5
+					// long line which devides score to measures
+					if (item.type === '=') {
+						items[index].longLine = items[index].addChild(new paper.Path.Line({
+							from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
+							to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
+							strokeColor: 'white',
+							strokeWidth: 2
 						}));
-						// lyric
-						items[index].addChild(new paper.PointText({
-							position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-							content: item.remainingText,
-							fillColor: 'white',
-							justification: 'center',
-							fontSize: 20,
-							fontFamily: 'sans-serif'
-						}));
-						// custom property
-						items[index].state = item.state;
-					} else if (item.state === youTyping.noteState.FAILED || item.state === youTyping.noteState.HITTINGFAILED) {
-						// note
-						items[index].addChild(new paper.Path.Circle({
-							center: [position, setting.scoreYpos * setting.height],
-							radius: setting.noteSize,
-							strokeWidth: 1,
-							strokeColor: '#aaa',
-							fillColor: '#aaa',
-							opacity: item.state === youTyping.noteState.FAILED ? 1 : 0.5
-						}));
-						// lyric
-						items[index].addChild(new paper.PointText({
-							position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-							content: item.remainingText,
-							fillColor: 'white',
-							justification: 'center',
-							fontSize: 20,
-							fontFamily: 'sans-serif'
-						}));
-						// custom property
-						items[index].state = item.state;
-					} else if (item.state === youTyping.noteState.CLEARED) {
 					}
+					// small line
+					if (item.type === '-') {
+						items[index].smallLine = items[index].addChild(new paper.Path.Line({
+							from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
+							to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
+							strokeColor: 'white',
+							strokeWidth: 1
+						}));
+					}
+					if (item.type === '+') {
+						// note
+						items[index].note = items[index].addChild(new paper.Path.Circle({
+							center: [position, setting.scoreYpos * setting.height],
+							radius: setting.noteSize,
+							strokeWidth: 1,
+							strokeColor: '#aaa'
+						}));
+						// lyric
+						items[index].lyric = items[index].addChild(new paper.PointText({
+							point: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+							content: item.remainingText,
+							fillColor: 'white',
+							justification: 'center',
+							fontSize: 20,
+							fontFamily: 'sans-serif'
+						}));
+					}
+				} else {
+					return;
 				}
-			};
-
-			if (index in items) { // if index-th item exists in screen
-				if (item.emergeTime > runTime || item.vanishTime < runTime) {
+			} else { // if index-th item exists in screen
+				if (runTime < item.emergeTime || item.vanishTime < runTime) {
 					items[index].remove();
 					delete items[index];
-				} else if (item.type === '+' && item.state !== items[index].state) {
-					// if state of note has changed, this recreates the note
-					createItem();
-				} else {
-					items[index].position.x = position;
+					return;
 				}
-			} else { // if index-th item doesn't exist in screen
-				if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
-					createItem();
+			}
+
+			// update item style
+			if (item.type === '=') {
+				items[index].position.x = position;
+			}
+			if (item.type === '-') {
+				items[index].position.x = position;
+			}
+			if (item.type === '+') {
+				items[index].position.x = position;
+				if (item.state === youTyping.noteState.CLEARED) {
+					items[index].note.visible = false;
+					items[index].lyric.visible = false;
+				} else {
+					// note
+					items[index].note.style = {
+						fillColor: (
+							item.state === youTyping.noteState.WAITING ||
+							item.state === youTyping.noteState.HITTING
+						) ? 'red' : '#aaa'
+					};
+					items[index].note.opacity = (
+						item.state === youTyping.noteState.FAILED ||
+						item.state === youTyping.noteState.WAITING
+					) ? 1 : 0.5;
+					// lyric
+					items[index].lyric.content = item.remainingText;
 				}
 			}
 		});
