@@ -166,14 +166,15 @@ var Screen = function (canvas, youTyping) {
 					}));
 				}
 				if (item.type === '+') {
-					if (item.state === youTyping.noteState.WAITING) {
+					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
 						// note
 						items[index].addChild(new paper.Path.Circle({
 							center: [position, setting.scoreYpos * setting.height],
 							radius: setting.noteSize,
 							strokeWidth: 1,
 							strokeColor: '#aaa',
-							fillColor: 'red'
+							fillColor: 'red',
+							opacity: item.state === youTyping.noteState.WAITING ? 1 : 0.5
 						}));
 						// lyric
 						items[index].addChild(new paper.PointText({
@@ -186,15 +187,15 @@ var Screen = function (canvas, youTyping) {
 						}));
 						// custom property
 						items[index].state = item.state;
-					} else if (item.state === youTyping.noteState.HITTING || item.state === youTyping.noteState.HITTINGFAILED) {
+					} else if (item.state === youTyping.noteState.FAILED || item.state === youTyping.noteState.HITTINGFAILED) {
 						// note
 						items[index].addChild(new paper.Path.Circle({
 							center: [position, setting.scoreYpos * setting.height],
 							radius: setting.noteSize,
 							strokeWidth: 1,
 							strokeColor: '#aaa',
-							fillColor: 'red',
-							opacity: 0.5
+							fillColor: '#aaa',
+							opacity: item.state === youTyping.noteState.FAILED ? 1 : 0.5
 						}));
 						// lyric
 						items[index].addChild(new paper.PointText({
