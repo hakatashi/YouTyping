@@ -80,7 +80,7 @@ var Screen = function (canvas, youTyping) {
 	this.ready = function () {
 		screen.pressEnter = new paper.PointText({
 			point: paper.view.bounds.bottomRight.multiply([0.5, 0.8]),
-			content: 'Press enter or click.',
+			content: 'Press enter or click here.',
 			justification: 'center',
 			fontSize: 45,
 			fillColor: 'white'
