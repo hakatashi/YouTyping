@@ -201,6 +201,10 @@ var YouTyping = function (element, settings) {
 
 		for (var i = noteIndex + 1; i < youTyping.score.length; i++) {
 			var item = youTyping.score[i];
+			if (item.type === '/') {
+				nextNote = null;
+				break;
+			}
 			if (item.type === '+') {
 				nextNote = i;
 				break;
@@ -272,17 +276,13 @@ var YouTyping = function (element, settings) {
 		var previousLiveNoteIndex = null;
 		youTyping.score.forEach(function (note, index) {
 			// if it's note and passed
-			if (note.type === '+' && note.time < time) {
+			if (note.type === '+' && note.time + youTyping.settings.failureSuspension < time) {
 				// and if the note is live
 				if (note.state === youTyping.noteState.WAITING || note.state === youTyping.noteState.HITTING) {
 					// and if previous live note exists
 					if (previousLiveNote) {
 						// mark it failed
-						if (previousLiveNote.state === youTyping.noteState.WAITING) {
-							previousLiveNote.state = youTyping.noteState.FAILED;
-						} else if (previousLiveNote.state === youTyping.noteState.HITTING) {
-							previousLiveNote.state = youTyping.noteState.HITTINGFAILED;
-						}
+						markFailed(previousLiveNote);
 
 						if (previousLiveNoteIndex === youTyping.currentNoteIndex) {
 							youTyping.currentNoteIndex = null;
@@ -293,8 +293,40 @@ var YouTyping = function (element, settings) {
 					previousLiveNote = note;
 					previousLiveNoteIndex = index;
 				}
+			} else if (note.type === '*' && note.time < time) {
+				// update current lyric index
+				if (youTyping.currentLyricIndex < index) { // null < number is true.
+					youTyping.currentLyricIndex = index;
+				}
+			} else if (note.type === '/' && note.time < time) { // if order stop marks
+				// cancel current lyric
+				if (youTyping.currentLyricIndex < index) {
+					youTyping.currentLyricIndex = null;
+				}
+				// and if previous live note exists
+				if (previousLiveNote) {
+					// mark it failed
+					markFailed(previousLiveNote);
+
+					if (previousLiveNoteIndex === youTyping.currentNoteIndex) {
+						youTyping.currentNoteIndex = null;
+						youTyping.inputBuffer = '';
+					}
+				}
+
+				previousLiveNote = null;
+				previousLiveNoteIndex = null;
 			}
 		});
+	};
+
+	// mark as failed
+	var markFailed = function (note) {
+		if (note.state === youTyping.noteState.WAITING) {
+			note.state = youTyping.noteState.FAILED;
+		} else if (note.state === youTyping.noteState.HITTING) {
+			note.state = youTyping.noteState.HITTINGFAILED;
+		}
 	};
 
 
@@ -324,6 +356,7 @@ var YouTyping = function (element, settings) {
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
 		bufferTextPosition: [0.2, 0.8], // ratio in screen
+		currentLyricPosition: [0.5, 0.3], // ration in screen
 		judges: [ // millisecond
 		{
 			name: 'perfect',
@@ -346,6 +379,7 @@ var YouTyping = function (element, settings) {
 			to: 150
 		}
 		],
+		failureSuspension: 100, // millisecond
 		tableFile: 'convert/romaji.xml'
 	};
 
@@ -369,6 +403,9 @@ var YouTyping = function (element, settings) {
 
 	this.currentNoteIndex = null;
 	this.inputBuffer = '';
+
+	// lyrics
+	this.currentLyricIndex = null;
 
 
 	/******************* Methods *******************/
@@ -490,6 +527,15 @@ var YouTyping = function (element, settings) {
 				youTyping.inputBuffer = newNoteInfo.inputBuffer;
 			}
 
+			// mark all the previous note failed
+			youTyping.score.forEach(function (item, index) {
+				if (item.type === '+' && item.time < note.time) {
+					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
+						markFailed(item);
+					}
+				}
+			});
+
 			// force hit
 			if (newNoteInfo.forcedHit) {
 				youTyping.hit(newNoteInfo.forcedHit, time, true);
@@ -557,7 +603,7 @@ var YouTyping = function (element, settings) {
 				// if currently hitting other note now, it will be marked as HITTINGFAILED
 				if (youTyping.currentNoteIndex !== null) {
 					var previousNote = youTyping.score[youTyping.currentNoteIndex];
-					previousNote.state = youTyping.noteState.HITTINGFAILED;
+					markFailed(previousNote);
 				}
 
 				hitNote(nearestNewNote);
@@ -676,6 +722,14 @@ var Screen = function (canvas, youTyping) {
 			fontSize: 24
 		});
 
+		screen.currentLyric = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.currentLyricPosition),
+			content: '',
+			fillColor: 'white',
+			justification: 'center',
+			fontSize: 36
+		});
+
 		setInterval(function () {
 			screen.debugTexts[0].content = 'FPS: ' + FPS;
 			FPS = 0;
@@ -722,7 +776,7 @@ var Screen = function (canvas, youTyping) {
 	this.ready = function () {
 		screen.pressEnter = new paper.PointText({
 			point: paper.view.bounds.bottomRight.multiply([0.5, 0.8]),
-			content: 'Press enter or click.',
+			content: 'Press enter or click here.',
 			justification: 'center',
 			fontSize: 45,
 			fillColor: 'white'
@@ -751,6 +805,7 @@ var Screen = function (canvas, youTyping) {
 			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 			screen.bufferText.content = youTyping.inputBuffer;
+			screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.score[youTyping.currentLyricIndex].text : '';
 			FPS++;
 		};
 
@@ -778,96 +833,98 @@ var Screen = function (canvas, youTyping) {
 			// X position of the item
 			var position = (item.time - runTime) * setting.speed + setting.hitPosition;
 
-			// create item in position
-			var createItem = function () {
-				var items = screen.items;
-				var setting = youTyping.settings;
+			// if index-th item doesn't exists in screen
+			if (!(index in items)) {
+				if (item.emergeTime <= runTime && runTime <= item.vanishTime) {
+					// create item
+					items[index] = new paper.Group();
 
-				if (items[index]) {
-					items[index].remove();
-				}
-
-				items[index] = new paper.Group();
-
-				// long line which devides score to measures
-				if (item.type === '=') {
-					items[index].addChild(new paper.Path.Line({
-						from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
-						to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
-						strokeColor: 'white',
-						strokeWidth: 2
-					}));
-				}
-				// small line
-				if (item.type === '-') {
-					items[index].addChild(new paper.Path.Line({
-						from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
-						to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
-						strokeColor: 'white',
-						strokeWidth: 1
-					}));
-				}
-				if (item.type === '+') {
-					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
-						// note
-						items[index].addChild(new paper.Path.Circle({
-							center: [position, setting.scoreYpos * setting.height],
-							radius: setting.noteSize,
-							strokeWidth: 1,
-							strokeColor: '#aaa',
-							fillColor: 'red',
-							opacity: item.state === youTyping.noteState.WAITING ? 1 : 0.5
+					// long line which devides score to measures
+					if (item.type === '=') {
+						items[index].longLine = items[index].addChild(new paper.Path.Line({
+							from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
+							to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
+							strokeColor: 'white',
+							strokeWidth: 2
 						}));
-						// lyric
-						items[index].addChild(new paper.PointText({
-							position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-							content: item.remainingText,
-							fillColor: 'white',
-							justification: 'center',
-							fontSize: 20,
-							fontFamily: 'sans-serif'
-						}));
-						// custom property
-						items[index].state = item.state;
-					} else if (item.state === youTyping.noteState.FAILED || item.state === youTyping.noteState.HITTINGFAILED) {
-						// note
-						items[index].addChild(new paper.Path.Circle({
-							center: [position, setting.scoreYpos * setting.height],
-							radius: setting.noteSize,
-							strokeWidth: 1,
-							strokeColor: '#aaa',
-							fillColor: '#aaa',
-							opacity: item.state === youTyping.noteState.FAILED ? 1 : 0.5
-						}));
-						// lyric
-						items[index].addChild(new paper.PointText({
-							position: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
-							content: item.remainingText,
-							fillColor: 'white',
-							justification: 'center',
-							fontSize: 20,
-							fontFamily: 'sans-serif'
-						}));
-						// custom property
-						items[index].state = item.state;
-					} else if (item.state === youTyping.noteState.CLEARED) {
 					}
+					// small line
+					if (item.type === '-') {
+						items[index].smallLine = items[index].addChild(new paper.Path.Line({
+							from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
+							to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
+							strokeColor: 'white',
+							strokeWidth: 1
+						}));
+					}
+					if (item.type === '+') {
+						// note
+						items[index].note = items[index].addChild(new paper.Path.Circle({
+							center: [position, setting.scoreYpos * setting.height],
+							radius: setting.noteSize,
+							strokeWidth: 1,
+							strokeColor: '#aaa'
+						}));
+						// lyric
+						items[index].lyric = items[index].addChild(new paper.PointText({
+							point: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+							content: item.remainingText,
+							fillColor: 'white',
+							justification: 'center',
+							fontSize: 20,
+							fontFamily: 'sans-serif'
+						}));
+					}
+					// order stop mark
+					if (item.type === '/') {
+						items[index].orderStop = items[index].addChild(new paper.Path({
+							segments: [[position, setting.scoreYpos * setting.height - setting.noteSize - 30]],
+							fillColor: 'white'
+						}));
+						items[index].orderStop.lineBy([10, -10]);
+						items[index].orderStop.lineBy([-20, 0]);
+						items[index].orderStop.closed = true;
+					}
+				} else {
+					return;
 				}
-			};
-
-			if (index in items) { // if index-th item exists in screen
-				if (item.emergeTime > runTime || item.vanishTime < runTime) {
+			} else { // if index-th item exists in screen
+				if (runTime < item.emergeTime || item.vanishTime < runTime) {
 					items[index].remove();
 					delete items[index];
-				} else if (item.type === '+' && item.state !== items[index].state) {
-					// if state of note has changed, this recreates the note
-					createItem();
-				} else {
-					items[index].position.x = position;
+					return;
 				}
-			} else { // if index-th item doesn't exist in screen
-				if (item.emergeTime <= runTime && item.vanishTime >= runTime) {
-					createItem();
+			}
+
+			// update item style
+			if (item.type === '=') {
+				items[index].position.x = position;
+			}
+			if (item.type === '-') {
+				items[index].position.x = position;
+			}
+			if (item.type === '/') {
+				items[index].position.x = position;
+			}
+			if (item.type === '+') {
+				items[index].position.x = position;
+				if (item.state === youTyping.noteState.CLEARED) {
+					items[index].note.visible = false;
+					items[index].lyric.visible = false;
+				} else {
+					// note
+					items[index].note.style = {
+						fillColor: (
+							item.state === youTyping.noteState.WAITING ||
+							item.state === youTyping.noteState.HITTING
+						) ? 'red' : '#aaa'
+					};
+					items[index].note.opacity = (
+						item.state === youTyping.noteState.FAILED ||
+						item.state === youTyping.noteState.WAITING
+					) ? 1 : 0.5;
+					// lyric
+					items[index].lyric.content = item.remainingText;
 				}
 			}
 		});
