@@ -198,6 +198,10 @@ var YouTyping = function (element, settings) {
 
 		for (var i = noteIndex + 1; i < youTyping.score.length; i++) {
 			var item = youTyping.score[i];
+			if (item.type === '/') {
+				nextNote = null;
+				break;
+			}
 			if (item.type === '+') {
 				nextNote = i;
 				break;
@@ -269,17 +273,13 @@ var YouTyping = function (element, settings) {
 		var previousLiveNoteIndex = null;
 		youTyping.score.forEach(function (note, index) {
 			// if it's note and passed
-			if (note.type === '+' && note.time < time) {
+			if (note.type === '+' && note.time + youTyping.settings.failureSuspension < time) {
 				// and if the note is live
 				if (note.state === youTyping.noteState.WAITING || note.state === youTyping.noteState.HITTING) {
 					// and if previous live note exists
 					if (previousLiveNote) {
 						// mark it failed
-						if (previousLiveNote.state === youTyping.noteState.WAITING) {
-							previousLiveNote.state = youTyping.noteState.FAILED;
-						} else if (previousLiveNote.state === youTyping.noteState.HITTING) {
-							previousLiveNote.state = youTyping.noteState.HITTINGFAILED;
-						}
+						markFailed(previousLiveNote);
 
 						if (previousLiveNoteIndex === youTyping.currentNoteIndex) {
 							youTyping.currentNoteIndex = null;
@@ -290,8 +290,40 @@ var YouTyping = function (element, settings) {
 					previousLiveNote = note;
 					previousLiveNoteIndex = index;
 				}
+			} else if (note.type === '*' && note.time < time) {
+				// update current lyric index
+				if (youTyping.currentLyricIndex < index) { // null < number is true.
+					youTyping.currentLyricIndex = index;
+				}
+			} else if (note.type === '/' && note.time < time) { // if order stop marks
+				// cancel current lyric
+				if (youTyping.currentLyricIndex < index) {
+					youTyping.currentLyricIndex = null;
+				}
+				// and if previous live note exists
+				if (previousLiveNote) {
+					// mark it failed
+					markFailed(previousLiveNote);
+
+					if (previousLiveNoteIndex === youTyping.currentNoteIndex) {
+						youTyping.currentNoteIndex = null;
+						youTyping.inputBuffer = '';
+					}
+				}
+
+				previousLiveNote = null;
+				previousLiveNoteIndex = null;
 			}
 		});
+	};
+
+	// mark as failed
+	var markFailed = function (note) {
+		if (note.state === youTyping.noteState.WAITING) {
+			note.state = youTyping.noteState.FAILED;
+		} else if (note.state === youTyping.noteState.HITTING) {
+			note.state = youTyping.noteState.HITTINGFAILED;
+		}
 	};
 
 
@@ -321,6 +353,7 @@ var YouTyping = function (element, settings) {
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
 		bufferTextPosition: [0.2, 0.8], // ratio in screen
+		currentLyricPosition: [0.5, 0.3], // ration in screen
 		judges: [ // millisecond
 		{
 			name: 'perfect',
@@ -343,6 +376,7 @@ var YouTyping = function (element, settings) {
 			to: 150
 		}
 		],
+		failureSuspension: 100, // millisecond
 		tableFile: 'convert/romaji.xml'
 	};
 
@@ -366,6 +400,9 @@ var YouTyping = function (element, settings) {
 
 	this.currentNoteIndex = null;
 	this.inputBuffer = '';
+
+	// lyrics
+	this.currentLyricIndex = null;
 
 
 	/******************* Methods *******************/
@@ -487,6 +524,15 @@ var YouTyping = function (element, settings) {
 				youTyping.inputBuffer = newNoteInfo.inputBuffer;
 			}
 
+			// mark all the previous note failed
+			youTyping.score.forEach(function (item, index) {
+				if (item.type === '+' && item.time < note.time) {
+					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
+						markFailed(item);
+					}
+				}
+			});
+
 			// force hit
 			if (newNoteInfo.forcedHit) {
 				youTyping.hit(newNoteInfo.forcedHit, time, true);
@@ -554,7 +600,7 @@ var YouTyping = function (element, settings) {
 				// if currently hitting other note now, it will be marked as HITTINGFAILED
 				if (youTyping.currentNoteIndex !== null) {
 					var previousNote = youTyping.score[youTyping.currentNoteIndex];
-					previousNote.state = youTyping.noteState.HITTINGFAILED;
+					markFailed(previousNote);
 				}
 
 				hitNote(nearestNewNote);
