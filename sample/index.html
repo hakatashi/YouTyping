@@ -11,15 +11,24 @@
 		var choices = [
 		{
 			videoId: 'fQ_m5VLhqNg',
-			title: 'とまどい→レシピ'
+			title: 'とまどい→レシピ',
+			offset: 0
 		},
 		{
 			videoId: 'a_mWyahWoUA',
-			title: '優しい忘却'
+			title: '優しい忘却',
+			offset: 0
 		},
 		{
 			videoId: 'dFf4AgBNR1E',
-			title: '恋するフォーチュンクッキー'
+			title: '恋するフォーチュンクッキー',
+			offset: 0
+		},
+		{
+			videoId: 'PqJNc9KVIZE',
+			title: 'Tell your world',
+			offset: 11,
+			controlledCorrection: 40
 		}
 		];
 
@@ -40,6 +49,16 @@
 				.appendTo('#choices');
 			});
 
+			var choice = (function () {
+				var result;
+				choices.forEach(function (choice) {
+					if (choice.videoId === settings.videoId) result = choice;
+				});
+				return result;
+			})();
+
+			settings.offset = choice.offset;
+			settings.controlledCorrection = choice.controlledCorrection || 0;
 			settings.score = settings.videoId + '.utfx';
 			settings.tableFile = '../convert/romaji.xml';
 			youTyping = new YouTyping($('#youtyping'), settings);
