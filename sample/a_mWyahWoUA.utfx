@@ -100,7 +100,7 @@
 		<item type="-" time="60.170209"/>
 		<item type="=" time="60.829549"/>
 		<item type="/" time="60.829549"/>
-		<item type="*" time="60.829549 なにもいらない" text="嘘ではなかった"/>
+		<item type="*" time="60.829549" text="なにもいらない 嘘ではなかった"/>
 		<item type="+" time="60.829549" text="な"/>
 		<item type="-" time="61.488890"/>
 		<item type="-" time="62.148231"/>
@@ -191,7 +191,7 @@
 		<item type="-" time="95.774604"/>
 		<item type="=" time="96.433945"/>
 		<item type="/" time="96.433945"/>
-		<item type="*" time="96.433945 それをしらない" text="自分でさえも"/>
+		<item type="*" time="96.433945" text="それをしらない 自分でさえも"/>
 		<item type="+" time="96.433945" text="そ"/>
 		<item type="-" time="97.093286"/>
 		<item type="-" time="97.752626"/>
@@ -298,7 +298,7 @@
 		<item type="=" time="135.994385"/>
 		<item type="-" time="136.653725"/>
 		<item type="/" time="136.653725"/>
-		<item type="*" time="136.653725 また会うまで" text="忘れないで"/>
+		<item type="*" time="136.653725" text="また会うまで 忘れないで"/>
 		<item type="+" time="136.653725" text="ま"/>
 		<item type="-" time="137.313066"/>
 		<item type="+" time="137.313066" text="たあ"/>
@@ -385,7 +385,7 @@
 		<item type="-" time="170.939440"/>
 		<item type="=" time="171.598780"/>
 		<item type="/" time="171.598780"/>
-		<item type="*" time="171.598780 記憶それとも" text="忘却だろうか"/>
+		<item type="*" time="171.598780" text="記憶それとも 忘却だろうか"/>
 		<item type="+" time="171.598780" text="き"/>
 		<item type="-" time="172.258121"/>
 		<item type="-" time="172.917462"/>
@@ -470,7 +470,7 @@
 		<item type="-" time="202.587791"/>
 		<item type="=" time="203.247132"/>
 		<item type="/" time="203.247132"/>
-		<item type="*" time="203.247132 ひとりひとりの" text="あしたに帰る"/>
+		<item type="*" time="203.247132" text="ひとりひとりの あしたに帰る"/>
 		<item type="+" time="203.247132" text="ひ"/>
 		<item type="-" time="203.906473"/>
 		<item type="-" time="204.565813"/>
@@ -578,7 +578,7 @@
 		<item type="=" time="242.807571"/>
 		<item type="-" time="243.466912"/>
 		<item type="/" time="243.466912"/>
-		<item type="*" time="243.466912 忘れないで" text="忘れないで"/>
+		<item type="*" time="243.466912" text="忘れないで 忘れないで"/>
 		<item type="+" time="243.466912" text="わ"/>
 		<item type="-" time="244.126253"/>
 		<item type="+" time="244.126253" text="す"/>
@@ -705,7 +705,7 @@
 		<item type="-" time="303.466912"/>
 		<item type="=" time="304.126253"/>
 		<item type="/" time="304.126253"/>
-		<item type="*" time="304.126253 それをしらない" text="自分でさえも"/>
+		<item type="*" time="304.126253" text="それをしらない 自分でさえも"/>
 		<item type="+" time="304.126253" text="そ"/>
 		<item type="-" time="304.785593"/>
 		<item type="-" time="305.444934"/>
