@@ -269,17 +269,13 @@ var YouTyping = function (element, settings) {
 		var previousLiveNoteIndex = null;
 		youTyping.score.forEach(function (note, index) {
 			// if it's note and passed
-			if (note.type === '+' && note.time < time) {
+			if (note.type === '+' && note.time + youTyping.settings.failureSuspension < time) {
 				// and if the note is live
 				if (note.state === youTyping.noteState.WAITING || note.state === youTyping.noteState.HITTING) {
 					// and if previous live note exists
 					if (previousLiveNote) {
 						// mark it failed
-						if (previousLiveNote.state === youTyping.noteState.WAITING) {
-							previousLiveNote.state = youTyping.noteState.FAILED;
-						} else if (previousLiveNote.state === youTyping.noteState.HITTING) {
-							previousLiveNote.state = youTyping.noteState.HITTINGFAILED;
-						}
+						markFailed(previousLiveNote);
 
 						if (previousLiveNoteIndex === youTyping.currentNoteIndex) {
 							youTyping.currentNoteIndex = null;
@@ -292,6 +288,15 @@ var YouTyping = function (element, settings) {
 				}
 			}
 		});
+	};
+
+	// mark as failed
+	var markFailed = function (note) {
+		if (note.state === youTyping.noteState.WAITING) {
+			note.state = youTyping.noteState.FAILED;
+		} else if (note.state === youTyping.noteState.HITTING) {
+			note.state = youTyping.noteState.HITTINGFAILED;
+		}
 	};
 
 
@@ -343,6 +348,7 @@ var YouTyping = function (element, settings) {
 			to: 150
 		}
 		],
+		failureSuspension: 100, // millisecond
 		tableFile: 'convert/romaji.xml'
 	};
 
@@ -487,6 +493,15 @@ var YouTyping = function (element, settings) {
 				youTyping.inputBuffer = newNoteInfo.inputBuffer;
 			}
 
+			// mark all the previous note failed
+			youTyping.score.forEach(function (item, index) {
+				if (item.type === '+' && item.time < note.time) {
+					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
+						markFailed(item);
+					}
+				}
+			});
+
 			// force hit
 			if (newNoteInfo.forcedHit) {
 				youTyping.hit(newNoteInfo.forcedHit, time, true);
@@ -554,7 +569,7 @@ var YouTyping = function (element, settings) {
 				// if currently hitting other note now, it will be marked as HITTINGFAILED
 				if (youTyping.currentNoteIndex !== null) {
 					var previousNote = youTyping.score[youTyping.currentNoteIndex];
-					previousNote.state = youTyping.noteState.HITTINGFAILED;
+					markFailed(previousNote);
 				}
 
 				hitNote(nearestNewNote);
