@@ -136,6 +136,8 @@ var YouTyping = function (element, settings) {
 					youTyping.score.push(tempItem);
 				});
 
+				youTyping.nextLyricIndex = findNextLyric(-1);
+
 				loadXMLDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -209,6 +211,21 @@ var YouTyping = function (element, settings) {
 		}
 
 		return nextNote;
+	};
+
+	// return next lyric
+	var findNextLyric = function (itemIndex) {
+		var nextLyric = null;
+
+		for (var i = itemIndex + 1; i < youTyping.score.length; i++) {
+			var item = youTyping.score[i];
+			if (item.type === '*') {
+				nextLyric = i;
+				break;
+			}
+		}
+
+		return nextLyric;
 	};
 
 	// game loop
@@ -294,6 +311,7 @@ var YouTyping = function (element, settings) {
 				// update current lyric index
 				if (youTyping.currentLyricIndex < index) { // null < number is true.
 					youTyping.currentLyricIndex = index;
+					youTyping.nextLyricIndex = findNextLyric(index);
 				}
 			} else if (note.type === '/' && note.time < time) { // if order stop marks
 				// cancel current lyric
@@ -353,7 +371,8 @@ var YouTyping = function (element, settings) {
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
 		bufferTextPosition: [0.2, 0.8], // ratio in screen
-		currentLyricPosition: [0.5, 0.3], // ration in screen
+		currentLyricPosition: [0.5, 0.25], // ration in screen
+		nextLyricPosition: [0.5, 0.3], // ration in screen
 		judges: [ // millisecond
 		{
 			name: 'perfect',
@@ -403,6 +422,7 @@ var YouTyping = function (element, settings) {
 
 	// lyrics
 	this.currentLyricIndex = null;
+	this.nextLyricIndex = null; // initialized in loadXML()
 
 
 	/******************* Methods *******************/
