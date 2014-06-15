@@ -198,6 +198,10 @@ var YouTyping = function (element, settings) {
 
 		for (var i = noteIndex + 1; i < youTyping.score.length; i++) {
 			var item = youTyping.score[i];
+			if (item.type === '/') {
+				nextNote = null;
+				break;
+			}
 			if (item.type === '+') {
 				nextNote = i;
 				break;
@@ -286,6 +290,20 @@ var YouTyping = function (element, settings) {
 					previousLiveNote = note;
 					previousLiveNoteIndex = index;
 				}
+			} else if (note.type === '/' && note.time < time) { // if order stop marks
+				// and if previous live note exists
+				if (previousLiveNote) {
+					// mark it failed
+					markFailed(previousLiveNote);
+
+					if (previousLiveNoteIndex === youTyping.currentNoteIndex) {
+						youTyping.currentNoteIndex = null;
+						youTyping.inputBuffer = '';
+					}
+				}
+
+				previousLiveNote = null;
+				previousLiveNoteIndex = null;
 			}
 		});
 	};
