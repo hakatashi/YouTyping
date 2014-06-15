@@ -34,6 +34,14 @@ var Screen = function (canvas, youTyping) {
 			fontSize: 24
 		});
 
+		screen.currentLyric = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.currentLyricPosition),
+			content: '',
+			fillColor: 'white',
+			justification: 'center',
+			fontSize: 36
+		});
+
 		setInterval(function () {
 			screen.debugTexts[0].content = 'FPS: ' + FPS;
 			FPS = 0;
@@ -109,6 +117,7 @@ var Screen = function (canvas, youTyping) {
 			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 			screen.bufferText.content = youTyping.inputBuffer;
+			screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.score[youTyping.currentLyricIndex].text : '';
 			FPS++;
 		};
 

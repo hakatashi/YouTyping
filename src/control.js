@@ -290,7 +290,16 @@ var YouTyping = function (element, settings) {
 					previousLiveNote = note;
 					previousLiveNoteIndex = index;
 				}
+			} else if (note.type === '*' && note.time < time) {
+				// update current lyric index
+				if (youTyping.currentLyricIndex < index) { // null < number is true.
+					youTyping.currentLyricIndex = index;
+				}
 			} else if (note.type === '/' && note.time < time) { // if order stop marks
+				// cancel current lyric
+				if (youTyping.currentLyricIndex < index) {
+					youTyping.currentLyricIndex = null;
+				}
 				// and if previous live note exists
 				if (previousLiveNote) {
 					// mark it failed
@@ -344,6 +353,7 @@ var YouTyping = function (element, settings) {
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
 		bufferTextPosition: [0.2, 0.8], // ratio in screen
+		currentLyricPosition: [0.5, 0.3], // ration in screen
 		judges: [ // millisecond
 		{
 			name: 'perfect',
@@ -390,6 +400,9 @@ var YouTyping = function (element, settings) {
 
 	this.currentNoteIndex = null;
 	this.inputBuffer = '';
+
+	// lyrics
+	this.currentLyricIndex = null;
 
 
 	/******************* Methods *******************/
