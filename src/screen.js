@@ -178,6 +178,16 @@ var Screen = function (canvas, youTyping) {
 							fontFamily: 'sans-serif'
 						}));
 					}
+					// order stop mark
+					if (item.type === '/') {
+						items[index].orderStop = items[index].addChild(new paper.Path({
+							segments: [[position, setting.scoreYpos * setting.height - setting.noteSize - 30]],
+							fillColor: 'white'
+						}));
+						items[index].orderStop.lineBy([10, -10]);
+						items[index].orderStop.lineBy([-20, 0]);
+						items[index].orderStop.closed = true;
+					}
 				} else {
 					return;
 				}
@@ -194,6 +204,9 @@ var Screen = function (canvas, youTyping) {
 				items[index].position.x = position;
 			}
 			if (item.type === '-') {
+				items[index].position.x = position;
+			}
+			if (item.type === '/') {
 				items[index].position.x = position;
 			}
 			if (item.type === '+') {
