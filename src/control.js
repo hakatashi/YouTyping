@@ -67,6 +67,11 @@ var YouTyping = function (element, settings) {
 			break;
 		case YT.PlayerState.PLAYING:
 			logTrace('Player Started.');
+
+			if (youTyping.player.getCurrentTime() < youTyping.settings.offset) {
+				youTyping.player.seekTo(youTyping.settings.offset, true);
+				console.log('seeked');
+			}
 			break;
 		case YT.PlayerState.PAUSED:
 			logTrace('Player Paused.');
@@ -432,10 +437,6 @@ var YouTyping = function (element, settings) {
 
 	this.play = function () {
 		youTyping.player.playVideo();
-		if (youTyping.settings.offset) {
-			youTyping.player.seekTo(youTyping.settings.offset, true);
-			console.log('seeked');
-		}
 		setInterval(gameLoop, 10);
 	};
 
