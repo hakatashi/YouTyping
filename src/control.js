@@ -57,6 +57,9 @@ var YouTyping = function (element, settings) {
 
 	var onPlayerReady = function (event) {
 		logTrace('Player is Ready.');
+
+		youTyping.player.setVolume(youTyping.settings.volume);
+
 		setupPlayerDeferred.resolve();
 	};
 
@@ -404,6 +407,7 @@ var YouTyping = function (element, settings) {
 		correction: 0, // millisecond
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
+		volume: 100, // percent
 		tableFile: 'convert/romaji.xml'
 	};
 
