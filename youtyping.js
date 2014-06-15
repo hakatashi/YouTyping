@@ -1,4 +1,4 @@
-/* youtyping.js 06-15-2014 */
+/* youtyping.js 06-16-2014 */
 
 var YouTyping = (function(){
 var YouTyping = function (element, settings) {
@@ -70,6 +70,11 @@ var YouTyping = function (element, settings) {
 			break;
 		case YT.PlayerState.PLAYING:
 			logTrace('Player Started.');
+
+			// seeking is only available when playing
+			if (youTyping.player.getCurrentTime() < youTyping.settings.offset) {
+				youTyping.player.seekTo(youTyping.settings.offset, true);
+			}
 			break;
 		case YT.PlayerState.PAUSED:
 			logTrace('Player Paused.');
@@ -258,9 +263,9 @@ var YouTyping = function (element, settings) {
 		var now = youTyping.now;
 
 		if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
-			youTyping.zeroTimePad = now;
-			youTyping.zeroTime = now;
-		} else if (youTyping.currentTime !== gotCurrentTime) { // if Current Time jumped
+			youTyping.zeroTimePad = now + youTyping.correction - youTyping.settings.offset * 1000;
+			youTyping.zeroTime = now + youTyping.correction - youTyping.settings.offset * 1000;
+		} else if (youTyping.currentTime !== gotCurrentTime && gotCurrentTime > youTyping.settings.offset) { // if Current Time jumped
 			youTyping.currentTime = gotCurrentTime;
 			youTyping.estimatedZero = now - youTyping.currentTime * 1000;
 
@@ -281,7 +286,7 @@ var YouTyping = function (element, settings) {
 			});
 
 			// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
-			youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length;
+			youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.correction;
 
 			youTyping.zeroCallFPS++;
 		}
@@ -399,6 +404,9 @@ var YouTyping = function (element, settings) {
 		}
 		],
 		failureSuspension: 100, // millisecond
+		correction: 0, // millisecond
+		controlledCorrection: 0, // millisecond
+		offset: 0, // second
 		tableFile: 'convert/romaji.xml'
 	};
 
@@ -432,7 +440,6 @@ var YouTyping = function (element, settings) {
 
 	this.play = function () {
 		youTyping.player.playVideo();
-
 		setInterval(gameLoop, 10);
 	};
 
@@ -648,6 +655,9 @@ var YouTyping = function (element, settings) {
 			}
 		}
 	}
+
+	// calculate correction
+	this.correction = this.settings.correction + this.settings.controlledCorrection + this.settings.offset * 1000;
 
 	// setup DOM
 	/*
