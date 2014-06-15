@@ -68,9 +68,9 @@ var YouTyping = function (element, settings) {
 		case YT.PlayerState.PLAYING:
 			logTrace('Player Started.');
 
+			// seeking is only available when playing
 			if (youTyping.player.getCurrentTime() < youTyping.settings.offset) {
 				youTyping.player.seekTo(youTyping.settings.offset, true);
-				console.log('seeked');
 			}
 			break;
 		case YT.PlayerState.PAUSED:
