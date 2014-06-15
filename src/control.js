@@ -255,8 +255,8 @@ var YouTyping = function (element, settings) {
 		var now = youTyping.now;
 
 		if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
-			youTyping.zeroTimePad = now + youTyping.settings.correction;
-			youTyping.zeroTime = now + youTyping.settings.correction;
+			youTyping.zeroTimePad = now + youTyping.correction;
+			youTyping.zeroTime = now + youTyping.correction;
 		} else if (youTyping.currentTime !== gotCurrentTime) { // if Current Time jumped
 			youTyping.currentTime = gotCurrentTime;
 			youTyping.estimatedZero = now - youTyping.currentTime * 1000;
@@ -278,7 +278,7 @@ var YouTyping = function (element, settings) {
 			});
 
 			// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
-			youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.settings.correction;
+			youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.correction;
 
 			youTyping.zeroCallFPS++;
 		}
@@ -397,6 +397,8 @@ var YouTyping = function (element, settings) {
 		],
 		failureSuspension: 100, // millisecond
 		correction: 0, // millisecond
+		controlledCorrection: 0, // millisecond
+		offset: 0, // second
 		tableFile: 'convert/romaji.xml'
 	};
 
@@ -430,7 +432,10 @@ var YouTyping = function (element, settings) {
 
 	this.play = function () {
 		youTyping.player.playVideo();
-
+		if (youTyping.settings.offset) {
+			youTyping.player.seekTo(youTyping.settings.offset, true);
+			console.log('seeked');
+		}
 		setInterval(gameLoop, 10);
 	};
 
@@ -646,6 +651,9 @@ var YouTyping = function (element, settings) {
 			}
 		}
 	}
+
+	// calculate correction
+	this.correction = this.settings.correction + this.settings.controlledCorrection + this.settings.offset * 1000;
 
 	// setup DOM
 	/*
