@@ -262,7 +262,7 @@ var YouTyping = function (element, settings) {
 		if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
 			youTyping.zeroTimePad = now + youTyping.correction - youTyping.settings.offset * 1000;
 			youTyping.zeroTime = now + youTyping.correction - youTyping.settings.offset * 1000;
-		} else if (youTyping.currentTime !== gotCurrentTime) { // if Current Time jumped
+		} else if (youTyping.currentTime !== gotCurrentTime && gotCurrentTime < youTyping.settings.offset) { // if Current Time jumped
 			youTyping.currentTime = gotCurrentTime;
 			youTyping.estimatedZero = now - youTyping.currentTime * 1000;
 
