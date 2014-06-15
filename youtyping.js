@@ -649,7 +649,7 @@ var YouTyping = function (element, settings) {
 			if (this.settings[param] === undefined) {
 				this.settings[param] = settings[param];
 			} else if (typeof this.settings[param] === 'number') {
-				this.settings[param] = parseInt(settings[param], 10);
+				this.settings[param] = parseFloat(settings[param], 10);
 			} else if (typeof this.settings[param] === 'string') {
 				this.settings[param] = settings[param];
 			}
