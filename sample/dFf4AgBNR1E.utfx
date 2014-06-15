@@ -171,7 +171,7 @@
 		<item type="-" time="61.232000"/>
 		<item type="-" time="61.723803"/>
 		<item type="/" time="61.969705"/>
-		<item type="*" time="61.969705 Yeah! Yeah!" text="Yeah!"/>
+		<item type="*" time="61.969705" text="Yeah! Yeah! Yeah!"/>
 		<item type="+" time="61.969705" text="いぇ"/>
 		<item type="=" time="62.215607"/>
 		<item type="+" time="62.461508" text="い"/>
@@ -255,7 +255,7 @@
 		<item type="-" time="76.969705"/>
 		<item type="-" time="77.461508"/>
 		<item type="/" time="77.707410"/>
-		<item type="*" time="77.707410 Yeah! Yeah!" text="Yeah!"/>
+		<item type="*" time="77.707410" text="Yeah! Yeah! Yeah!"/>
 		<item type="+" time="77.707410" text="いぇ"/>
 		<item type="=" time="77.953311"/>
 		<item type="+" time="78.199213" text="い"/>
@@ -373,7 +373,7 @@
 		<item type="-" time="99.100852"/>
 		<item type="=" time="99.592656"/>
 		<item type="/" time="99.592656"/>
-		<item type="*" time="99.592656 カモン カモン カモン カモン" text="ベイビー"/>
+		<item type="*" time="99.592656" text="カモン カモン カモン カモン ベイビー"/>
 		<item type="+" time="99.592656" text="か"/>
 		<item type="+" time="99.715607" text="もん"/>
 		<item type="+" time="99.961508" text="か"/>
@@ -450,7 +450,7 @@
 		<item type="-" time="111.887738"/>
 		<item type="-" time="112.379541"/>
 		<item type="/" time="112.379541"/>
-		<item type="*" time="112.379541 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="112.379541" text="Hey! Hey! Hey!"/>
 		<item type="+" time="112.379541" text="へい"/>
 		<item type="+" time="112.625443" text="へい"/>
 		<item type="-" time="112.871344"/>
@@ -538,7 +538,7 @@
 		<item type="-" time="127.625443"/>
 		<item type="-" time="128.117246"/>
 		<item type="/" time="128.117246"/>
-		<item type="*" time="128.117246 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="128.117246" text="Hey! Hey! Hey!"/>
 		<item type="+" time="128.117246" text="へい"/>
 		<item type="+" time="128.363148" text="へい"/>
 		<item type="-" time="128.609049"/>
@@ -547,7 +547,7 @@
 		<item type="-" time="129.592656"/>
 		<item type="-" time="130.084459"/>
 		<item type="/" time="130.084459"/>
-		<item type="*" time="130.084459 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="130.084459" text="Hey! Hey! Hey!"/>
 		<item type="+" time="130.084459" text="へい"/>
 		<item type="+" time="130.330361" text="へい"/>
 		<item type="-" time="130.576262"/>
@@ -718,7 +718,7 @@
 		<item type="-" time="165.494295"/>
 		<item type="-" time="165.986098"/>
 		<item type="/" time="166.232000"/>
-		<item type="*" time="166.232000 Yeah! Yeah!" text="Yeah!"/>
+		<item type="*" time="166.232000" text="Yeah! Yeah! Yeah!"/>
 		<item type="+" time="166.232000" text="いぇ"/>
 		<item type="=" time="166.477902"/>
 		<item type="+" time="166.723803" text="い"/>
@@ -838,7 +838,7 @@
 		<item type="-" time="187.625443"/>
 		<item type="=" time="188.117246"/>
 		<item type="/" time="188.117246"/>
-		<item type="*" time="188.117246 プリーズ プリーズ プリーズ" text="オーベイビー"/>
+		<item type="*" time="188.117246" text="プリーズ プリーズ プリーズ オーベイビー"/>
 		<item type="+" time="188.117246" text="ぷ"/>
 		<item type="+" time="188.240197" text="りーず"/>
 		<item type="+" time="188.486098" text="ぷ"/>
@@ -914,7 +914,7 @@
 		<item type="-" time="200.412328"/>
 		<item type="-" time="200.904131"/>
 		<item type="/" time="200.904131"/>
-		<item type="*" time="200.904131 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="200.904131" text="Hey! Hey! Hey!"/>
 		<item type="+" time="200.904131" text="へい"/>
 		<item type="+" time="201.150033" text="へい"/>
 		<item type="-" time="201.395934"/>
@@ -1002,7 +1002,7 @@
 		<item type="-" time="216.150033"/>
 		<item type="-" time="216.641836"/>
 		<item type="/" time="216.641836"/>
-		<item type="*" time="216.641836 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="216.641836" text="Hey! Hey! Hey!"/>
 		<item type="+" time="216.641836" text="へい"/>
 		<item type="+" time="216.887738" text="へい"/>
 		<item type="-" time="217.133639"/>
@@ -1011,7 +1011,7 @@
 		<item type="-" time="218.117246"/>
 		<item type="-" time="218.609049"/>
 		<item type="/" time="218.609049"/>
-		<item type="*" time="218.609049 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="218.609049" text="Hey! Hey! Hey!"/>
 		<item type="+" time="218.609049" text="へい"/>
 		<item type="+" time="218.854951" text="へい"/>
 		<item type="-" time="219.100852"/>
@@ -1125,7 +1125,7 @@
 		<item type="-" time="246.150033"/>
 		<item type="-" time="246.641836"/>
 		<item type="=" time="247.133639"/>
-		<item type="*" time="247.133639 カモン カモン カモン カモン" text="ベイビー"/>
+		<item type="*" time="247.133639" text="カモン カモン カモン カモン ベイビー"/>
 		<item type="+" time="247.133639" text="か"/>
 		<item type="+" time="247.256590" text="もん"/>
 		<item type="+" time="247.502492" text="か"/>
@@ -1202,7 +1202,7 @@
 		<item type="-" time="259.428721"/>
 		<item type="-" time="259.920525"/>
 		<item type="/" time="259.920525"/>
-		<item type="*" time="259.920525 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="259.920525" text="Hey! Hey! Hey!"/>
 		<item type="+" time="259.920525" text="へい"/>
 		<item type="+" time="260.166426" text="へい"/>
 		<item type="-" time="260.412328"/>
@@ -1290,7 +1290,7 @@
 		<item type="-" time="275.166426"/>
 		<item type="-" time="275.658230"/>
 		<item type="/" time="275.658230"/>
-		<item type="*" time="275.658230 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="275.658230" text="Hey! Hey! Hey!"/>
 		<item type="+" time="275.658230" text="へい"/>
 		<item type="+" time="275.904131" text="へい"/>
 		<item type="-" time="276.150033"/>
@@ -1299,7 +1299,7 @@
 		<item type="-" time="277.133639"/>
 		<item type="-" time="277.625443"/>
 		<item type="/" time="277.625443"/>
-		<item type="*" time="277.625443 Hey! Hey!" text="Hey!"/>
+		<item type="*" time="277.625443" text="Hey! Hey! Hey!"/>
 		<item type="+" time="277.625443" text="へい"/>
 		<item type="+" time="277.871344" text="へい"/>
 		<item type="-" time="278.117246"/>
