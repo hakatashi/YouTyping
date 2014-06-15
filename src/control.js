@@ -255,8 +255,8 @@ var YouTyping = function (element, settings) {
 		var now = youTyping.now;
 
 		if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
-			youTyping.zeroTimePad = now;
-			youTyping.zeroTime = now;
+			youTyping.zeroTimePad = now + youTyping.settings.correction;
+			youTyping.zeroTime = now + youTyping.settings.correction;
 		} else if (youTyping.currentTime !== gotCurrentTime) { // if Current Time jumped
 			youTyping.currentTime = gotCurrentTime;
 			youTyping.estimatedZero = now - youTyping.currentTime * 1000;
@@ -278,7 +278,7 @@ var YouTyping = function (element, settings) {
 			});
 
 			// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
-			youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length;
+			youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.settings.correction;
 
 			youTyping.zeroCallFPS++;
 		}
@@ -396,6 +396,7 @@ var YouTyping = function (element, settings) {
 		}
 		],
 		failureSuspension: 100, // millisecond
+		correction: 0, // millisecond
 		tableFile: 'convert/romaji.xml'
 	};
 
