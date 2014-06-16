@@ -65,8 +65,8 @@ var Screen = function (canvas, youTyping) {
 		var settings = youTyping.settings;
 		var now = youTyping.now;
 
-		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
-		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
+		var paddingRight = settings.width * (1 - settings.hitPosition) + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
+		var paddingLeft = settings.width * settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
 
 		try {
 			// Computes emerge time and vanishing time of item.
@@ -86,7 +86,7 @@ var Screen = function (canvas, youTyping) {
 		screen.update();
 
 		this.hitCircle = new paper.Path.Circle({
-			center: [settings.hitPosition, settings.scoreYpos * settings.height],
+			center: paper.view.bounds.bottomRight.multiply([settings.hitPosition, settings.scoreYpos]),
 			radius: settings.noteSize,
 			strokeWidth: 1,
 			strokeColor: 'white'
@@ -152,7 +152,7 @@ var Screen = function (canvas, youTyping) {
 
 		youTyping.score.forEach(function (item, index) {
 			// X position of the item
-			var position = (item.time - runTime) * setting.speed + setting.hitPosition;
+			var position = (item.time - runTime) * setting.speed + setting.width * setting.hitPosition;
 
 			// if index-th item doesn't exists in screen
 			if (!(index in items)) {

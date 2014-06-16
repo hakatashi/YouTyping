@@ -371,7 +371,7 @@ var YouTyping = function (element, settings) {
 		score: 'data.utfx',
 		width: 1120, // pixel
 		height: 630, // pixel
-		hitPosition: 400, // pixel
+		hitPosition: 0.4, // ratio
 		noteSize: 50, // pixel
 		speed: 0.5, // pixel per second
 		scoreYpos: 0.5, // ratio
