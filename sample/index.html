@@ -11,18 +11,15 @@
 		var choices = [
 		{
 			videoId: 'fQ_m5VLhqNg',
-			title: 'とまどい→レシピ',
-			offset: 0
+			title: 'とまどい→レシピ'
 		},
 		{
 			videoId: 'a_mWyahWoUA',
-			title: '優しい忘却',
-			offset: 0
+			title: '優しい忘却'
 		},
 		{
 			videoId: 'dFf4AgBNR1E',
-			title: '恋するフォーチュンクッキー',
-			offset: 0
+			title: '恋するフォーチュンクッキー'
 		},
 		{
 			videoId: 'PqJNc9KVIZE',
@@ -57,7 +54,7 @@
 				return result;
 			})();
 
-			settings.offset = choice.offset;
+			settings.offset = choice.offset || 0;
 			settings.controlledCorrection = choice.controlledCorrection || 0;
 			settings.score = settings.videoId + '.utfx';
 			settings.tableFile = '../convert/romaji.xml';
