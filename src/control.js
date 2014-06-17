@@ -410,6 +410,7 @@ var YouTyping = function (element, settings) {
 			to: 150
 		}
 		],
+		breakCombo: 'bad', // judgement name
 		failureSuspension: 100, // millisecond
 		correction: 0, // millisecond
 		controlledCorrection: 0, // millisecond
@@ -645,6 +646,11 @@ var YouTyping = function (element, settings) {
 				}
 
 				hitNote(nearestNewNote);
+
+				// breaking combo
+				if (hitJudge === youTyping.settings.breakCombo) {
+					youTyping.combo = 0;
+				}
 
 				youTyping.combo++;
 
