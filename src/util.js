@@ -41,28 +41,11 @@ var startsWith = function (string, prefix) {
 	return string.substring(0, prefix.length) === prefix;
 };
 
-// equivalent to jQuery.extend(true)
-// http://youmightnotneedjquery.com/
-var deepExtend = function (out) {
-	out = out || {};
-
-	for (var i = 1; i < arguments.length; i++) {
-		var obj = arguments[i];
-
-		if (!obj) {
-			continue;
-		}
-
-		for (var key in obj) {
-			if (obj.hasOwnProperty(key)) {
-				if (typeof obj[key] === 'object') {
-					deepExtend(out[key], obj[key]);
-				} else {
-					out[key] = obj[key];
-				}
-			}
-		}
+// generate (hopefully unique) identifier
+var generateID = function () {
+	var id = '';
+	for (var i = 0; i < 12; i++) {
+		id += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)];
 	}
-
-	return out;
+	return id;
 };

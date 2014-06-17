@@ -64,6 +64,10 @@ var YouTyping = function (element, settings) {
 	};
 
 	var onPlayerStateChange = function (event) {
+		if (screen.onPlayerStateChange) {
+			screen.onPlayerStateChange.call(screen, event);
+		}
+
 		switch (event.data) {
 		case YT.PlayerState.ENDED:
 			logTrace('Player Ended.');
@@ -636,7 +640,13 @@ var YouTyping = function (element, settings) {
 
 				hitNote(nearestNewNote);
 
-				console.log(distance, hitJudge);
+				// trigger judgement effect
+				screen.onJudgement({
+					judgement: {
+						distance: distance,
+						judge: hitJudge
+					}
+				});
 			}
 		}
 	};
@@ -700,6 +710,7 @@ var YouTyping = function (element, settings) {
 
 	// create YouTyping screen class
 	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
+	var screen = this.screen;
 
 	// Initialize asynchronously
 	// http://stackoverflow.com/questions/22346345/

@@ -50,6 +50,8 @@ var Screen = function (canvas, youTyping) {
 			fontSize: 18
 		});
 
+		screen.judgeEffects = new paper.Group();
+
 		setInterval(function () {
 			screen.debugTexts[0].content = 'FPS: ' + FPS;
 			FPS = 0;
@@ -85,7 +87,7 @@ var Screen = function (canvas, youTyping) {
 		youTyping.zeroTime = now;
 		screen.update();
 
-		this.hitCircle = new paper.Path.Circle({
+		screen.hitCircle = new paper.Path.Circle({
 			center: paper.view.bounds.bottomRight.multiply([settings.hitPosition, settings.scoreYpos]),
 			radius: settings.noteSize,
 			strokeWidth: 1,
@@ -117,18 +119,8 @@ var Screen = function (canvas, youTyping) {
 	this.start = function () {
 		logTrace('Starting game.');
 
-		paper.view.onFrame = function (event) {
-			if (youTyping.player.getPlayerState() === 1) {
-				screen.update();
-			}
-			screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
-			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
-			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
-			screen.bufferText.content = youTyping.inputBuffer;
-			screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.score[youTyping.currentLyricIndex].text : '';
-			screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.score[youTyping.nextLyricIndex].text : '';
-			FPS++;
-		};
+		// register onFrame event
+		paper.view.onFrame = screen.onFrame;
 
 		youTyping.play();
 
@@ -249,5 +241,81 @@ var Screen = function (canvas, youTyping) {
 				}
 			}
 		});
+	};
+
+	this.onFrame = function (event) {
+		if (youTyping.player.getPlayerState() === 1) {
+			screen.update();
+		}
+		screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
+		screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
+		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
+		screen.bufferText.content = youTyping.inputBuffer;
+		screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.score[youTyping.currentLyricIndex].text : '';
+		screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.score[youTyping.nextLyricIndex].text : '';
+
+		screen.judgeEffects.children.forEach(function (judgeEffect) {
+			judgeEffect.controller.onFrame();
+		});
+
+		FPS++;
+	};
+
+	// YouTube onStateChange event supplied from YouTyping
+	this.onPlayerStateChange = function (event) {
+		// hide mouse cursor when playing
+		if (event.data === YT.PlayerState.PLAYING) {
+			youTyping.DOM.screen.css({
+				cursor: 'none'
+			});
+		} else {
+			youTyping.DOM.screen.css({
+				cursor: 'auto'
+			});
+		}
+	};
+
+	this.onJudgement = function (event) {
+		var judgeEffect = new JudgeEffect(event.judgement);
+		judgeEffect.item.controller = judgeEffect;
+		screen.judgeEffects.addChild(judgeEffect.item);
+	};
+
+	// judge effect object
+	var JudgeEffect = function (judgement) {
+		var judgeEffect = this;
+		var settings = youTyping.settings;
+
+		this.item = new paper.Group();
+
+		this.judgeColor = '';
+		switch (judgement.judge) {
+		case 'perfect':
+			this.judgeColor = 'yellow'; break;
+		case 'great':
+			this.judgeColor = '#2d1'; break;
+		case 'good':
+			this.judgeColor = '#19a'; break;
+		case 'bad':
+			this.judgeColor = '#aaa'; break;
+		}
+
+		this.judge = this.item.addChild(new paper.PointText({
+			point: screen.hitCircle.position.add([0, -settings.noteSize]),
+			content: judgement.judge,
+			fillColor: this.judgeColor,
+			justification: 'center',
+			fontSize: 24,
+			fontFamily: 'sans-serif'
+		}));
+
+		this.onFrame = function (event) {
+			this.item.translate([0, -3]);
+			this.item.opacity -= 0.02;
+
+			if (this.item.opacity < 0) {
+				this.item.remove();
+			}
+		};
 	};
 };
