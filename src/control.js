@@ -386,8 +386,9 @@ var YouTyping = function (element, settings) {
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
 		bufferTextPosition: [0.2, 0.8], // ratio in screen
-		currentLyricPosition: [0.5, 0.25], // ration in screen
-		nextLyricPosition: [0.5, 0.3], // ration in screen
+		currentLyricPosition: [0.5, 0.25], // ratio in screen
+		nextLyricPosition: [0.5, 0.3], // ratio in screen
+		kanaLyricPosition: [0.5, 0.8], // ratio in screen
 		judges: [ // millisecond
 		{
 			name: 'perfect',
@@ -480,6 +481,11 @@ var YouTyping = function (element, settings) {
 
 			// TODO: Polyfill Array.prototype.filter (IE<9)
 			var matchingRules = youTyping.table.filter(function (rule) {
+				// currently YouTyping assumes no character in lyric cannnot be input as
+				// single character. (e.g. 'きゃ' is also inputtable as 'ki lya' in romaji mode)
+				// so YouTyping spares no effort to find special combination of
+				// rules that can generate ramaining text, but it deserves consideration to
+				// prevent evel behavior of breaking conversion table input.
 				if (!startsWith(rule.before, newInputBuffer)) {
 					return false;
 				}
@@ -664,6 +670,32 @@ var YouTyping = function (element, settings) {
 				});
 			}
 		}
+	};
+
+	// get kana version of currently playing lyric
+	this.getKanaLyric = function (lyricIndex) {
+		if (typeof lyricIndex === 'undefined') {
+			lyricIndex = youTyping.currentLyricIndex;
+		}
+
+		if (lyricIndex === null) {
+			return null;
+		}
+
+		var kanaLyric = '';
+
+		for (var i = lyricIndex + 1; i < youTyping.score.length; i++) {
+			if (youTyping.score[i].type === '+') {
+				kanaLyric += youTyping.score[i].text;
+			} else if (
+				youTyping.score[i].type === '/' ||
+				youTyping.score[i].type === '*'
+			) {
+				break;
+			}
+		}
+
+		return kanaLyric;
 	};
 
 

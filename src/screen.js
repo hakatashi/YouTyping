@@ -50,6 +50,14 @@ var Screen = function (canvas, youTyping) {
 			fontSize: 18
 		});
 
+		screen.kanaLyric = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.kanaLyricPosition),
+			content: '',
+			fillColor: 'white',
+			justification: 'center',
+			fontSize: 24
+		});
+
 		screen.judgeEffects = new paper.Group();
 
 		setInterval(function () {
@@ -244,15 +252,19 @@ var Screen = function (canvas, youTyping) {
 	};
 
 	this.onFrame = function (event) {
+		var kanaLyric;
+
 		if (youTyping.player.getPlayerState() === 1) {
 			screen.update();
 		}
+
 		screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
 		screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 		screen.bufferText.content = youTyping.inputBuffer;
 		screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.score[youTyping.currentLyricIndex].text : '';
 		screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.score[youTyping.nextLyricIndex].text : '';
+		screen.kanaLyric.content = (kanaLyric = youTyping.getKanaLyric()) ? kanaLyric : '';
 
 		screen.judgeEffects.children.forEach(function (judgeEffect) {
 			judgeEffect.controller.onFrame();
