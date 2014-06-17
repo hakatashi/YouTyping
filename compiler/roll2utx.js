@@ -111,7 +111,7 @@ try {
 		}
 
 		var time = parseFloat(rollLine.slice(1).split(/ (.+)?/)[0]);
-		time = (time + options.shift / 1000).round(5);
+		time = (time + options.shift / 1000).round(6);
 		var text = rollLine.slice(1).split(/ (.+)?/)[1];
 
 		if (text) {

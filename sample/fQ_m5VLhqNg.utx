@@ -1,1091 +1,1098 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <utx version="0.1">
-	<data>
-		<music>tomadoi-short.mp3</music>
-		<resource>https://www.youtube.com/watch?v=fQ_m5VLhqNg</resource>
-		<info>
-			<title>とまどい→レシピ</title>
-			<artist>みかくにんぐッ!</artist>
-			<creator type="lyricyst">Junky</creator>
-			<creator type="composer">Junky</creator>
-			<creator type="arranger">Junky</creator>
-			<creator type="singer">みかくにんぐッ!</creator>
-			<note>アニメ「未確認で進行形」OP</note>
-			<maker>koyi</maker>
-			<difficulty>2</difficulty>
-			<datafile>tomadoi-short.txt</datafile>
-			<scorefile>tomadoi-short.score</scorefile>
-			<description>作詞 Junky&lt;br&gt;作曲 Junky&lt;br&gt;編曲 Junky&lt;br&gt;唄   みかくにんぐッ!&lt;br&gt;&lt;br&gt;アニメ「未確認で進行形」OP&lt;br&gt;&lt;br&gt;JunkyってあのJunkyっすか。ひえー</description>
-		</info>
-		<roll>
-			<item time="0.643" type="longline"/>
-			<item time="0.995941" type="line"/>
-			<item time="1.348882" type="line"/>
-			<item time="1.701824" type="line"/>
-			<item time="2.054765" type="longline"/>
-			<item time="2.407706" type="line"/>
-			<item time="2.760647" type="line"/>
-			<item time="3.113588" type="line"/>
-			<item time="3.466529" type="longline"/>
-			<item time="3.819471" type="line"/>
-			<item time="4.172412" type="line"/>
-			<item time="4.525353" type="line"/>
-			<item time="4.878294" type="longline"/>
-			<item time="5.231235" type="line"/>
-			<item time="5.584176" type="line"/>
-			<item time="5.937118" type="line"/>
-			<item time="6.290059" type="longline"/>
-			<item time="6.643" type="line"/>
-			<item time="6.995941" type="line"/>
-			<item time="7.348882" type="line"/>
-			<item time="7.701824" type="longline"/>
-			<item time="8.054765" type="line"/>
-			<item time="8.407706" type="line"/>
-			<item time="8.760647" type="line"/>
-			<item time="9.113588" type="longline"/>
-			<item time="9.466529" type="line"/>
-			<item time="9.819471" type="line"/>
-			<item time="10.172412" type="line"/>
-			<item time="10.525353" type="longline"/>
-			<item time="10.878294" type="line"/>
-			<item time="11.231235" type="line"/>
-			<item time="11.231235" type="lyric">
-				<text>ふぅふぅ らったった らったったった ふぅふぅ</text>
-			</item>
-			<item time="11.231235" type="note">
-				<text>ふ</text>
-			</item>
-			<item time="11.407706" type="note">
-				<text>う</text>
-			</item>
-			<item time="11.584176" type="line"/>
-			<item time="11.584176" type="note">
-				<text>ふ</text>
-			</item>
-			<item time="11.760647" type="note">
-				<text>う</text>
-			</item>
-			<item time="11.937118" type="longline"/>
-			<item time="11.937118" type="note">
-				<text>らっ</text>
-			</item>
-			<item time="12.290059" type="line"/>
-			<item time="12.290059" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="12.643" type="line"/>
-			<item time="12.643" type="note">
-				<text>た</text>
-			</item>
-			<item time="12.819471" type="note">
-				<text>らっ</text>
-			</item>
-			<item time="12.995941" type="line"/>
-			<item time="13.172412" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="13.348882" type="longline"/>
-			<item time="13.525353" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="13.701824" type="line"/>
-			<item time="13.878294" type="note">
-				<text>た</text>
-			</item>
-			<item time="14.054765" type="line"/>
-			<item time="14.054765" type="note">
-				<text>ふ</text>
-			</item>
-			<item time="14.231235" type="note">
-				<text>う</text>
-			</item>
-			<item time="14.407706" type="line"/>
-			<item time="14.407706" type="note">
-				<text>ふ</text>
-			</item>
-			<item time="14.584176" type="note">
-				<text>う</text>
-			</item>
-			<item time="14.760647" type="longline"/>
-			<item time="14.760647" type="stop"/>
-			<item time="14.760647" type="lyric">
-				<text>らったったらっぱ いぇーい いぇーい</text>
-			</item>
-			<item time="14.760647" type="note">
-				<text>らっ</text>
-			</item>
-			<item time="15.113588" type="line"/>
-			<item time="15.113588" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="15.466529" type="line"/>
-			<item time="15.466529" type="note">
-				<text>た</text>
-			</item>
-			<item time="15.643" type="note">
-				<text>らっ</text>
-			</item>
-			<item time="15.819471" type="line"/>
-			<item time="15.995941" type="note">
-				<text>ぱ</text>
-			</item>
-			<item time="16.172412" type="longline"/>
-			<item time="16.172412" type="note">
-				<text>いぇー</text>
-			</item>
-			<item time="16.525353" type="line"/>
-			<item time="16.525353" type="note">
-				<text>い</text>
-			</item>
-			<item time="16.701824" type="note">
-				<text>いぇーい</text>
-			</item>
-			<item time="16.878294" type="line"/>
-			<item time="17.231235" type="line"/>
-			<item time="17.584176" type="longline"/>
-			<item time="17.584176" type="stop"/>
-			<item time="17.584176" type="lyric">
-				<text>らったった らったったった ふぅふぅいぇい</text>
-			</item>
-			<item time="17.584176" type="note">
-				<text>らっ</text>
-			</item>
-			<item time="17.937118" type="line"/>
-			<item time="17.937118" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="18.290059" type="line"/>
-			<item time="18.290059" type="note">
-				<text>た</text>
-			</item>
-			<item time="18.466529" type="note">
-				<text>らっ</text>
-			</item>
-			<item time="18.643" type="line"/>
-			<item time="18.819471" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="18.995941" type="longline"/>
-			<item time="19.172412" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="19.348882" type="line"/>
-			<item time="19.525353" type="note">
-				<text>た</text>
-			</item>
-			<item time="19.701824" type="line"/>
-			<item time="19.701824" type="note">
-				<text>ふ</text>
-			</item>
-			<item time="19.878294" type="note">
-				<text>う</text>
-			</item>
-			<item time="20.054765" type="line"/>
-			<item time="20.054765" type="note">
-				<text>ふ</text>
-			</item>
-			<item time="20.231235" type="note">
-				<text>う</text>
-			</item>
-			<item time="20.407706" type="longline"/>
-			<item time="20.407706" type="note">
-				<text>いぇい</text>
-			</item>
-			<item time="20.584176" type="stop"/>
-			<item time="20.760647" type="line"/>
-			<item time="21.113588" type="line"/>
-			<item time="21.466529" type="line"/>
-			<item time="21.819471" type="longline"/>
-			<item time="22.172412" type="line"/>
-			<item time="22.525353" type="line"/>
-			<item time="22.878294" type="line"/>
-			<item time="23.231235" type="longline"/>
-			<item time="23.231235" type="lyric">
-				<text>朝目が覚めたらもう昨日みたいな日常はなくて</text>
-			</item>
-			<item time="23.231235" type="note">
-				<text>あ</text>
-			</item>
-			<item time="23.584176" type="line"/>
-			<item time="23.584176" type="note">
-				<text>さ</text>
-			</item>
-			<item time="23.937118" type="line"/>
-			<item time="23.937118" type="note">
-				<text>め</text>
-			</item>
-			<item time="24.290059" type="line"/>
-			<item time="24.290059" type="note">
-				<text>が</text>
-			</item>
-			<item time="24.466529" type="note">
-				<text>さ</text>
-			</item>
-			<item time="24.643" type="longline"/>
-			<item time="24.819471" type="note">
-				<text>め</text>
-			</item>
-			<item time="24.995941" type="line"/>
-			<item time="24.995941" type="note">
-				<text>た</text>
-			</item>
-			<item time="25.172412" type="note">
-				<text>ら</text>
-			</item>
-			<item time="25.348882" type="line"/>
-			<item time="25.348882" type="note">
-				<text>も</text>
-			</item>
-			<item time="25.525353" type="note">
-				<text>う</text>
-			</item>
-			<item time="25.701824" type="line"/>
-			<item time="25.878294" type="note">
-				<text>き</text>
-			</item>
-			<item time="26.054765" type="longline"/>
-			<item time="26.054765" type="note">
-				<text>のう</text>
-			</item>
-			<item time="26.407706" type="line"/>
-			<item time="26.407706" type="note">
-				<text>み</text>
-			</item>
-			<item time="26.584176" type="note">
-				<text>た</text>
-			</item>
-			<item time="26.760647" type="line"/>
-			<item time="26.937118" type="note">
-				<text>い</text>
-			</item>
-			<item time="27.113588" type="line"/>
-			<item time="27.113588" type="note">
-				<text>な</text>
-			</item>
-			<item time="27.290059" type="note">
-				<text>に</text>
-			</item>
-			<item time="27.466529" type="longline"/>
-			<item time="27.466529" type="note">
-				<text>ち</text>
-			</item>
-			<item time="27.819471" type="line"/>
-			<item time="27.819471" type="note">
-				<text>じょ</text>
-			</item>
-			<item time="28.172412" type="line"/>
-			<item time="28.172412" type="note">
-				<text>う</text>
-			</item>
-			<item time="28.525353" type="line"/>
-			<item time="28.525353" type="note">
-				<text>は</text>
-			</item>
-			<item time="28.701824" type="note">
-				<text>な</text>
-			</item>
-			<item time="28.878294" type="longline"/>
-			<item time="29.054765" type="note">
-				<text>く</text>
-			</item>
-			<item time="29.231235" type="line"/>
-			<item time="29.231235" type="note">
-				<text>て</text>
-			</item>
-			<item time="29.584176" type="line"/>
-			<item time="29.937118" type="line"/>
-			<item time="30.290059" type="longline"/>
-			<item time="30.643" type="line"/>
-			<item time="30.643" type="stop"/>
-			<item time="30.643" type="lyric">
-				<text>「ホントあぁもう...えっとどうしよう」</text>
-			</item>
-			<item time="30.643" type="note">
-				<text>ほ</text>
-			</item>
-			<item time="30.995941" type="line"/>
-			<item time="30.995941" type="note">
-				<text>ん</text>
-			</item>
-			<item time="31.348882" type="line"/>
-			<item time="31.348882" type="note">
-				<text>と</text>
-			</item>
-			<item time="31.701824" type="longline"/>
-			<item time="31.701824" type="note">
-				<text>ああ</text>
-			</item>
-			<item time="32.054765" type="line"/>
-			<item time="32.231235" type="note">
-				<text>もう</text>
-			</item>
-			<item time="32.407706" type="line"/>
-			<item time="32.407706" type="note">
-				<text>えっ</text>
-			</item>
-			<item time="32.760647" type="line"/>
-			<item time="32.937118" type="note">
-				<text>と</text>
-			</item>
-			<item time="33.113588" type="longline"/>
-			<item time="33.113588" type="note">
-				<text>どう</text>
-			</item>
-			<item time="33.466529" type="line"/>
-			<item time="33.643" type="note">
-				<text>し</text>
-			</item>
-			<item time="33.819471" type="line"/>
-			<item time="33.819471" type="note">
-				<text>よう</text>
-			</item>
-			<item time="34.172412" type="line"/>
-			<item time="34.525353" type="longline"/>
-			<item time="34.525353" type="stop"/>
-			<item time="34.525353" type="lyric">
-				<text>ため息混じりに練るお菓子と妄想のレシピの中に</text>
-			</item>
-			<item time="34.525353" type="note">
-				<text>た</text>
-			</item>
-			<item time="34.878294" type="line"/>
-			<item time="34.878294" type="note">
-				<text>め</text>
-			</item>
-			<item time="35.231235" type="line"/>
-			<item time="35.231235" type="note">
-				<text>い</text>
-			</item>
-			<item time="35.584176" type="line"/>
-			<item time="35.584176" type="note">
-				<text>き</text>
-			</item>
-			<item time="35.760647" type="note">
-				<text>ま</text>
-			</item>
-			<item time="35.937118" type="longline"/>
-			<item time="36.113588" type="note">
-				<text>じ</text>
-			</item>
-			<item time="36.290059" type="line"/>
-			<item time="36.290059" type="note">
-				<text>り</text>
-			</item>
-			<item time="36.466529" type="note">
-				<text>に</text>
-			</item>
-			<item time="36.643" type="line"/>
-			<item time="36.643" type="note">
-				<text>ね</text>
-			</item>
-			<item time="36.819471" type="note">
-				<text>る</text>
-			</item>
-			<item time="36.995941" type="line"/>
-			<item time="37.172412" type="note">
-				<text>お</text>
-			</item>
-			<item time="37.348882" type="longline"/>
-			<item time="37.348882" type="note">
-				<text>か</text>
-			</item>
-			<item time="37.525353" type="note">
-				<text>し</text>
-			</item>
-			<item time="37.701824" type="line"/>
-			<item time="37.701824" type="note">
-				<text>と</text>
-			</item>
-			<item time="37.878294" type="note">
-				<text>も</text>
-			</item>
-			<item time="38.054765" type="line"/>
-			<item time="38.054765" type="note">
-				<text>う</text>
-			</item>
-			<item time="38.231235" type="note">
-				<text>そ</text>
-			</item>
-			<item time="38.407706" type="line"/>
-			<item time="38.407706" type="note">
-				<text>う</text>
-			</item>
-			<item time="38.584176" type="note">
-				<text>の</text>
-			</item>
-			<item time="38.760647" type="longline"/>
-			<item time="38.760647" type="note">
-				<text>れ</text>
-			</item>
-			<item time="39.113588" type="line"/>
-			<item time="39.113588" type="note">
-				<text>し</text>
-			</item>
-			<item time="39.466529" type="line"/>
-			<item time="39.466529" type="note">
-				<text>ぴ</text>
-			</item>
-			<item time="39.819471" type="line"/>
-			<item time="39.819471" type="note">
-				<text>の</text>
-			</item>
-			<item time="39.995941" type="note">
-				<text>な</text>
-			</item>
-			<item time="40.172412" type="longline"/>
-			<item time="40.348882" type="note">
-				<text>か</text>
-			</item>
-			<item time="40.525353" type="line"/>
-			<item time="40.525353" type="note">
-				<text>に</text>
-			</item>
-			<item time="40.878294" type="line"/>
-			<item time="41.231235" type="line"/>
-			<item time="41.231235" type="stop"/>
-			<item time="41.231235" type="lyric">
-				<text>恋心入っちゃった</text>
-			</item>
-			<item time="41.231235" type="note">
-				<text>こ</text>
-			</item>
-			<item time="41.407706" type="note">
-				<text>い</text>
-			</item>
-			<item time="41.584176" type="longline"/>
-			<item time="41.584176" type="note">
-				<text>ご</text>
-			</item>
-			<item time="41.760647" type="note">
-				<text>こ</text>
-			</item>
-			<item time="41.937118" type="line"/>
-			<item time="41.937118" type="note">
-				<text>ろ</text>
-			</item>
-			<item time="42.113588" type="note">
-				<text>はいっ</text>
-			</item>
-			<item time="42.290059" type="line"/>
-			<item time="42.466529" type="note">
-				<text>ちゃっ</text>
-			</item>
-			<item time="42.643" type="line"/>
-			<item time="42.819471" type="note">
-				<text>た</text>
-			</item>
-			<item time="42.995941" type="longline"/>
-			<item time="42.995941" type="stop"/>
-			<item time="43.348882" type="line"/>
-			<item time="43.701824" type="line"/>
-			<item time="44.054765" type="line"/>
-			<item time="44.407706" type="longline"/>
-			<item time="44.760647" type="line"/>
-			<item time="45.113588" type="line"/>
-			<item time="45.290059" type="lyric">
-				<text>シフォンケーキにカスタード スコーンにクロテッドクリーム</text>
-			</item>
-			<item time="45.290059" type="note">
-				<text>し</text>
-			</item>
-			<item time="45.466529" type="line"/>
-			<item time="45.466529" type="note">
-				<text>ふぉ</text>
-			</item>
-			<item time="45.643" type="note">
-				<text>ん</text>
-			</item>
-			<item time="45.819471" type="longline"/>
-			<item time="45.819471" type="note">
-				<text>け</text>
-			</item>
-			<item time="46.172412" type="line"/>
-			<item time="46.172412" type="note">
-				<text>ー</text>
-			</item>
-			<item time="46.525353" type="line"/>
-			<item time="46.525353" type="note">
-				<text>き</text>
-			</item>
-			<item time="46.878294" type="line"/>
-			<item time="46.878294" type="note">
-				<text>に</text>
-			</item>
-			<item time="47.054765" type="note">
-				<text>か</text>
-			</item>
-			<item time="47.231235" type="longline"/>
-			<item time="47.231235" type="note">
-				<text>す</text>
-			</item>
-			<item time="47.407706" type="note">
-				<text>た</text>
-			</item>
-			<item time="47.584176" type="line"/>
-			<item time="47.584176" type="note">
-				<text>ー</text>
-			</item>
-			<item time="47.760647" type="note">
-				<text>ど</text>
-			</item>
-			<item time="47.937118" type="line"/>
-			<item time="48.113588" type="note">
-				<text>す</text>
-			</item>
-			<item time="48.290059" type="line"/>
-			<item time="48.290059" type="note">
-				<text>こー</text>
-			</item>
-			<item time="48.466529" type="note">
-				<text>ん</text>
-			</item>
-			<item time="48.643" type="longline"/>
-			<item time="48.643" type="note">
-				<text>に</text>
-			</item>
-			<item time="48.995941" type="line"/>
-			<item time="48.995941" type="note">
-				<text>く</text>
-			</item>
-			<item time="49.172412" type="note">
-				<text>ろ</text>
-			</item>
-			<item time="49.348882" type="line"/>
-			<item time="49.348882" type="note">
-				<text>てっ</text>
-			</item>
-			<item time="49.701824" type="line"/>
-			<item time="49.701824" type="note">
-				<text>ど</text>
-			</item>
-			<item time="49.878294" type="note">
-				<text>く</text>
-			</item>
-			<item time="50.054765" type="longline"/>
-			<item time="50.054765" type="note">
-				<text>り</text>
-			</item>
-			<item time="50.231235" type="note">
-				<text>ー</text>
-			</item>
-			<item time="50.407706" type="line"/>
-			<item time="50.584176" type="note">
-				<text>む</text>
-			</item>
-			<item time="50.760647" type="line"/>
-			<item time="50.937118" type="stop"/>
-			<item time="50.937118" type="lyric">
-				<text>だけどやっぱこれっておかしいわ どうして私なんだろ</text>
-			</item>
-			<item time="50.937118" type="note">
-				<text>だ</text>
-			</item>
-			<item time="51.113588" type="line"/>
-			<item time="51.113588" type="note">
-				<text>け</text>
-			</item>
-			<item time="51.290059" type="note">
-				<text>ど</text>
-			</item>
-			<item time="51.466529" type="longline"/>
-			<item time="51.466529" type="note">
-				<text>やっ</text>
-			</item>
-			<item time="51.819471" type="line"/>
-			<item time="51.819471" type="note">
-				<text>ぱ</text>
-			</item>
-			<item time="51.995941" type="note">
-				<text>こ</text>
-			</item>
-			<item time="52.172412" type="line"/>
-			<item time="52.172412" type="note">
-				<text>れっ</text>
-			</item>
-			<item time="52.525353" type="line"/>
-			<item time="52.525353" type="note">
-				<text>て</text>
-			</item>
-			<item time="52.701824" type="note">
-				<text>お</text>
-			</item>
-			<item time="52.878294" type="longline"/>
-			<item time="52.878294" type="note">
-				<text>か</text>
-			</item>
-			<item time="53.054765" type="note">
-				<text>し</text>
-			</item>
-			<item time="53.231235" type="line"/>
-			<item time="53.231235" type="note">
-				<text>い</text>
-			</item>
-			<item time="53.407706" type="note">
-				<text>わ</text>
-			</item>
-			<item time="53.584176" type="line"/>
-			<item time="53.760647" type="note">
-				<text>ど</text>
-			</item>
-			<item time="53.937118" type="line"/>
-			<item time="53.937118" type="note">
-				<text>う</text>
-			</item>
-			<item time="54.113588" type="note">
-				<text>し</text>
-			</item>
-			<item time="54.290059" type="longline"/>
-			<item time="54.290059" type="note">
-				<text>て</text>
-			</item>
-			<item time="54.643" type="line"/>
-			<item time="54.643" type="note">
-				<text>わ</text>
-			</item>
-			<item time="54.995941" type="line"/>
-			<item time="54.995941" type="note">
-				<text>た</text>
-			</item>
-			<item time="55.348882" type="line"/>
-			<item time="55.348882" type="note">
-				<text>し</text>
-			</item>
-			<item time="55.701824" type="longline"/>
-			<item time="55.701824" type="note">
-				<text>なん</text>
-			</item>
-			<item time="56.054765" type="line"/>
-			<item time="56.054765" type="note">
-				<text>だ</text>
-			</item>
-			<item time="56.231235" type="note">
-				<text>ろ</text>
-			</item>
-			<item time="56.407706" type="line"/>
-			<item time="56.584176" type="stop"/>
-			<item time="56.584176" type="lyric">
-				<text>急にそんな事言い出して…</text>
-			</item>
-			<item time="56.584176" type="note">
-				<text>きゅ</text>
-			</item>
-			<item time="56.760647" type="line"/>
-			<item time="56.760647" type="note">
-				<text>う</text>
-			</item>
-			<item time="56.937118" type="note">
-				<text>に</text>
-			</item>
-			<item time="57.113588" type="longline"/>
-			<item time="57.113588" type="note">
-				<text>そん</text>
-			</item>
-			<item time="57.466529" type="line"/>
-			<item time="57.819471" type="line"/>
-			<item time="57.819471" type="note">
-				<text>な</text>
-			</item>
-			<item time="58.172412" type="line"/>
-			<item time="58.172412" type="note">
-				<text>こ</text>
-			</item>
-			<item time="58.348882" type="note">
-				<text>と</text>
-			</item>
-			<item time="58.525353" type="longline"/>
-			<item time="58.525353" type="note">
-				<text>いい</text>
-			</item>
-			<item time="58.878294" type="line"/>
-			<item time="59.054765" type="note">
-				<text>だ</text>
-			</item>
-			<item time="59.231235" type="line"/>
-			<item time="59.584176" type="line"/>
-			<item time="59.584176" type="note">
-				<text>し</text>
-			</item>
-			<item time="59.937118" type="longline"/>
-			<item time="59.937118" type="note">
-				<text>て</text>
-			</item>
-			<item time="60.290059" type="line"/>
-			<item time="60.643" type="line"/>
-			<item time="60.995941" type="line"/>
-			<item time="61.348882" type="longline"/>
-			<item time="61.348882" type="stop"/>
-			<item time="61.701824" type="line"/>
-			<item time="61.701824" type="lyric">
-				<text>あぁどうしよ</text>
-			</item>
-			<item time="61.701824" type="note">
-				<text>ああ</text>
-			</item>
-			<item time="62.054765" type="line"/>
-			<item time="62.054765" type="note">
-				<text>どう</text>
-			</item>
-			<item time="62.407706" type="line"/>
-			<item time="62.407706" type="note">
-				<text>し</text>
-			</item>
-			<item time="62.584176" type="note">
-				<text>よ</text>
-			</item>
-			<item time="62.760647" type="longline"/>
-			<item time="62.760647" type="stop"/>
-			<item time="62.760647" type="lyric">
-				<text>君を好きになっちゃうかなんて分からないけど</text>
-			</item>
-			<item time="62.760647" type="note">
-				<text>き</text>
-			</item>
-			<item time="63.113588" type="line"/>
-			<item time="63.290059" type="note">
-				<text>み</text>
-			</item>
-			<item time="63.466529" type="line"/>
-			<item time="63.466529" type="note">
-				<text>を</text>
-			</item>
-			<item time="63.819471" type="line"/>
-			<item time="63.995941" type="note">
-				<text>す</text>
-			</item>
-			<item time="64.172412" type="longline"/>
-			<item time="64.172412" type="note">
-				<text>き</text>
-			</item>
-			<item time="64.525353" type="line"/>
-			<item time="64.525353" type="note">
-				<text>に</text>
-			</item>
-			<item time="64.701824" type="note">
-				<text>なっ</text>
-			</item>
-			<item time="64.878294" type="line"/>
-			<item time="65.054765" type="note">
-				<text>ちゃう</text>
-			</item>
-			<item time="65.231235" type="line"/>
-			<item time="65.407706" type="note">
-				<text>か</text>
-			</item>
-			<item time="65.584176" type="longline"/>
-			<item time="65.584176" type="note">
-				<text>な</text>
-			</item>
-			<item time="65.937118" type="line"/>
-			<item time="66.113588" type="note">
-				<text>ん</text>
-			</item>
-			<item time="66.290059" type="line"/>
-			<item time="66.290059" type="note">
-				<text>て</text>
-			</item>
-			<item time="66.643" type="line"/>
-			<item time="66.819471" type="note">
-				<text>わ</text>
-			</item>
-			<item time="66.995941" type="longline"/>
-			<item time="66.995941" type="note">
-				<text>か</text>
-			</item>
-			<item time="67.348882" type="line"/>
-			<item time="67.348882" type="note">
-				<text>ら</text>
-			</item>
-			<item time="67.525353" type="note">
-				<text>ない</text>
-			</item>
-			<item time="67.701824" type="line"/>
-			<item time="67.878294" type="note">
-				<text>け</text>
-			</item>
-			<item time="68.054765" type="line"/>
-			<item time="68.231235" type="note">
-				<text>ど</text>
-			</item>
-			<item time="68.407706" type="longline"/>
-			<item time="68.407706" type="stop"/>
-			<item time="68.407706" type="lyric">
-				<text>大切な人だなんてAh照れくさいかな</text>
-			</item>
-			<item time="68.407706" type="note">
-				<text>た</text>
-			</item>
-			<item time="68.760647" type="line"/>
-			<item time="68.760647" type="note">
-				<text>い</text>
-			</item>
-			<item time="69.113588" type="line"/>
-			<item time="69.113588" type="note">
-				<text>せ</text>
-			</item>
-			<item time="69.290059" type="note">
-				<text>つ</text>
-			</item>
-			<item time="69.466529" type="line"/>
-			<item time="69.643" type="note">
-				<text>な</text>
-			</item>
-			<item time="69.819471" type="longline"/>
-			<item time="69.819471" type="note">
-				<text>ひ</text>
-			</item>
-			<item time="70.172412" type="line"/>
-			<item time="70.172412" type="note">
-				<text>と</text>
-			</item>
-			<item time="70.348882" type="note">
-				<text>だ</text>
-			</item>
-			<item time="70.525353" type="line"/>
-			<item time="70.701824" type="note">
-				<text>な</text>
-			</item>
-			<item time="70.878294" type="line"/>
-			<item time="70.878294" type="note">
-				<text>ん</text>
-			</item>
-			<item time="71.054765" type="note">
-				<text>て</text>
-			</item>
-			<item time="71.231235" type="longline"/>
-			<item time="71.231235" type="note">
-				<text>ああ</text>
-			</item>
-			<item time="71.584176" type="line"/>
-			<item time="71.584176" type="note">
-				<text>て</text>
-			</item>
-			<item time="71.937118" type="line"/>
-			<item time="71.937118" type="note">
-				<text>れ</text>
-			</item>
-			<item time="72.290059" type="line"/>
-			<item time="72.290059" type="note">
-				<text>く</text>
-			</item>
-			<item time="72.466529" type="note">
-				<text>さい</text>
-			</item>
-			<item time="72.643" type="longline"/>
-			<item time="72.995941" type="line"/>
-			<item time="72.995941" type="note">
-				<text>か</text>
-			</item>
-			<item time="73.172412" type="note">
-				<text>な</text>
-			</item>
-			<item time="73.348882" type="line"/>
-			<item time="73.701824" type="line"/>
-			<item time="74.054765" type="longline"/>
-			<item time="74.054765" type="stop"/>
-			<item time="74.054765" type="lyric">
-				<text>君は真面目なトーンで好きってなんて言うでしょ</text>
-			</item>
-			<item time="74.054765" type="note">
-				<text>き</text>
-			</item>
-			<item time="74.407706" type="line"/>
-			<item time="74.584176" type="note">
-				<text>み</text>
-			</item>
-			<item time="74.760647" type="line"/>
-			<item time="74.760647" type="note">
-				<text>は</text>
-			</item>
-			<item time="75.113588" type="line"/>
-			<item time="75.290059" type="note">
-				<text>ま</text>
-			</item>
-			<item time="75.466529" type="longline"/>
-			<item time="75.466529" type="note">
-				<text>じ</text>
-			</item>
-			<item time="75.819471" type="line"/>
-			<item time="75.819471" type="note">
-				<text>め</text>
-			</item>
-			<item time="75.995941" type="note">
-				<text>な</text>
-			</item>
-			<item time="76.172412" type="line"/>
-			<item time="76.348882" type="note">
-				<text>とー</text>
-			</item>
-			<item time="76.525353" type="line"/>
-			<item time="76.701824" type="note">
-				<text>ん</text>
-			</item>
-			<item time="76.878294" type="longline"/>
-			<item time="76.878294" type="note">
-				<text>で</text>
-			</item>
-			<item time="77.231235" type="line"/>
-			<item time="77.407706" type="note">
-				<text>す</text>
-			</item>
-			<item time="77.584176" type="line"/>
-			<item time="77.584176" type="note">
-				<text>きっ</text>
-			</item>
-			<item time="77.937118" type="line"/>
-			<item time="78.113588" type="note">
-				<text>て</text>
-			</item>
-			<item time="78.290059" type="longline"/>
-			<item time="78.290059" type="note">
-				<text>なん</text>
-			</item>
-			<item time="78.643" type="line"/>
-			<item time="78.643" type="note">
-				<text>て</text>
-			</item>
-			<item time="78.819471" type="note">
-				<text>いう</text>
-			</item>
-			<item time="78.995941" type="line"/>
-			<item time="79.172412" type="note">
-				<text>で</text>
-			</item>
-			<item time="79.348882" type="line"/>
-			<item time="79.525353" type="note">
-				<text>しょ</text>
-			</item>
-			<item time="79.701824" type="longline"/>
-			<item time="79.701824" type="stop"/>
-			<item time="79.701824" type="lyric">
-				<text>ちょっとドキッとしちゃうじゃん</text>
-			</item>
-			<item time="79.701824" type="note">
-				<text>ちょっ</text>
-			</item>
-			<item time="80.054765" type="line"/>
-			<item time="80.054765" type="note">
-				<text>と</text>
-			</item>
-			<item time="80.407706" type="line"/>
-			<item time="80.407706" type="note">
-				<text>ど</text>
-			</item>
-			<item time="80.584176" type="note">
-				<text>きっ</text>
-			</item>
-			<item time="80.760647" type="line"/>
-			<item time="80.937118" type="note">
-				<text>とし</text>
-			</item>
-			<item time="81.113588" type="longline"/>
-			<item time="81.113588" type="note">
-				<text>ちゃ</text>
-			</item>
-			<item time="81.466529" type="line"/>
-			<item time="81.466529" type="note">
-				<text>う</text>
-			</item>
-			<item time="81.643" type="note">
-				<text>じゃん</text>
-			</item>
-			<item time="81.819471" type="line"/>
-			<item time="81.995941" type="stop"/>
-			<item time="81.995941" type="lyric">
-				<text>なんて非日常的なレボリューション</text>
-			</item>
-			<item time="81.995941" type="note">
-				<text>な</text>
-			</item>
-			<item time="82.172412" type="line"/>
-			<item time="82.172412" type="note">
-				<text>ん</text>
-			</item>
-			<item time="82.348882" type="note">
-				<text>て</text>
-			</item>
-			<item time="82.525353" type="longline"/>
-			<item time="82.525353" type="note">
-				<text>ひ</text>
-			</item>
-			<item time="82.878294" type="line"/>
-			<item time="82.878294" type="note">
-				<text>にち</text>
-			</item>
-			<item time="83.231235" type="line"/>
-			<item time="83.231235" type="note">
-				<text>じょう</text>
-			</item>
-			<item time="83.584176" type="line"/>
-			<item time="83.584176" type="note">
-				<text>てき</text>
-			</item>
-			<item time="83.937118" type="longline"/>
-			<item time="83.937118" type="note">
-				<text>な</text>
-			</item>
-			<item time="84.290059" type="line"/>
-			<item time="84.290059" type="note">
-				<text>れぼ</text>
-			</item>
-			<item time="84.643" type="line"/>
-			<item time="84.643" type="note">
-				<text>りゅー</text>
-			</item>
-			<item time="84.995941" type="line"/>
-			<item time="84.995941" type="note">
-				<text>しょん</text>
-			</item>
-			<item time="85.348882" type="longline"/>
-			<item time="85.348882" type="stop"/>
-			<item time="85.348882" type="lyric">
-				<text>らったった らったったった ふぅふぅいぇい</text>
-			</item>
-			<item time="85.348882" type="note">
-				<text>らっ</text>
-			</item>
-			<item time="85.701824" type="line"/>
-			<item time="85.701824" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="86.054765" type="line"/>
-			<item time="86.054765" type="note">
-				<text>た</text>
-			</item>
-			<item time="86.231235" type="note">
-				<text>らっ</text>
-			</item>
-			<item time="86.407706" type="line"/>
-			<item time="86.584176" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="86.760647" type="longline"/>
-			<item time="86.937118" type="note">
-				<text>たっ</text>
-			</item>
-			<item time="87.113588" type="line"/>
-			<item time="87.290059" type="note">
-				<text>た</text>
-			</item>
-			<item time="87.466529" type="line"/>
-			<item time="87.466529" type="note">
-				<text>ふ</text>
-			</item>
-			<item time="87.643" type="note">
-				<text>う</text>
-			</item>
-			<item time="87.819471" type="line"/>
-			<item time="87.819471" type="note">
-				<text>ふ</text>
-			</item>
-			<item time="87.995941" type="note">
-				<text>う</text>
-			</item>
-			<item time="88.172412" type="longline"/>
-			<item time="88.172412" type="note">
-				<text>いぇい</text>
-			</item>
-			<item time="88.878294" type="stop"/>
-		</roll>
-	</data>
+  <data>
+    <music>tomadoi-short.mp3</music>
+    <resource>https://www.youtube.com/watch?v=fQ_m5VLhqNg</resource>
+    <info>
+      <title>とまどい→レシピ</title>
+      <artist>みかくにんぐッ!</artist>
+      <maker>koyi</maker>
+      <difficulty>2</difficulty>
+      <datafile>tomadoi-short.txt</datafile>
+      <scorefile>tomadoi-short.score</scorefile>
+      <description>作詞 Junky&lt;br&gt;作曲 Junky&lt;br&gt;編曲 Junky&lt;br&gt;唄   みかくにんぐッ!&lt;br&gt;&lt;br&gt;アニメ「未確認で進行形」OP&lt;br&gt;&lt;br&gt;JunkyってあのJunkyっすか。ひえー</description>
+      <note>アニメ「未確認で進行形」OP</note>
+      <creator type="lyricyst">Junky</creator>
+      <creator type="composer">Junky</creator>
+      <creator type="arranger">Junky</creator>
+      <creator type="singer">みかくにんぐッ!</creator>
+    </info>
+    <roll>
+      <item time="0.643" type="longline"/>
+      <item time="0.995941" type="line"/>
+      <item time="1.348882" type="line"/>
+      <item time="1.701824" type="line"/>
+      <item time="2.054765" type="longline"/>
+      <item time="2.407706" type="line"/>
+      <item time="2.760647" type="line"/>
+      <item time="3.113588" type="line"/>
+      <item time="3.466529" type="longline"/>
+      <item time="3.819471" type="line"/>
+      <item time="4.172412" type="line"/>
+      <item time="4.525353" type="line"/>
+      <item time="4.878294" type="longline"/>
+      <item time="5.231235" type="line"/>
+      <item time="5.584176" type="line"/>
+      <item time="5.937118" type="line"/>
+      <item time="6.290059" type="longline"/>
+      <item time="6.643" type="line"/>
+      <item time="6.995941" type="line"/>
+      <item time="7.348882" type="line"/>
+      <item time="7.701824" type="longline"/>
+      <item time="8.054765" type="line"/>
+      <item time="8.407706" type="line"/>
+      <item time="8.760647" type="line"/>
+      <item time="9.113588" type="longline"/>
+      <item time="9.466529" type="line"/>
+      <item time="9.819471" type="line"/>
+      <item time="10.172412" type="line"/>
+      <item time="10.525353" type="longline"/>
+      <item time="10.878294" type="line"/>
+      <item time="11.231235" type="line"/>
+      <item time="11.231235" type="lyric">
+        <text>ふぅふぅ らったった らったったった ふぅふぅ</text>
+      </item>
+      <item time="11.231235" type="note">
+        <text>ふ</text>
+      </item>
+      <item time="11.407706" type="note">
+        <text>う</text>
+      </item>
+      <item time="11.584176" type="line"/>
+      <item time="11.584176" type="note">
+        <text>ふ</text>
+      </item>
+      <item time="11.760647" type="note">
+        <text>う</text>
+      </item>
+      <item time="11.937118" type="longline"/>
+      <item time="11.937118" type="note">
+        <text>らっ</text>
+      </item>
+      <item time="12.290059" type="line"/>
+      <item time="12.290059" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="12.643" type="line"/>
+      <item time="12.643" type="note">
+        <text>た</text>
+      </item>
+      <item time="12.819471" type="note">
+        <text>らっ</text>
+      </item>
+      <item time="12.995941" type="line"/>
+      <item time="13.172412" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="13.348882" type="longline"/>
+      <item time="13.525353" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="13.701824" type="line"/>
+      <item time="13.878294" type="note">
+        <text>た</text>
+      </item>
+      <item time="14.054765" type="line"/>
+      <item time="14.054765" type="note">
+        <text>ふ</text>
+      </item>
+      <item time="14.231235" type="note">
+        <text>う</text>
+      </item>
+      <item time="14.407706" type="line"/>
+      <item time="14.407706" type="note">
+        <text>ふ</text>
+      </item>
+      <item time="14.584176" type="note">
+        <text>う</text>
+      </item>
+      <item time="14.760647" type="longline"/>
+      <item time="14.760647" type="stop"/>
+      <item time="14.760647" type="lyric">
+        <text>らったったらっぱ いぇーい いぇーい</text>
+      </item>
+      <item time="14.760647" type="note">
+        <text>らっ</text>
+      </item>
+      <item time="15.113588" type="line"/>
+      <item time="15.113588" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="15.466529" type="line"/>
+      <item time="15.466529" type="note">
+        <text>た</text>
+      </item>
+      <item time="15.643" type="note">
+        <text>らっ</text>
+      </item>
+      <item time="15.819471" type="line"/>
+      <item time="15.995941" type="note">
+        <text>ぱ</text>
+      </item>
+      <item time="16.172412" type="longline"/>
+      <item time="16.172412" type="note">
+        <text>いぇー</text>
+      </item>
+      <item time="16.525353" type="line"/>
+      <item time="16.525353" type="note">
+        <text>い</text>
+      </item>
+      <item time="16.701824" type="note">
+        <text>いぇーい</text>
+      </item>
+      <item time="16.878294" type="line"/>
+      <item time="17.231235" type="line"/>
+      <item time="17.584176" type="longline"/>
+      <item time="17.584176" type="stop"/>
+      <item time="17.584176" type="lyric">
+        <text>らったった らったったった ふぅふぅいぇい</text>
+      </item>
+      <item time="17.584176" type="note">
+        <text>らっ</text>
+      </item>
+      <item time="17.937118" type="line"/>
+      <item time="17.937118" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="18.290059" type="line"/>
+      <item time="18.290059" type="note">
+        <text>た</text>
+      </item>
+      <item time="18.466529" type="note">
+        <text>らっ</text>
+      </item>
+      <item time="18.643" type="line"/>
+      <item time="18.819471" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="18.995941" type="longline"/>
+      <item time="19.172412" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="19.348882" type="line"/>
+      <item time="19.525353" type="note">
+        <text>た</text>
+      </item>
+      <item time="19.701824" type="line"/>
+      <item time="19.701824" type="note">
+        <text>ふ</text>
+      </item>
+      <item time="19.878294" type="note">
+        <text>う</text>
+      </item>
+      <item time="20.054765" type="line"/>
+      <item time="20.054765" type="note">
+        <text>ふ</text>
+      </item>
+      <item time="20.231235" type="note">
+        <text>う</text>
+      </item>
+      <item time="20.407706" type="longline"/>
+      <item time="20.407706" type="note">
+        <text>いぇい</text>
+      </item>
+      <item time="20.584176" type="stop"/>
+      <item time="20.760647" type="line"/>
+      <item time="21.113588" type="line"/>
+      <item time="21.466529" type="line"/>
+      <item time="21.819471" type="longline"/>
+      <item time="22.172412" type="line"/>
+      <item time="22.525353" type="line"/>
+      <item time="22.878294" type="line"/>
+      <item time="23.231235" type="longline"/>
+      <item time="23.231235" type="lyric">
+        <text>朝目が覚めたらもう昨日みたいな日常はなくて</text>
+      </item>
+      <item time="23.231235" type="note">
+        <text>あ</text>
+      </item>
+      <item time="23.584176" type="line"/>
+      <item time="23.584176" type="note">
+        <text>さ</text>
+      </item>
+      <item time="23.937118" type="line"/>
+      <item time="23.937118" type="note">
+        <text>め</text>
+      </item>
+      <item time="24.290059" type="line"/>
+      <item time="24.290059" type="note">
+        <text>が</text>
+      </item>
+      <item time="24.466529" type="note">
+        <text>さ</text>
+      </item>
+      <item time="24.643" type="longline"/>
+      <item time="24.819471" type="note">
+        <text>め</text>
+      </item>
+      <item time="24.995941" type="line"/>
+      <item time="24.995941" type="note">
+        <text>た</text>
+      </item>
+      <item time="25.172412" type="note">
+        <text>ら</text>
+      </item>
+      <item time="25.348882" type="line"/>
+      <item time="25.348882" type="note">
+        <text>も</text>
+      </item>
+      <item time="25.525353" type="note">
+        <text>う</text>
+      </item>
+      <item time="25.701824" type="line"/>
+      <item time="25.878294" type="note">
+        <text>き</text>
+      </item>
+      <item time="26.054765" type="longline"/>
+      <item time="26.054765" type="note">
+        <text>のう</text>
+      </item>
+      <item time="26.407706" type="line"/>
+      <item time="26.407706" type="note">
+        <text>み</text>
+      </item>
+      <item time="26.584176" type="note">
+        <text>た</text>
+      </item>
+      <item time="26.760647" type="line"/>
+      <item time="26.937118" type="note">
+        <text>い</text>
+      </item>
+      <item time="27.113588" type="line"/>
+      <item time="27.113588" type="note">
+        <text>な</text>
+      </item>
+      <item time="27.290059" type="note">
+        <text>に</text>
+      </item>
+      <item time="27.466529" type="longline"/>
+      <item time="27.466529" type="note">
+        <text>ち</text>
+      </item>
+      <item time="27.819471" type="line"/>
+      <item time="27.819471" type="note">
+        <text>じょ</text>
+      </item>
+      <item time="28.172412" type="line"/>
+      <item time="28.172412" type="note">
+        <text>う</text>
+      </item>
+      <item time="28.525353" type="line"/>
+      <item time="28.525353" type="note">
+        <text>は</text>
+      </item>
+      <item time="28.701824" type="note">
+        <text>な</text>
+      </item>
+      <item time="28.878294" type="longline"/>
+      <item time="29.054765" type="note">
+        <text>く</text>
+      </item>
+      <item time="29.231235" type="line"/>
+      <item time="29.231235" type="note">
+        <text>て</text>
+      </item>
+      <item time="29.584176" type="line"/>
+      <item time="29.937118" type="line"/>
+      <item time="30.290059" type="longline"/>
+      <item time="30.643" type="line"/>
+      <item time="30.643" type="stop"/>
+      <item time="30.643" type="lyric">
+        <text>「ホントあぁもう...えっとどうしよう」</text>
+      </item>
+      <item time="30.643" type="note">
+        <text>ほ</text>
+      </item>
+      <item time="30.995941" type="line"/>
+      <item time="30.995941" type="note">
+        <text>ん</text>
+      </item>
+      <item time="31.348882" type="line"/>
+      <item time="31.348882" type="note">
+        <text>と</text>
+      </item>
+      <item time="31.701824" type="longline"/>
+      <item time="31.701824" type="note">
+        <text>ああ</text>
+      </item>
+      <item time="32.054765" type="line"/>
+      <item time="32.231235" type="note">
+        <text>もう</text>
+      </item>
+      <item time="32.407706" type="line"/>
+      <item time="32.407706" type="note">
+        <text>えっ</text>
+      </item>
+      <item time="32.760647" type="line"/>
+      <item time="32.937118" type="note">
+        <text>と</text>
+      </item>
+      <item time="33.113588" type="longline"/>
+      <item time="33.113588" type="note">
+        <text>どう</text>
+      </item>
+      <item time="33.466529" type="line"/>
+      <item time="33.643" type="note">
+        <text>し</text>
+      </item>
+      <item time="33.819471" type="line"/>
+      <item time="33.819471" type="note">
+        <text>よう</text>
+      </item>
+      <item time="34.172412" type="line"/>
+      <item time="34.525353" type="longline"/>
+      <item time="34.525353" type="stop"/>
+      <item time="34.525353" type="lyric">
+        <text>ため息混じりに練るお菓子と妄想のレシピの中に</text>
+      </item>
+      <item time="34.525353" type="note">
+        <text>た</text>
+      </item>
+      <item time="34.878294" type="line"/>
+      <item time="34.878294" type="note">
+        <text>め</text>
+      </item>
+      <item time="35.231235" type="line"/>
+      <item time="35.231235" type="note">
+        <text>い</text>
+      </item>
+      <item time="35.584176" type="line"/>
+      <item time="35.584176" type="note">
+        <text>き</text>
+      </item>
+      <item time="35.760647" type="note">
+        <text>ま</text>
+      </item>
+      <item time="35.937118" type="longline"/>
+      <item time="36.113588" type="note">
+        <text>じ</text>
+      </item>
+      <item time="36.290059" type="line"/>
+      <item time="36.290059" type="note">
+        <text>り</text>
+      </item>
+      <item time="36.466529" type="note">
+        <text>に</text>
+      </item>
+      <item time="36.643" type="line"/>
+      <item time="36.643" type="note">
+        <text>ね</text>
+      </item>
+      <item time="36.819471" type="note">
+        <text>る</text>
+      </item>
+      <item time="36.995941" type="line"/>
+      <item time="37.172412" type="note">
+        <text>お</text>
+      </item>
+      <item time="37.348882" type="longline"/>
+      <item time="37.348882" type="note">
+        <text>か</text>
+      </item>
+      <item time="37.525353" type="note">
+        <text>し</text>
+      </item>
+      <item time="37.701824" type="line"/>
+      <item time="37.701824" type="note">
+        <text>と</text>
+      </item>
+      <item time="37.878294" type="note">
+        <text>も</text>
+      </item>
+      <item time="38.054765" type="line"/>
+      <item time="38.054765" type="note">
+        <text>う</text>
+      </item>
+      <item time="38.231235" type="note">
+        <text>そ</text>
+      </item>
+      <item time="38.407706" type="line"/>
+      <item time="38.407706" type="note">
+        <text>う</text>
+      </item>
+      <item time="38.584176" type="note">
+        <text>の</text>
+      </item>
+      <item time="38.760647" type="longline"/>
+      <item time="38.760647" type="note">
+        <text>れ</text>
+      </item>
+      <item time="39.113588" type="line"/>
+      <item time="39.113588" type="note">
+        <text>し</text>
+      </item>
+      <item time="39.466529" type="line"/>
+      <item time="39.466529" type="note">
+        <text>ぴ</text>
+      </item>
+      <item time="39.819471" type="line"/>
+      <item time="39.819471" type="note">
+        <text>の</text>
+      </item>
+      <item time="39.995941" type="note">
+        <text>な</text>
+      </item>
+      <item time="40.172412" type="longline"/>
+      <item time="40.348882" type="note">
+        <text>か</text>
+      </item>
+      <item time="40.525353" type="line"/>
+      <item time="40.525353" type="note">
+        <text>に</text>
+      </item>
+      <item time="40.878294" type="line"/>
+      <item time="41.231235" type="line"/>
+      <item time="41.231235" type="stop"/>
+      <item time="41.231235" type="lyric">
+        <text>恋心入っちゃった</text>
+      </item>
+      <item time="41.231235" type="note">
+        <text>こ</text>
+      </item>
+      <item time="41.407706" type="note">
+        <text>い</text>
+      </item>
+      <item time="41.584176" type="longline"/>
+      <item time="41.584176" type="note">
+        <text>ご</text>
+      </item>
+      <item time="41.760647" type="note">
+        <text>こ</text>
+      </item>
+      <item time="41.937118" type="line"/>
+      <item time="41.937118" type="note">
+        <text>ろ</text>
+      </item>
+      <item time="42.113588" type="note">
+        <text>はいっ</text>
+      </item>
+      <item time="42.290059" type="line"/>
+      <item time="42.466529" type="note">
+        <text>ちゃっ</text>
+      </item>
+      <item time="42.643" type="line"/>
+      <item time="42.819471" type="note">
+        <text>た</text>
+      </item>
+      <item time="42.995941" type="longline"/>
+      <item time="42.995941" type="stop"/>
+      <item time="43.348882" type="line"/>
+      <item time="43.701824" type="line"/>
+      <item time="44.054765" type="line"/>
+      <item time="44.407706" type="longline"/>
+      <item time="44.760647" type="line"/>
+      <item time="45.113588" type="line"/>
+      <item time="45.290059" type="lyric">
+        <text>シフォンケーキにカスタード スコーンにクロテッドクリーム</text>
+      </item>
+      <item time="45.290059" type="note">
+        <text>し</text>
+      </item>
+      <item time="45.466529" type="line"/>
+      <item time="45.466529" type="note">
+        <text>ふぉ</text>
+      </item>
+      <item time="45.643" type="note">
+        <text>ん</text>
+      </item>
+      <item time="45.819471" type="longline"/>
+      <item time="45.819471" type="note">
+        <text>け</text>
+      </item>
+      <item time="46.172412" type="line"/>
+      <item time="46.172412" type="note">
+        <text>ー</text>
+      </item>
+      <item time="46.525353" type="line"/>
+      <item time="46.525353" type="note">
+        <text>き</text>
+      </item>
+      <item time="46.878294" type="line"/>
+      <item time="46.878294" type="note">
+        <text>に</text>
+      </item>
+      <item time="47.054765" type="note">
+        <text>か</text>
+      </item>
+      <item time="47.231235" type="longline"/>
+      <item time="47.231235" type="note">
+        <text>す</text>
+      </item>
+      <item time="47.407706" type="note">
+        <text>た</text>
+      </item>
+      <item time="47.584176" type="line"/>
+      <item time="47.584176" type="note">
+        <text>ー</text>
+      </item>
+      <item time="47.760647" type="note">
+        <text>ど</text>
+      </item>
+      <item time="47.937118" type="line"/>
+      <item time="48.113588" type="note">
+        <text>す</text>
+      </item>
+      <item time="48.290059" type="line"/>
+      <item time="48.290059" type="note">
+        <text>こー</text>
+      </item>
+      <item time="48.466529" type="note">
+        <text>ん</text>
+      </item>
+      <item time="48.643" type="longline"/>
+      <item time="48.643" type="note">
+        <text>に</text>
+      </item>
+      <item time="48.995941" type="line"/>
+      <item time="48.995941" type="note">
+        <text>く</text>
+      </item>
+      <item time="49.172412" type="note">
+        <text>ろ</text>
+      </item>
+      <item time="49.348882" type="line"/>
+      <item time="49.348882" type="note">
+        <text>てっ</text>
+      </item>
+      <item time="49.701824" type="line"/>
+      <item time="49.701824" type="note">
+        <text>ど</text>
+      </item>
+      <item time="49.878294" type="note">
+        <text>く</text>
+      </item>
+      <item time="50.054765" type="longline"/>
+      <item time="50.054765" type="note">
+        <text>り</text>
+      </item>
+      <item time="50.231235" type="note">
+        <text>ー</text>
+      </item>
+      <item time="50.407706" type="line"/>
+      <item time="50.584176" type="note">
+        <text>む</text>
+      </item>
+      <item time="50.760647" type="line"/>
+      <item time="50.937118" type="stop"/>
+      <item time="50.937118" type="lyric">
+        <text>だけどやっぱこれっておかしいわ どうして私なんだろ</text>
+      </item>
+      <item time="50.937118" type="note">
+        <text>だ</text>
+      </item>
+      <item time="51.113588" type="line"/>
+      <item time="51.113588" type="note">
+        <text>け</text>
+      </item>
+      <item time="51.290059" type="note">
+        <text>ど</text>
+      </item>
+      <item time="51.466529" type="longline"/>
+      <item time="51.466529" type="note">
+        <text>やっ</text>
+      </item>
+      <item time="51.819471" type="line"/>
+      <item time="51.819471" type="note">
+        <text>ぱ</text>
+      </item>
+      <item time="51.995941" type="note">
+        <text>こ</text>
+      </item>
+      <item time="52.172412" type="line"/>
+      <item time="52.172412" type="note">
+        <text>れっ</text>
+      </item>
+      <item time="52.525353" type="line"/>
+      <item time="52.525353" type="note">
+        <text>て</text>
+      </item>
+      <item time="52.701824" type="note">
+        <text>お</text>
+      </item>
+      <item time="52.878294" type="longline"/>
+      <item time="52.878294" type="note">
+        <text>か</text>
+      </item>
+      <item time="53.054765" type="note">
+        <text>し</text>
+      </item>
+      <item time="53.231235" type="line"/>
+      <item time="53.231235" type="note">
+        <text>い</text>
+      </item>
+      <item time="53.407706" type="note">
+        <text>わ</text>
+      </item>
+      <item time="53.584176" type="line"/>
+      <item time="53.760647" type="note">
+        <text>ど</text>
+      </item>
+      <item time="53.937118" type="line"/>
+      <item time="53.937118" type="note">
+        <text>う</text>
+      </item>
+      <item time="54.113588" type="note">
+        <text>し</text>
+      </item>
+      <item time="54.290059" type="longline"/>
+      <item time="54.290059" type="note">
+        <text>て</text>
+      </item>
+      <item time="54.643" type="line"/>
+      <item time="54.643" type="note">
+        <text>わ</text>
+      </item>
+      <item time="54.995941" type="line"/>
+      <item time="54.995941" type="note">
+        <text>た</text>
+      </item>
+      <item time="55.348882" type="line"/>
+      <item time="55.348882" type="note">
+        <text>し</text>
+      </item>
+      <item time="55.701824" type="longline"/>
+      <item time="55.701824" type="note">
+        <text>なん</text>
+      </item>
+      <item time="56.054765" type="line"/>
+      <item time="56.054765" type="note">
+        <text>だ</text>
+      </item>
+      <item time="56.231235" type="note">
+        <text>ろ</text>
+      </item>
+      <item time="56.407706" type="line"/>
+      <item time="56.584176" type="stop"/>
+      <item time="56.584176" type="lyric">
+        <text>急にそんな事言い出して…</text>
+      </item>
+      <item time="56.584176" type="note">
+        <text>きゅ</text>
+      </item>
+      <item time="56.760647" type="line"/>
+      <item time="56.760647" type="note">
+        <text>う</text>
+      </item>
+      <item time="56.937118" type="note">
+        <text>に</text>
+      </item>
+      <item time="57.113588" type="longline"/>
+      <item time="57.113588" type="note">
+        <text>そん</text>
+      </item>
+      <item time="57.466529" type="line"/>
+      <item time="57.819471" type="line"/>
+      <item time="57.819471" type="note">
+        <text>な</text>
+      </item>
+      <item time="58.172412" type="line"/>
+      <item time="58.172412" type="note">
+        <text>こ</text>
+      </item>
+      <item time="58.348882" type="note">
+        <text>と</text>
+      </item>
+      <item time="58.525353" type="longline"/>
+      <item time="58.525353" type="note">
+        <text>いい</text>
+      </item>
+      <item time="58.878294" type="line"/>
+      <item time="59.054765" type="note">
+        <text>だ</text>
+      </item>
+      <item time="59.231235" type="line"/>
+      <item time="59.584176" type="line"/>
+      <item time="59.584176" type="note">
+        <text>し</text>
+      </item>
+      <item time="59.937118" type="longline"/>
+      <item time="59.937118" type="note">
+        <text>て</text>
+      </item>
+      <item time="60.290059" type="line"/>
+      <item time="60.643" type="line"/>
+      <item time="60.995941" type="line"/>
+      <item time="61.348882" type="longline"/>
+      <item time="61.348882" type="stop"/>
+      <item time="61.701824" type="line"/>
+      <item time="61.701824" type="lyric">
+        <text>あぁどうしよ</text>
+      </item>
+      <item time="61.701824" type="note">
+        <text>ああ</text>
+      </item>
+      <item time="62.054765" type="line"/>
+      <item time="62.054765" type="note">
+        <text>どう</text>
+      </item>
+      <item time="62.407706" type="line"/>
+      <item time="62.407706" type="note">
+        <text>し</text>
+      </item>
+      <item time="62.584176" type="note">
+        <text>よ</text>
+      </item>
+      <item time="62.760647" type="longline"/>
+      <item time="62.760647" type="stop"/>
+      <item time="62.760647" type="lyric">
+        <text>君を好きになっちゃうかなんて分からないけど</text>
+      </item>
+      <item time="62.760647" type="note">
+        <text>き</text>
+      </item>
+      <item time="63.113588" type="line"/>
+      <item time="63.290059" type="note">
+        <text>み</text>
+      </item>
+      <item time="63.466529" type="line"/>
+      <item time="63.466529" type="note">
+        <text>を</text>
+      </item>
+      <item time="63.819471" type="line"/>
+      <item time="63.995941" type="note">
+        <text>す</text>
+      </item>
+      <item time="64.172412" type="longline"/>
+      <item time="64.172412" type="note">
+        <text>き</text>
+      </item>
+      <item time="64.525353" type="line"/>
+      <item time="64.525353" type="note">
+        <text>に</text>
+      </item>
+      <item time="64.701824" type="note">
+        <text>なっ</text>
+      </item>
+      <item time="64.878294" type="line"/>
+      <item time="65.054765" type="note">
+        <text>ちゃう</text>
+      </item>
+      <item time="65.231235" type="line"/>
+      <item time="65.407706" type="note">
+        <text>か</text>
+      </item>
+      <item time="65.584176" type="longline"/>
+      <item time="65.584176" type="note">
+        <text>な</text>
+      </item>
+      <item time="65.937118" type="line"/>
+      <item time="66.113588" type="note">
+        <text>ん</text>
+      </item>
+      <item time="66.290059" type="line"/>
+      <item time="66.290059" type="note">
+        <text>て</text>
+      </item>
+      <item time="66.643" type="line"/>
+      <item time="66.819471" type="note">
+        <text>わ</text>
+      </item>
+      <item time="66.995941" type="longline"/>
+      <item time="66.995941" type="note">
+        <text>か</text>
+      </item>
+      <item time="67.348882" type="line"/>
+      <item time="67.348882" type="note">
+        <text>ら</text>
+      </item>
+      <item time="67.525353" type="note">
+        <text>ない</text>
+      </item>
+      <item time="67.701824" type="line"/>
+      <item time="67.878294" type="note">
+        <text>け</text>
+      </item>
+      <item time="68.054765" type="line"/>
+      <item time="68.231235" type="note">
+        <text>ど</text>
+      </item>
+      <item time="68.407706" type="longline"/>
+      <item time="68.407706" type="stop"/>
+      <item time="68.407706" type="lyric">
+        <text>大切な人だなんてAh照れくさいかな</text>
+      </item>
+      <item time="68.407706" type="note">
+        <text>た</text>
+      </item>
+      <item time="68.760647" type="line"/>
+      <item time="68.760647" type="note">
+        <text>い</text>
+      </item>
+      <item time="69.113588" type="line"/>
+      <item time="69.113588" type="note">
+        <text>せ</text>
+      </item>
+      <item time="69.290059" type="note">
+        <text>つ</text>
+      </item>
+      <item time="69.466529" type="line"/>
+      <item time="69.643" type="note">
+        <text>な</text>
+      </item>
+      <item time="69.819471" type="longline"/>
+      <item time="69.819471" type="note">
+        <text>ひ</text>
+      </item>
+      <item time="70.172412" type="line"/>
+      <item time="70.172412" type="note">
+        <text>と</text>
+      </item>
+      <item time="70.348882" type="note">
+        <text>だ</text>
+      </item>
+      <item time="70.525353" type="line"/>
+      <item time="70.701824" type="note">
+        <text>な</text>
+      </item>
+      <item time="70.878294" type="line"/>
+      <item time="70.878294" type="note">
+        <text>ん</text>
+      </item>
+      <item time="71.054765" type="note">
+        <text>て</text>
+      </item>
+      <item time="71.231235" type="longline"/>
+      <item time="71.231235" type="note">
+        <text>ああ</text>
+      </item>
+      <item time="71.584176" type="line"/>
+      <item time="71.584176" type="note">
+        <text>て</text>
+      </item>
+      <item time="71.937118" type="line"/>
+      <item time="71.937118" type="note">
+        <text>れ</text>
+      </item>
+      <item time="72.290059" type="line"/>
+      <item time="72.290059" type="note">
+        <text>く</text>
+      </item>
+      <item time="72.466529" type="note">
+        <text>さい</text>
+      </item>
+      <item time="72.643" type="longline"/>
+      <item time="72.995941" type="line"/>
+      <item time="72.995941" type="note">
+        <text>か</text>
+      </item>
+      <item time="73.172412" type="note">
+        <text>な</text>
+      </item>
+      <item time="73.348882" type="line"/>
+      <item time="73.701824" type="line"/>
+      <item time="74.054765" type="longline"/>
+      <item time="74.054765" type="stop"/>
+      <item time="74.054765" type="lyric">
+        <text>君は真面目なトーンで好きってなんて言うでしょ</text>
+      </item>
+      <item time="74.054765" type="note">
+        <text>き</text>
+      </item>
+      <item time="74.407706" type="line"/>
+      <item time="74.584176" type="note">
+        <text>み</text>
+      </item>
+      <item time="74.760647" type="line"/>
+      <item time="74.760647" type="note">
+        <text>は</text>
+      </item>
+      <item time="75.113588" type="line"/>
+      <item time="75.290059" type="note">
+        <text>ま</text>
+      </item>
+      <item time="75.466529" type="longline"/>
+      <item time="75.466529" type="note">
+        <text>じ</text>
+      </item>
+      <item time="75.819471" type="line"/>
+      <item time="75.819471" type="note">
+        <text>め</text>
+      </item>
+      <item time="75.995941" type="note">
+        <text>な</text>
+      </item>
+      <item time="76.172412" type="line"/>
+      <item time="76.348882" type="note">
+        <text>とー</text>
+      </item>
+      <item time="76.525353" type="line"/>
+      <item time="76.701824" type="note">
+        <text>ん</text>
+      </item>
+      <item time="76.878294" type="longline"/>
+      <item time="76.878294" type="note">
+        <text>で</text>
+      </item>
+      <item time="77.231235" type="line"/>
+      <item time="77.407706" type="note">
+        <text>す</text>
+      </item>
+      <item time="77.584176" type="line"/>
+      <item time="77.584176" type="note">
+        <text>きっ</text>
+      </item>
+      <item time="77.937118" type="line"/>
+      <item time="78.113588" type="note">
+        <text>て</text>
+      </item>
+      <item time="78.290059" type="longline"/>
+      <item time="78.290059" type="note">
+        <text>なん</text>
+      </item>
+      <item time="78.643" type="line"/>
+      <item time="78.643" type="note">
+        <text>て</text>
+      </item>
+      <item time="78.819471" type="note">
+        <text>いう</text>
+      </item>
+      <item time="78.995941" type="line"/>
+      <item time="79.172412" type="note">
+        <text>で</text>
+      </item>
+      <item time="79.348882" type="line"/>
+      <item time="79.525353" type="note">
+        <text>しょ</text>
+      </item>
+      <item time="79.701824" type="longline"/>
+      <item time="79.701824" type="stop"/>
+      <item time="79.701824" type="lyric">
+        <text>ちょっとドキッとしちゃうじゃん</text>
+      </item>
+      <item time="79.701824" type="note">
+        <text>ちょっ</text>
+      </item>
+      <item time="80.054765" type="line"/>
+      <item time="80.054765" type="note">
+        <text>と</text>
+      </item>
+      <item time="80.407706" type="line"/>
+      <item time="80.407706" type="note">
+        <text>ど</text>
+      </item>
+      <item time="80.584176" type="note">
+        <text>きっ</text>
+      </item>
+      <item time="80.760647" type="line"/>
+      <item time="80.937118" type="note">
+        <text>とし</text>
+      </item>
+      <item time="81.113588" type="longline"/>
+      <item time="81.113588" type="note">
+        <text>ちゃ</text>
+      </item>
+      <item time="81.466529" type="line"/>
+      <item time="81.466529" type="note">
+        <text>う</text>
+      </item>
+      <item time="81.643" type="note">
+        <text>じゃん</text>
+      </item>
+      <item time="81.819471" type="line"/>
+      <item time="81.995941" type="stop"/>
+      <item time="81.995941" type="lyric">
+        <text>なんて非日常的なレボリューション</text>
+      </item>
+      <item time="81.995941" type="note">
+        <text>な</text>
+      </item>
+      <item time="82.172412" type="line"/>
+      <item time="82.172412" type="note">
+        <text>ん</text>
+      </item>
+      <item time="82.348882" type="note">
+        <text>て</text>
+      </item>
+      <item time="82.525353" type="longline"/>
+      <item time="82.525353" type="note">
+        <text>ひ</text>
+      </item>
+      <item time="82.878294" type="line"/>
+      <item time="82.878294" type="note">
+        <text>にち</text>
+      </item>
+      <item time="83.231235" type="line"/>
+      <item time="83.231235" type="note">
+        <text>じょう</text>
+      </item>
+      <item time="83.584176" type="line"/>
+      <item time="83.584176" type="note">
+        <text>てき</text>
+      </item>
+      <item time="83.937118" type="longline"/>
+      <item time="83.937118" type="note">
+        <text>な</text>
+      </item>
+      <item time="84.290059" type="line"/>
+      <item time="84.290059" type="note">
+        <text>れぼ</text>
+      </item>
+      <item time="84.643" type="line"/>
+      <item time="84.643" type="note">
+        <text>りゅー</text>
+      </item>
+      <item time="84.995941" type="line"/>
+      <item time="84.995941" type="note">
+        <text>しょん</text>
+      </item>
+      <item time="85.348882" type="longline"/>
+      <item time="85.348882" type="stop"/>
+      <item time="85.348882" type="lyric">
+        <text>らったった らったったった ふぅふぅいぇい</text>
+      </item>
+      <item time="85.348882" type="note">
+        <text>らっ</text>
+      </item>
+      <item time="85.701824" type="line"/>
+      <item time="85.701824" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="86.054765" type="line"/>
+      <item time="86.054765" type="note">
+        <text>た</text>
+      </item>
+      <item time="86.231235" type="note">
+        <text>らっ</text>
+      </item>
+      <item time="86.407706" type="line"/>
+      <item time="86.584176" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="86.760647" type="longline"/>
+      <item time="86.937118" type="note">
+        <text>たっ</text>
+      </item>
+      <item time="87.113588" type="line"/>
+      <item time="87.290059" type="note">
+        <text>た</text>
+      </item>
+      <item time="87.466529" type="line"/>
+      <item time="87.466529" type="note">
+        <text>ふ</text>
+      </item>
+      <item time="87.643" type="note">
+        <text>う</text>
+      </item>
+      <item time="87.819471" type="line"/>
+      <item time="87.819471" type="note">
+        <text>ふ</text>
+      </item>
+      <item time="87.995941" type="note">
+        <text>う</text>
+      </item>
+      <item time="88.172412" type="longline"/>
+      <item time="88.172412" type="note">
+        <text>いぇい</text>
+      </item>
+      <item time="88.525353" type="line"/>
+      <item time="88.878294" type="line"/>
+      <item time="88.878294" type="stop"/>
+      <item time="89.231235" type="line"/>
+      <item time="89.584176" type="longline"/>
+      <item time="89.937118" type="line"/>
+      <item time="90.290059" type="line"/>
+      <item time="90.643" type="line"/>
+      <item time="90.995941" type="longline"/>
+    </roll>
+  </data>
 </utx>
