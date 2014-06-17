@@ -59,6 +59,7 @@ var YouTyping = function (element, settings) {
 		logTrace('Player is Ready.');
 
 		youTyping.player.setVolume(youTyping.settings.volume);
+		youTyping.player.setPlaybackQuality(youTyping.settings.playbackQuality);
 
 		setupPlayerDeferred.resolve();
 	};
@@ -414,6 +415,7 @@ var YouTyping = function (element, settings) {
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
 		volume: 100, // percent
+		playbackQuality: 'default', // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
 		tableFile: 'convert/romaji.xml'
 	};
 
