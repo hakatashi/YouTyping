@@ -12,6 +12,8 @@ var options = optimist.options('output', {
 	'default': 'stdout'
 }).options('resource', {
 	alias: 'r'
+}).options('note', {
+	alias: 'n'
 }).argv;
 
 if (options._.length < 1) {
@@ -85,7 +87,7 @@ try {
 		var type = itemTypes[rollLine[0]];
 
 		if (typeof type === 'undefined') {
-			throw 'Line ' + i + ': Unknown item type \'' + type + '\'';
+			throw 'File ' + options._[0] + ' Line ' + i + ': Unknown item type \'' + type + '\'';
 		}
 
 		var time = rollLine.slice(1).split(/ (.+)?/)[0];
@@ -102,7 +104,7 @@ try {
 		} else {
 			// lyric and note must have text field
 			if (type === 'lyric' || type === 'note') {
-				throw 'Line ' + i + ': Text field not found';
+				throw 'File ' + options._[0] + ' Line ' + i + ': Text field not found';
 			}
 			utx.data.roll.item.push({
 				$: {
@@ -111,6 +113,29 @@ try {
 				}
 			});
 		}
+	}
+
+	// parse info file
+	if (infoText) {
+		utx.data.info = {};
+
+		var infoLines = infoText.split('\r\n');
+
+		// info file must have at least six lines
+		if (infoLines.length < 6) {
+			throw 'File ' + options._[1] + ': Info file must have at least six lines';
+		}
+
+		// store info into corresponding fields
+		utx.data.info.title = infoLines[0];
+		utx.data.info.artist = infoLines[1];
+		utx.data.info.maker = infoLines[2];
+		utx.data.info.difficulty = infoLines[3];
+		utx.data.info.datafile = infoLines[4];
+		utx.data.info.scorefile = infoLines[5];
+
+		var description = infoLines.from(6);
+		utx.data.info.description = description.join('<br>');
 	}
 } catch (exception) {
 	console.error('Parse error: ' + exception);
