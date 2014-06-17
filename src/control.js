@@ -685,11 +685,11 @@ var YouTyping = function (element, settings) {
 		var kanaLyric = '';
 
 		for (var i = lyricIndex + 1; i < youTyping.score.length; i++) {
-			if (youTyping.score[i].type === '+') {
+			if (youTyping.score[i].type === 'note') {
 				kanaLyric += youTyping.score[i].text;
 			} else if (
-				youTyping.score[i].type === '/' ||
-				youTyping.score[i].type === '*'
+				youTyping.score[i].type === 'stop' ||
+				youTyping.score[i].type === 'lyric'
 			) {
 				break;
 			}
