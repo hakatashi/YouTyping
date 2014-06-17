@@ -1,4 +1,4 @@
-/* youtyping.js 06-16-2014 */
+/* youtyping.js 06-17-2014 */
 
 var YouTyping = (function(){
 var YouTyping = function (element, settings) {
@@ -62,11 +62,16 @@ var YouTyping = function (element, settings) {
 		logTrace('Player is Ready.');
 
 		youTyping.player.setVolume(youTyping.settings.volume);
+		youTyping.player.setPlaybackQuality(youTyping.settings.playbackQuality);
 
 		setupPlayerDeferred.resolve();
 	};
 
 	var onPlayerStateChange = function (event) {
+		if (screen.onPlayerStateChange) {
+			screen.onPlayerStateChange.call(screen, event);
+		}
+
 		switch (event.data) {
 		case YT.PlayerState.ENDED:
 			logTrace('Player Ended.');
@@ -353,6 +358,8 @@ var YouTyping = function (element, settings) {
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
 		}
+
+		youTyping.combo = 0;
 	};
 
 
@@ -374,7 +381,7 @@ var YouTyping = function (element, settings) {
 		score: 'data.utfx',
 		width: 1120, // pixel
 		height: 630, // pixel
-		hitPosition: 400, // pixel
+		hitPosition: 0.4, // ratio
 		noteSize: 50, // pixel
 		speed: 0.5, // pixel per second
 		scoreYpos: 0.5, // ratio
@@ -411,6 +418,7 @@ var YouTyping = function (element, settings) {
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
 		volume: 100, // percent
+		playbackQuality: 'default', // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
 		tableFile: 'convert/romaji.xml'
 	};
 
@@ -438,6 +446,8 @@ var YouTyping = function (element, settings) {
 	// lyrics
 	this.currentLyricIndex = null;
 	this.nextLyricIndex = null; // initialized in loadXML()
+
+	this.combo = 0;
 
 
 	/******************* Methods *******************/
@@ -639,7 +649,16 @@ var YouTyping = function (element, settings) {
 
 				hitNote(nearestNewNote);
 
-				console.log(distance, hitJudge);
+				youTyping.combo++;
+
+				// trigger judgement effect
+				screen.onJudgement({
+					judgement: {
+						distance: distance,
+						judge: hitJudge,
+						combo: youTyping.combo
+					}
+				});
 			}
 		}
 	};
@@ -703,6 +722,7 @@ var YouTyping = function (element, settings) {
 
 	// create YouTyping screen class
 	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
+	var screen = this.screen;
 
 	// Initialize asynchronously
 	// http://stackoverflow.com/questions/22346345/
@@ -772,6 +792,8 @@ var Screen = function (canvas, youTyping) {
 			fontSize: 18
 		});
 
+		screen.judgeEffects = new paper.Group();
+
 		setInterval(function () {
 			screen.debugTexts[0].content = 'FPS: ' + FPS;
 			FPS = 0;
@@ -787,8 +809,8 @@ var Screen = function (canvas, youTyping) {
 		var settings = youTyping.settings;
 		var now = youTyping.now;
 
-		var paddingRight = settings.width - settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
-		var paddingLeft = settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
+		var paddingRight = settings.width * (1 - settings.hitPosition) + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
+		var paddingLeft = settings.width * settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
 
 		try {
 			// Computes emerge time and vanishing time of item.
@@ -807,8 +829,8 @@ var Screen = function (canvas, youTyping) {
 		youTyping.zeroTime = now;
 		screen.update();
 
-		this.hitCircle = new paper.Path.Circle({
-			center: [settings.hitPosition, settings.scoreYpos * settings.height],
+		screen.hitCircle = new paper.Path.Circle({
+			center: paper.view.bounds.bottomRight.multiply([settings.hitPosition, settings.scoreYpos]),
 			radius: settings.noteSize,
 			strokeWidth: 1,
 			strokeColor: 'white'
@@ -839,18 +861,8 @@ var Screen = function (canvas, youTyping) {
 	this.start = function () {
 		logTrace('Starting game.');
 
-		paper.view.onFrame = function (event) {
-			if (youTyping.player.getPlayerState() === 1) {
-				screen.update();
-			}
-			screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
-			screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
-			screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
-			screen.bufferText.content = youTyping.inputBuffer;
-			screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.score[youTyping.currentLyricIndex].text : '';
-			screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.score[youTyping.nextLyricIndex].text : '';
-			FPS++;
-		};
+		// register onFrame event
+		paper.view.onFrame = screen.onFrame;
 
 		youTyping.play();
 
@@ -874,7 +886,7 @@ var Screen = function (canvas, youTyping) {
 
 		youTyping.score.forEach(function (item, index) {
 			// X position of the item
-			var position = (item.time - runTime) * setting.speed + setting.hitPosition;
+			var position = (item.time - runTime) * setting.speed + setting.width * setting.hitPosition;
 
 			// if index-th item doesn't exists in screen
 			if (!(index in items)) {
@@ -972,6 +984,91 @@ var Screen = function (canvas, youTyping) {
 			}
 		});
 	};
+
+	this.onFrame = function (event) {
+		if (youTyping.player.getPlayerState() === 1) {
+			screen.update();
+		}
+		screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
+		screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
+		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
+		screen.bufferText.content = youTyping.inputBuffer;
+		screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.score[youTyping.currentLyricIndex].text : '';
+		screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.score[youTyping.nextLyricIndex].text : '';
+
+		screen.judgeEffects.children.forEach(function (judgeEffect) {
+			judgeEffect.controller.onFrame();
+		});
+
+		FPS++;
+	};
+
+	// YouTube onStateChange event supplied from YouTyping
+	this.onPlayerStateChange = function (event) {
+		// hide mouse cursor when playing
+		if (event.data === YT.PlayerState.PLAYING) {
+			youTyping.DOM.screen.css({
+				cursor: 'none'
+			});
+		} else {
+			youTyping.DOM.screen.css({
+				cursor: 'auto'
+			});
+		}
+	};
+
+	this.onJudgement = function (event) {
+		var judgeEffect = new JudgeEffect(event.judgement);
+		judgeEffect.item.controller = judgeEffect;
+		screen.judgeEffects.addChild(judgeEffect.item);
+	};
+
+	// judge effect object
+	var JudgeEffect = function (judgement) {
+		var judgeEffect = this;
+		var settings = youTyping.settings;
+
+		this.item = new paper.Group();
+
+		this.judgeColor = '';
+		switch (judgement.judge) {
+		case 'perfect':
+			this.judgeColor = 'yellow'; break;
+		case 'great':
+			this.judgeColor = '#2d1'; break;
+		case 'good':
+			this.judgeColor = '#19a'; break;
+		case 'bad':
+			this.judgeColor = '#aaa'; break;
+		}
+
+		this.judge = this.item.addChild(new paper.PointText({
+			point: screen.hitCircle.position.add([0, -settings.noteSize - 24]),
+			content: judgement.judge,
+			fillColor: this.judgeColor,
+			justification: 'center',
+			fontSize: 24,
+			fontFamily: 'sans-serif'
+		}));
+
+		this.combo = this.item.addChild(new paper.PointText({
+			point: screen.hitCircle.position.add([0, -settings.noteSize]),
+			content: judgement.combo,
+			fillColor: 'white',
+			justification: 'center',
+			fontSize: 15,
+			fontFamily: 'sans-serif'
+		}));
+
+		this.onFrame = function (event) {
+			this.item.translate([0, -3]);
+			this.item.opacity -= 0.02;
+
+			if (this.item.opacity < 0) {
+				this.item.remove();
+			}
+		};
+	};
 };
 
 
@@ -1018,30 +1115,13 @@ var startsWith = function (string, prefix) {
 	return string.substring(0, prefix.length) === prefix;
 };
 
-// equivalent to jQuery.extend(true)
-// http://youmightnotneedjquery.com/
-var deepExtend = function (out) {
-	out = out || {};
-
-	for (var i = 1; i < arguments.length; i++) {
-		var obj = arguments[i];
-
-		if (!obj) {
-			continue;
-		}
-
-		for (var key in obj) {
-			if (obj.hasOwnProperty(key)) {
-				if (typeof obj[key] === 'object') {
-					deepExtend(out[key], obj[key]);
-				} else {
-					out[key] = obj[key];
-				}
-			}
-		}
+// generate (hopefully unique) identifier
+var generateID = function () {
+	var id = '';
+	for (var i = 0; i < 12; i++) {
+		id += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)];
 	}
-
-	return out;
+	return id;
 };
 
 
