@@ -354,6 +354,8 @@ var YouTyping = function (element, settings) {
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
 		}
+
+		youTyping.combo = 0;
 	};
 
 
@@ -439,6 +441,8 @@ var YouTyping = function (element, settings) {
 	// lyrics
 	this.currentLyricIndex = null;
 	this.nextLyricIndex = null; // initialized in loadXML()
+
+	this.combo = 0;
 
 
 	/******************* Methods *******************/
@@ -640,11 +644,14 @@ var YouTyping = function (element, settings) {
 
 				hitNote(nearestNewNote);
 
+				youTyping.combo++;
+
 				// trigger judgement effect
 				screen.onJudgement({
 					judgement: {
 						distance: distance,
-						judge: hitJudge
+						judge: hitJudge,
+						combo: youTyping.combo
 					}
 				});
 			}

@@ -301,11 +301,20 @@ var Screen = function (canvas, youTyping) {
 		}
 
 		this.judge = this.item.addChild(new paper.PointText({
-			point: screen.hitCircle.position.add([0, -settings.noteSize]),
+			point: screen.hitCircle.position.add([0, -settings.noteSize - 24]),
 			content: judgement.judge,
 			fillColor: this.judgeColor,
 			justification: 'center',
 			fontSize: 24,
+			fontFamily: 'sans-serif'
+		}));
+
+		this.combo = this.item.addChild(new paper.PointText({
+			point: screen.hitCircle.position.add([0, -settings.noteSize]),
+			content: judgement.combo,
+			fillColor: 'white',
+			justification: 'center',
+			fontSize: 15,
 			fontFamily: 'sans-serif'
 		}));
 
