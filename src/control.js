@@ -126,20 +126,21 @@ var YouTyping = function (element, settings) {
 			datatype: 'xml',
 			timeout: 1000,
 			success: function (data, textStatus, jqXHR) {
-				youTyping.dataXML = $(data).find('fumen').find('item');
-				logTrace('Loaded XML File.');
+				youTyping.dataXML = $(data).find('data').first();
+
+				var items = youTyping.dataXML.find('roll > item');
 
 				// parse XML and store into YouTyping.roll
 				youTyping.roll = [];
 
-				$(youTyping.dataXML).each(function () {
+				$(items).each(function () {
 					var tempItem = {
 						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
 						type: $(this).attr('type')
 					};
 
-					if ($(this).attr('text')) {
-						tempItem.text = tempItem.remainingText = $(this).attr('text');
+					if ($(this).has('text')) {
+						tempItem.text = tempItem.remainingText = $(this).children('text').text();
 					}
 
 					if (tempItem.type === 'note') {
@@ -150,6 +151,8 @@ var YouTyping = function (element, settings) {
 				});
 
 				youTyping.nextLyricIndex = findNextLyric(-1);
+
+				logTrace('Loaded XML File.');
 
 				loadXMLDeferred.resolve();
 			},
