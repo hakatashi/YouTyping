@@ -36,8 +36,6 @@ var utx = {
 	}
 };
 
-// shortcuts
-
 // setup xml builder
 var builder = new xml2js.Builder({
 	explicitRoot: false,
