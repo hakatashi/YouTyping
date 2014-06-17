@@ -153,7 +153,7 @@ var Screen = function (canvas, youTyping) {
 					items[index] = new paper.Group();
 
 					// long line which devides score to measures
-					if (item.type === '=') {
+					if (item.type === 'longline') {
 						items[index].longLine = items[index].addChild(new paper.Path.Line({
 							from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
 							to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
@@ -162,7 +162,7 @@ var Screen = function (canvas, youTyping) {
 						}));
 					}
 					// small line
-					if (item.type === '-') {
+					if (item.type === 'line') {
 						items[index].smallLine = items[index].addChild(new paper.Path.Line({
 							from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
 							to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
@@ -170,7 +170,7 @@ var Screen = function (canvas, youTyping) {
 							strokeWidth: 1
 						}));
 					}
-					if (item.type === '+') {
+					if (item.type === 'note') {
 						// note
 						items[index].note = items[index].addChild(new paper.Path.Circle({
 							center: [position, setting.scoreYpos * setting.height],
@@ -189,7 +189,7 @@ var Screen = function (canvas, youTyping) {
 						}));
 					}
 					// order stop mark
-					if (item.type === '/') {
+					if (item.type === 'stop') {
 						items[index].orderStop = items[index].addChild(new paper.Path({
 							segments: [[position, setting.scoreYpos * setting.height - setting.noteSize - 30]],
 							fillColor: 'white'
@@ -210,16 +210,16 @@ var Screen = function (canvas, youTyping) {
 			}
 
 			// update item style
-			if (item.type === '=') {
+			if (item.type === 'longline') {
 				items[index].position.x = position;
 			}
-			if (item.type === '-') {
+			if (item.type === 'line') {
 				items[index].position.x = position;
 			}
-			if (item.type === '/') {
+			if (item.type === 'stop') {
 				items[index].position.x = position;
 			}
-			if (item.type === '+') {
+			if (item.type === 'note') {
 				items[index].position.x = position;
 				if (item.state === youTyping.noteState.CLEARED) {
 					items[index].note.visible = false;

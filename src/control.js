@@ -142,7 +142,7 @@ var YouTyping = function (element, settings) {
 						tempItem.text = tempItem.remainingText = $(this).attr('text');
 					}
 
-					if (tempItem.type === '+') {
+					if (tempItem.type === 'note') {
 						tempItem.state = youTyping.noteState.WAITING;
 					}
 
@@ -213,11 +213,11 @@ var YouTyping = function (element, settings) {
 
 		for (var i = noteIndex + 1; i < youTyping.score.length; i++) {
 			var item = youTyping.score[i];
-			if (item.type === '/') {
+			if (item.type === 'stop') {
 				nextNote = null;
 				break;
 			}
-			if (item.type === '+') {
+			if (item.type === 'note') {
 				nextNote = i;
 				break;
 			}
@@ -232,7 +232,7 @@ var YouTyping = function (element, settings) {
 
 		for (var i = itemIndex + 1; i < youTyping.score.length; i++) {
 			var item = youTyping.score[i];
-			if (item.type === '*') {
+			if (item.type === 'lyric') {
 				nextLyric = i;
 				break;
 			}
@@ -303,7 +303,7 @@ var YouTyping = function (element, settings) {
 		var previousLiveNoteIndex = null;
 		youTyping.score.forEach(function (note, index) {
 			// if it's note and passed
-			if (note.type === '+' && note.time + youTyping.settings.failureSuspension < time) {
+			if (note.type === 'note' && note.time + youTyping.settings.failureSuspension < time) {
 				// and if the note is live
 				if (note.state === youTyping.noteState.WAITING || note.state === youTyping.noteState.HITTING) {
 					// and if previous live note exists
@@ -320,13 +320,13 @@ var YouTyping = function (element, settings) {
 					previousLiveNote = note;
 					previousLiveNoteIndex = index;
 				}
-			} else if (note.type === '*' && note.time < time) {
+			} else if (note.type === 'lyric' && note.time < time) {
 				// update current lyric index
 				if (youTyping.currentLyricIndex < index) { // null < number is true.
 					youTyping.currentLyricIndex = index;
 					youTyping.nextLyricIndex = findNextLyric(index);
 				}
-			} else if (note.type === '/' && note.time < time) { // if order stop marks
+			} else if (note.type === 'stop' && note.time < time) { // if order stop marks
 				// cancel current lyric
 				if (youTyping.currentLyricIndex < index) {
 					youTyping.currentLyricIndex = null;
@@ -568,7 +568,7 @@ var YouTyping = function (element, settings) {
 
 			// mark all the previous note failed
 			youTyping.score.forEach(function (item, index) {
-				if (item.type === '+' && item.time < note.time) {
+				if (item.type === 'note' && item.time < note.time) {
 					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
 						markFailed(item);
 					}
@@ -600,7 +600,7 @@ var YouTyping = function (element, settings) {
 		var nearestNewNote = null;
 		var nearestDistance = Infinity;
 		youTyping.score.forEach(function (item, index) {
-			if (item.type === '+') {
+			if (item.type === 'note') {
 				if (
 					index > youTyping.currentNoteIndex && // Luckily `positive number` > null is always true :)
 					item.state === youTyping.noteState.WAITING &&
