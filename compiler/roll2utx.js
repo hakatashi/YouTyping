@@ -28,7 +28,12 @@ var utx = {
 	$: {
 		version: '0.1'
 	},
-	data: {}
+	data: {
+		music: '',
+		resource: '',
+		info: '',
+		roll: ''
+	}
 };
 
 // shortcuts
