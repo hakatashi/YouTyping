@@ -59,11 +59,16 @@ var YouTyping = function (element, settings) {
 		logTrace('Player is Ready.');
 
 		youTyping.player.setVolume(youTyping.settings.volume);
+		youTyping.player.setPlaybackQuality(youTyping.settings.playbackQuality);
 
 		setupPlayerDeferred.resolve();
 	};
 
 	var onPlayerStateChange = function (event) {
+		if (screen.onPlayerStateChange) {
+			screen.onPlayerStateChange.call(screen, event);
+		}
+
 		switch (event.data) {
 		case YT.PlayerState.ENDED:
 			logTrace('Player Ended.');
@@ -350,6 +355,8 @@ var YouTyping = function (element, settings) {
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
 		}
+
+		youTyping.combo = 0;
 	};
 
 
@@ -371,7 +378,7 @@ var YouTyping = function (element, settings) {
 		score: 'data.utfx',
 		width: 1120, // pixel
 		height: 630, // pixel
-		hitPosition: 400, // pixel
+		hitPosition: 0.4, // ratio
 		noteSize: 50, // pixel
 		speed: 0.5, // pixel per second
 		scoreYpos: 0.5, // ratio
@@ -408,6 +415,7 @@ var YouTyping = function (element, settings) {
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
 		volume: 100, // percent
+		playbackQuality: 'default', // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
 		tableFile: 'convert/romaji.xml'
 	};
 
@@ -435,6 +443,8 @@ var YouTyping = function (element, settings) {
 	// lyrics
 	this.currentLyricIndex = null;
 	this.nextLyricIndex = null; // initialized in loadXML()
+
+	this.combo = 0;
 
 
 	/******************* Methods *******************/
@@ -636,7 +646,16 @@ var YouTyping = function (element, settings) {
 
 				hitNote(nearestNewNote);
 
-				console.log(distance, hitJudge);
+				youTyping.combo++;
+
+				// trigger judgement effect
+				screen.onJudgement({
+					judgement: {
+						distance: distance,
+						judge: hitJudge,
+						combo: youTyping.combo
+					}
+				});
 			}
 		}
 	};
@@ -700,6 +719,7 @@ var YouTyping = function (element, settings) {
 
 	// create YouTyping screen class
 	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
+	var screen = this.screen;
 
 	// Initialize asynchronously
 	// http://stackoverflow.com/questions/22346345/
