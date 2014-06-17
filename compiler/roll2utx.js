@@ -16,6 +16,9 @@ var options = optimist.options('output', {
 }).options('note', {
 	alias: 'n',
 	'default': ''
+}).options('shift', {
+	alias: 's',
+	'default': 0
 }).argv;
 
 if (options._.length < 1) {
@@ -107,7 +110,8 @@ try {
 			throw 'File ' + options._[0] + ' Line ' + i + ': Unknown item type \'' + type + '\'';
 		}
 
-		var time = rollLine.slice(1).split(/ (.+)?/)[0];
+		var time = parseFloat(rollLine.slice(1).split(/ (.+)?/)[0]);
+		time = (time + options.shift / 1000).round(5);
 		var text = rollLine.slice(1).split(/ (.+)?/)[1];
 
 		if (text) {
