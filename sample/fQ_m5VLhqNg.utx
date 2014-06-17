@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<utfx version="0.1">
+<utx version="0.1">
 	<data>
 		<music>tomadoi-short.mp3</music>
 		<resource>https://www.youtube.com/watch?v=fQ_m5VLhqNg</resource>
@@ -18,7 +18,7 @@
 			<scorefile>tomadoi-short.score</scorefile>
 			<description>作詞 Junky&lt;br&gt;作曲 Junky&lt;br&gt;編曲 Junky&lt;br&gt;唄   みかくにんぐッ!&lt;br&gt;&lt;br&gt;アニメ「未確認で進行形」OP&lt;br&gt;&lt;br&gt;JunkyってあのJunkyっすか。ひえー</description>
 		</info>
-		<score>
+		<roll>
 			<item time="0.643" type="longline"/>
 			<item time="0.995941" type="line"/>
 			<item time="1.348882" type="line"/>
@@ -1086,6 +1086,6 @@
 				<text>いぇい</text>
 			</item>
 			<item time="88.878294" type="stop"/>
-		</score>
+		</roll>
 	</data>
-</utfx>
+</utx>
