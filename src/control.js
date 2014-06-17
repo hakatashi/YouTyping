@@ -481,6 +481,11 @@ var YouTyping = function (element, settings) {
 
 			// TODO: Polyfill Array.prototype.filter (IE<9)
 			var matchingRules = youTyping.table.filter(function (rule) {
+				// currently YouTyping assumes no character in lyric cannnot be input as
+				// single character. (e.g. 'きゃ' is also inputtable as 'ki lya' in romaji mode)
+				// so YouTyping spares no effort to find special combination of
+				// rules that can generate ramaining text, but it deserves consideration to
+				// prevent evel behavior of breaking conversion table input.
 				if (!startsWith(rule.before, newInputBuffer)) {
 					return false;
 				}
