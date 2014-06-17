@@ -11,9 +11,11 @@ var options = optimist.options('output', {
 	alias: 'o',
 	'default': 'stdout'
 }).options('resource', {
-	alias: 'r'
+	alias: 'r',
+	'default': ''
 }).options('note', {
-	alias: 'n'
+	alias: 'n',
+	'default': ''
 }).argv;
 
 if (options._.length < 1) {
@@ -61,6 +63,16 @@ var itemTypes = {
 	'/': 'stop'
 };
 
+// extract creator dictionary
+var extractCreator = {
+	'作詞': 'lyricyst',
+	'作曲': 'composer',
+	'編曲': 'arranger',
+	'歌': 'singer',
+	'うた': 'singer',
+	'唄': 'singer'
+};
+
 /******** Parser ********/
 
 try {
@@ -72,6 +84,8 @@ try {
 	} else {
 		throw 'Music line is invalid';
 	}
+
+	utx.data.resource = options.resource;
 
 	// load items
 	utx.data.roll = {};
@@ -136,6 +150,28 @@ try {
 
 		var description = infoLines.from(6);
 		utx.data.info.description = description.join('<br>');
+
+		utx.data.info.note = options.note;
+
+		// extract extra information from description
+		utx.data.info.creator = [];
+		description.forEach(function (line) {
+			for (creatorType in extractCreator) {
+				if (extractCreator.hasOwnProperty(creatorType)) {
+					if (line.startsWith(creatorType)) {
+						var creator = line.slice(creatorType.length).trim();
+						var type = extractCreator[creatorType];
+
+						utx.data.info.creator.push({
+							_: creator,
+							$: {
+								type: type
+							}
+						});
+					}
+				}
+			}
+		});
 	}
 } catch (exception) {
 	console.error('Parse error: ' + exception);
