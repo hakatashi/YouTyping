@@ -375,7 +375,7 @@ var YouTyping = function (element, settings) {
 	this.settings = {
 		zeroEstimateSamples: 16, // integer
 		videoId: 'fQ_m5VLhqNg',
-		dataFile: 'data.utfx',
+		dataFile: 'data.utx',
 		width: 1120, // pixel
 		height: 630, // pixel
 		hitPosition: 0.4, // ratio
