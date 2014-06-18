@@ -156,7 +156,9 @@ try {
 		utx.data.info.scorefile = infoLines[5];
 
 		var description = infoLines.from(6);
-		utx.data.info.description = description.join('<br>');
+		utx.data.info.description = description.map(function (line) {
+			return line.escapeHTML();
+		}).join('<br>'); // escape and join with breakline
 
 		utx.data.info.note = options.note;
 
