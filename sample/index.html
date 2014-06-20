@@ -56,7 +56,7 @@
 
 			settings.offset = choice.offset || 0;
 			settings.controlledCorrection = choice.controlledCorrection || 0;
-			settings.score = settings.videoId + '.utfx';
+			settings.dataFile = settings.videoId + '.utx';
 			settings.tableFile = '../convert/romaji.xml';
 			youTyping = new YouTyping($('#youtyping'), settings);
 		});

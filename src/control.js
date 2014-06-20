@@ -116,40 +116,43 @@ var YouTyping = function (element, settings) {
 	};
 
 	var loadXMLDeferred;
-	var loadScoreXML = function () {
+	var loadDataXML = function () {
 		// Initialize deferred
 		loadXMLDeferred = $.Deferred();
 
 		$.ajax({
-			url: youTyping.settings.score,
+			url: youTyping.settings.dataFile,
 			type: 'get',
 			datatype: 'xml',
 			timeout: 1000,
 			success: function (data, textStatus, jqXHR) {
-				youTyping.scoreXML = $(data).find('fumen').find('item');
-				logTrace('Loaded XML File.');
+				youTyping.dataXML = $(data).find('data').first();
 
-				// parse XML and store into YouTyping.score
-				youTyping.score = [];
+				var items = youTyping.dataXML.find('roll > item');
 
-				$(youTyping.scoreXML).each(function () {
+				// parse XML and store into YouTyping.roll
+				youTyping.roll = [];
+
+				$(items).each(function () {
 					var tempItem = {
 						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
 						type: $(this).attr('type')
 					};
 
-					if ($(this).attr('text')) {
-						tempItem.text = tempItem.remainingText = $(this).attr('text');
+					if ($(this).has('text')) {
+						tempItem.text = tempItem.remainingText = $(this).children('text').text();
 					}
 
-					if (tempItem.type === '+') {
+					if (tempItem.type === 'note') {
 						tempItem.state = youTyping.noteState.WAITING;
 					}
 
-					youTyping.score.push(tempItem);
+					youTyping.roll.push(tempItem);
 				});
 
 				youTyping.nextLyricIndex = findNextLyric(-1);
+
+				logTrace('Loaded XML File.');
 
 				loadXMLDeferred.resolve();
 			},
@@ -211,13 +214,13 @@ var YouTyping = function (element, settings) {
 	var findNextNote = function (noteIndex) {
 		var nextNote = null;
 
-		for (var i = noteIndex + 1; i < youTyping.score.length; i++) {
-			var item = youTyping.score[i];
-			if (item.type === '/') {
+		for (var i = noteIndex + 1; i < youTyping.roll.length; i++) {
+			var item = youTyping.roll[i];
+			if (item.type === 'stop') {
 				nextNote = null;
 				break;
 			}
-			if (item.type === '+') {
+			if (item.type === 'note') {
 				nextNote = i;
 				break;
 			}
@@ -230,9 +233,9 @@ var YouTyping = function (element, settings) {
 	var findNextLyric = function (itemIndex) {
 		var nextLyric = null;
 
-		for (var i = itemIndex + 1; i < youTyping.score.length; i++) {
-			var item = youTyping.score[i];
-			if (item.type === '*') {
+		for (var i = itemIndex + 1; i < youTyping.roll.length; i++) {
+			var item = youTyping.roll[i];
+			if (item.type === 'lyric') {
 				nextLyric = i;
 				break;
 			}
@@ -301,9 +304,9 @@ var YouTyping = function (element, settings) {
 		var time = now - youTyping.zeroTime;
 		var previousLiveNote = null;
 		var previousLiveNoteIndex = null;
-		youTyping.score.forEach(function (note, index) {
+		youTyping.roll.forEach(function (note, index) {
 			// if it's note and passed
-			if (note.type === '+' && note.time + youTyping.settings.failureSuspension < time) {
+			if (note.type === 'note' && note.time + youTyping.settings.failureSuspension < time) {
 				// and if the note is live
 				if (note.state === youTyping.noteState.WAITING || note.state === youTyping.noteState.HITTING) {
 					// and if previous live note exists
@@ -320,13 +323,13 @@ var YouTyping = function (element, settings) {
 					previousLiveNote = note;
 					previousLiveNoteIndex = index;
 				}
-			} else if (note.type === '*' && note.time < time) {
+			} else if (note.type === 'lyric' && note.time < time) {
 				// update current lyric index
 				if (youTyping.currentLyricIndex < index) { // null < number is true.
 					youTyping.currentLyricIndex = index;
 					youTyping.nextLyricIndex = findNextLyric(index);
 				}
-			} else if (note.type === '/' && note.time < time) { // if order stop marks
+			} else if (note.type === 'stop' && note.time < time) { // if order stop marks
 				// cancel current lyric
 				if (youTyping.currentLyricIndex < index) {
 					youTyping.currentLyricIndex = null;
@@ -364,9 +367,9 @@ var YouTyping = function (element, settings) {
 
 	this.startTime = Date.now();
 
-	// score data
-	this.scoreXML = null;
-	this.score = null;
+	// roll data
+	this.dataXML = null;
+	this.roll = null;
 
 	// YouTube Iframe Player
 	this.player = null;
@@ -375,13 +378,13 @@ var YouTyping = function (element, settings) {
 	this.settings = {
 		zeroEstimateSamples: 16, // integer
 		videoId: 'fQ_m5VLhqNg',
-		score: 'data.utfx',
+		dataFile: 'data.utx',
 		width: 1120, // pixel
 		height: 630, // pixel
 		hitPosition: 0.4, // ratio
 		noteSize: 50, // pixel
 		speed: 0.5, // pixel per second
-		scoreYpos: 0.5, // ratio
+		rollYpos: 0.5, // ratio
 		longLineHeight: 150, // pixel
 		lineHeight: 120, // pixel
 		screenPadding: 30, // pixel
@@ -432,6 +435,9 @@ var YouTyping = function (element, settings) {
 	// YouTyping.now
 	Object.defineProperty(this, 'now', {
 		get: function () {
+			// note: this is most frequently called property in YouTyping.
+			// In chrome, Date.now is faster than performance.now,
+			// but Firefox is not. Came from http://jsperf.com/new-date-vs-date-now-vs-performance-now/21
 			return window.performance.now();
 		}
 	});
@@ -466,7 +472,7 @@ var YouTyping = function (element, settings) {
 		// check hit-ability of note by passed key.
 		// return false when un-hit-able, and info about new note when hit-able
 		var preHitNote = function (noteIndex, hitKey) {
-			var note = youTyping.score[noteIndex];
+			var note = youTyping.roll[noteIndex];
 			var newInputBuffer = '';
 
 			if (noteIndex === youTyping.currentNoteIndex) {
@@ -556,7 +562,7 @@ var YouTyping = function (element, settings) {
 
 		// hit note by passed key
 		var hitNote = function (newNoteInfo) {
-			var note = youTyping.score[newNoteInfo.noteIndex];
+			var note = youTyping.roll[newNoteInfo.noteIndex];
 
 			// update current note index
 			youTyping.currentNoteIndex = newNoteInfo.noteIndex;
@@ -573,8 +579,8 @@ var YouTyping = function (element, settings) {
 			}
 
 			// mark all the previous note failed
-			youTyping.score.forEach(function (item, index) {
-				if (item.type === '+' && item.time < note.time) {
+			youTyping.roll.forEach(function (item, index) {
+				if (item.type === 'note' && item.time < note.time) {
 					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
 						markFailed(item);
 					}
@@ -605,8 +611,8 @@ var YouTyping = function (element, settings) {
 		var nearestNote = null;
 		var nearestNewNote = null;
 		var nearestDistance = Infinity;
-		youTyping.score.forEach(function (item, index) {
-			if (item.type === '+') {
+		youTyping.roll.forEach(function (item, index) {
+			if (item.type === 'note') {
 				if (
 					index > youTyping.currentNoteIndex && // Luckily `positive number` > null is always true :)
 					item.state === youTyping.noteState.WAITING &&
@@ -647,7 +653,7 @@ var YouTyping = function (element, settings) {
 			if (hitJudge !== null) {
 				// if currently hitting other note now, it will be marked as HITTINGFAILED
 				if (youTyping.currentNoteIndex !== null) {
-					var previousNote = youTyping.score[youTyping.currentNoteIndex];
+					var previousNote = youTyping.roll[youTyping.currentNoteIndex];
 					markFailed(previousNote);
 				}
 
@@ -684,12 +690,12 @@ var YouTyping = function (element, settings) {
 
 		var kanaLyric = '';
 
-		for (var i = lyricIndex + 1; i < youTyping.score.length; i++) {
-			if (youTyping.score[i].type === '+') {
-				kanaLyric += youTyping.score[i].text;
+		for (var i = lyricIndex + 1; i < youTyping.roll.length; i++) {
+			if (youTyping.roll[i].type === 'note') {
+				kanaLyric += youTyping.roll[i].text;
 			} else if (
-				youTyping.score[i].type === '/' ||
-				youTyping.score[i].type === '*'
+				youTyping.roll[i].type === 'stop' ||
+				youTyping.roll[i].type === 'lyric'
 			) {
 				break;
 			}
@@ -763,7 +769,7 @@ var YouTyping = function (element, settings) {
 	// http://stackoverflow.com/questions/22346345/
 	$.when(
 		$.when(
-			loadScoreXML(),
+			loadDataXML(),
 			$.Deferred(this.screen.setup).promise()
 		).done(this.screen.load),
 		loadTable(),
