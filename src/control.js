@@ -435,6 +435,9 @@ var YouTyping = function (element, settings) {
 	// YouTyping.now
 	Object.defineProperty(this, 'now', {
 		get: function () {
+			// note: this is most frequently called property in YouTyping.
+			// In chrome, Date.now is faster than performance.now,
+			// but Firefox is not. Came from http://jsperf.com/new-date-vs-date-now-vs-performance-now/21
 			return window.performance.now();
 		}
 	});
