@@ -41,6 +41,7 @@ var YouTyping = function (element, settings) {
 			videoId: settings.videoId,
 			playerVars: {
 				rel: 0,
+				start: settings.offset,
 				// Wishing the best effort of hiding any information except for the video
 				controls: 0,
 				showinfo: 0,
@@ -75,11 +76,6 @@ var YouTyping = function (element, settings) {
 			break;
 		case YT.PlayerState.PLAYING:
 			logTrace('Player Started.');
-
-			// seeking is only available when playing
-			if (youTyping.player.getCurrentTime() < youTyping.settings.offset) {
-				youTyping.player.seekTo(youTyping.settings.offset, true);
-			}
 			break;
 		case YT.PlayerState.PAUSED:
 			logTrace('Player Paused.');
@@ -270,9 +266,9 @@ var YouTyping = function (element, settings) {
 		var gotCurrentTime = youTyping.player.getCurrentTime();
 		var now = youTyping.now;
 
-		if (gotCurrentTime === 0) { // if playing time is zero `ZeroTime` is immediately `now`!
-			youTyping.zeroTimePad = now + youTyping.correction - youTyping.settings.offset * 1000;
-			youTyping.zeroTime = now + youTyping.correction - youTyping.settings.offset * 1000;
+		if (gotCurrentTime === youTyping.settings.offset) { // if playing time is zero `ZeroTime` is immediately `now`!
+			youTyping.zeroTimePad = now - youTyping.settings.offset * 1000 + youTyping.correction;
+			youTyping.zeroTime = now - youTyping.settings.offset * 1000 + youTyping.correction;
 		} else if (youTyping.currentTime !== gotCurrentTime && gotCurrentTime > youTyping.settings.offset) { // if Current Time jumped
 			youTyping.currentTime = gotCurrentTime;
 			youTyping.estimatedZero = now - youTyping.currentTime * 1000;
@@ -722,6 +718,9 @@ var YouTyping = function (element, settings) {
 
 	// calculate correction
 	this.correction = this.settings.correction + this.settings.controlledCorrection + this.settings.offset * 1000;
+	// initialize zeroTime
+	this.zeroTimePad = this.correction - this.settings.offset * 1000;
+	this.zeroTime = this.correction - this.settings.offset * 1000;
 
 	// setup DOM
 	/*
