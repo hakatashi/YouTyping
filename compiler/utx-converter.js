@@ -74,9 +74,9 @@ var extractCreator = {
 	'作詞': 'lyricyst',
 	'作曲': 'composer',
 	'編曲': 'arranger',
+	'唄': 'singer',
 	'歌': 'singer',
-	'うた': 'singer',
-	'唄': 'singer'
+	'うた': 'singer'
 };
 
 /******** Parser ********/
