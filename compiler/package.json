@@ -1,6 +1,6 @@
 {
   "name": "YouCompiler",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Collection of compilers that works fine for fumen builders!!",
   "main": "utx-converter.js",
   "scripts": {

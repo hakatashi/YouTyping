@@ -2,8 +2,14 @@
 <utx version="0.1">
   <data>
     <music>tomadoi-short.mp3</music>
-    <resource>https://www.youtube.com/watch?v=fQ_m5VLhqNg</resource>
+    <resource>
+      <url>https://www.youtube.com/watch?v=fQ_m5VLhqNg</url>
+      <offset>10</offset>
+    </resource>
     <info>
+      <id></id>
+      <published>2007-05-22T20:29:24.000Z</published>
+      <updated>2014-06-20T20:37:45.000Z</updated>
       <title>とまどい→レシピ</title>
       <artist>みかくにんぐッ!</artist>
       <maker>koyi</maker>
