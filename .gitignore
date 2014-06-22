@@ -238,5 +238,5 @@ youtyping.min.js
 youtyping.min.map
 
 # Compiler's Outputs
-compiler/*.txt
-compiler/*.utx
+tools/*.txt
+tools/*.utx
