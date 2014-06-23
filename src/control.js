@@ -760,9 +760,23 @@ var YouTyping = function (element, settings) {
 		})
 	};
 
-	// create YouTyping screen class
+	// create YouTyping screen instance
 	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
 	var screen = this.screen;
+
+	// sanitize Screen
+	var callbacks = [
+	'onPlayerStateChange',
+	'onHit',
+	'onJudgement',
+	'onLyricChange',
+	'onError'
+	];
+	callbacks.forEach(function (callback) {
+		if (typeof screen[callback] !== 'function') {
+			screen[callback] = function () {};
+		}
+	});
 
 	// Initialize asynchronously
 	// http://stackoverflow.com/questions/22346345/
