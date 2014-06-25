@@ -450,6 +450,8 @@ var YouTyping = function (element, settings) {
 	this.nextLyricIndex = null; // initialized in loadXML()
 
 	this.combo = 0;
+	this.maxCombo = 0;
+	this.score = 0;
 
 
 	/******************* Methods *******************/
@@ -787,6 +789,12 @@ var YouTyping = function (element, settings) {
 		if (typeof screen[callback] !== 'function') {
 			screen[callback] = function () {};
 		}
+	});
+
+	// initialize scorebook
+	this.scorebook = {};
+	this.settings.judges.forEach(function (judge) {
+		this.scorebook[judge.name] = 0;
 	});
 
 	// Initialize asynchronously
