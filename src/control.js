@@ -774,9 +774,13 @@ var YouTyping = function (element, settings) {
 	// sanitize Screen
 	var callbacks = [
 	'onPlayerStateChange',
+	'onMiss',
 	'onHit',
 	'onJudgement',
+	'onNoteClear',
 	'onLyricChange',
+	'onVideoEnd',
+	'onGameEnd',
 	'onError'
 	];
 	callbacks.forEach(function (callback) {
