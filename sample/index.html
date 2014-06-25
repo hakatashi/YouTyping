@@ -26,37 +26,64 @@
 			title: 'Tell your world',
 			offset: 11,
 			controlledCorrection: 40
+		},
+		{
+			videoId: 'eGHDrlvypWg',
+			title: 'さくらんぼ',
+			offset: 9,
+			controlledCorrection: -60
+		},
+		{
+			videoId: 'eGHDrlvypWg',
+			file: 'eGHDrlvypWg-extract',
+			title: 'さくらんぼ (Extract)',
+			offset: 9,
+			controlledCorrection: -60
 		}
 		];
+
+		choices.forEach(function (choice) {
+			choice.file = choice.file || choice.videoId;
+			choice.dataFile = choice.dataFile || (choice.file + '.utx');
+			choice.offset = choice.offset || 0;
+			choice.controlledCorrection = choice.controlledCorrection || 0;
+		})
 
 		$(document).ready(function () {
 			var settings = $.deparam(location.search.slice(1));
 
-			if (!settings.videoId) settings.videoId = choices[0].videoId;
+			if (!settings.file) {
+				settings.file = choices[0].videoId;
+			}
+
+			settings.dataFile = settings.file + '.utx';
 
 			// render choices
 			choices.forEach(function (choice) {
 				$('<a>', {
-					href: './?videoId=' + choice.videoId,
+					href: './?file=' + choice.file,
 					text: choice.title
 				})
 				.addClass('btn')
 				.addClass('btn-lg')
-				.addClass(settings.videoId === choice.videoId ? 'btn-primary' : 'btn-default')
+				.addClass(settings.file === choice.file ? 'btn-primary' : 'btn-default')
 				.appendTo('#choices');
 			});
 
 			var choice = (function () {
 				var result;
 				choices.forEach(function (choice) {
-					if (choice.videoId === settings.videoId) result = choice;
+					console.log(choice.dataFile, settings.dataFile);
+					if (choice.dataFile === settings.dataFile) {
+						result = choice;
+					}
 				});
 				return result;
 			})();
 
-			settings.offset = choice.offset || 0;
-			settings.controlledCorrection = choice.controlledCorrection || 0;
-			settings.dataFile = settings.videoId + '.utx';
+			settings.offset = choice.offset;
+			settings.controlledCorrection = choice.controlledCorrection;
+			settings.videoId = choice.videoId;
 			settings.tableFile = '../convert/romaji.xml';
 			youTyping = new YouTyping($('#youtyping'), settings);
 		});
