@@ -8,61 +8,92 @@
 	<script src="../youtyping.js"></script>
 	<script src="jquery-deparam.js"></script>
 	<script>
-		var choices = [
-		{
-			videoId: 'fQ_m5VLhqNg',
-			title: 'とまどい→レシピ',
-			offset: 0
-		},
-		{
-			videoId: 'a_mWyahWoUA',
-			title: '優しい忘却',
-			offset: 0
-		},
-		{
-			videoId: 'dFf4AgBNR1E',
-			title: '恋するフォーチュンクッキー',
-			offset: 0
-		},
-		{
-			videoId: 'PqJNc9KVIZE',
-			title: 'Tell your world',
-			offset: 11,
-			controlledCorrection: 40
-		}
-		];
+	var choices = [
+	{
+		videoId: 'fQ_m5VLhqNg',
+		title: 'とまどい→レシピ'
+	},
+	{
+		videoId: 'a_mWyahWoUA',
+		title: '優しい忘却'
+	},
+	{
+		videoId: 'dFf4AgBNR1E',
+		title: '恋するフォーチュンクッキー'
+	},
+	{
+		videoId: 'PqJNc9KVIZE',
+		title: 'Tell your world',
+		offset: 11,
+		controlledCorrection: 40
+	},
+	{
+		videoId: 'eGHDrlvypWg',
+		title: 'さくらんぼ',
+		offset: 9,
+		controlledCorrection: -60
+	},
+	{
+		id: 'eGHDrlvypWg-extract',
+		videoId: 'eGHDrlvypWg',
+		file: 'eGHDrlvypWg-extract',
+		title: 'さくらんぼ (Extract)',
+		offset: 9,
+		controlledCorrection: -60
+	},
+	{
+		id: 'eGHDrlvypWg-initial',
+		videoId: 'eGHDrlvypWg',
+		file: 'eGHDrlvypWg',
+		title: 'さくらんぼ (Initial)',
+		offset: 9,
+		controlledCorrection: -60,
+		initial: true
+	}
+	];
 
-		$(document).ready(function () {
-			var settings = $.deparam(location.search.slice(1));
+	choices.forEach(function (choice) {
+		choice.id = choice.id || choice.videoId;
+		choice.file = choice.file || choice.videoId;
+		choice.dataFile = choice.dataFile || (choice.file + '.utx');
+		choice.offset = choice.offset || 0;
+		choice.controlledCorrection = choice.controlledCorrection || 0;
+	})
 
-			if (!settings.videoId) settings.videoId = choices[0].videoId;
+	$(document).ready(function () {
+		var settings = $.deparam(location.search.slice(1));
 
-			// render choices
-			choices.forEach(function (choice) {
-				$('<a>', {
-					href: './?videoId=' + choice.videoId,
-					text: choice.title
-				})
-				.addClass('btn')
-				.addClass('btn-lg')
-				.addClass(settings.videoId === choice.videoId ? 'btn-primary' : 'btn-default')
-				.appendTo('#choices');
-			});
+		settings.id = settings.id || choices[0].id;
 
-			var choice = (function () {
-				var result;
-				choices.forEach(function (choice) {
-					if (choice.videoId === settings.videoId) result = choice;
-				});
-				return result;
-			})();
-
-			settings.offset = choice.offset;
-			settings.controlledCorrection = choice.controlledCorrection || 0;
-			settings.score = settings.videoId + '.utfx';
-			settings.tableFile = '../convert/romaji.xml';
-			youTyping = new YouTyping($('#youtyping'), settings);
+		// render choices
+		choices.forEach(function (choice) {
+			$('<a>', {
+				href: './?id=' + choice.id,
+				text: choice.title
+			})
+			.addClass('btn')
+			.addClass('btn-lg')
+			.addClass(settings.id === choice.id ? 'btn-primary' : 'btn-default')
+			.appendTo('#choices');
 		});
+
+		var choice = (function () {
+			var result;
+			choices.forEach(function (choice) {
+				if (choice.id === settings.id) {
+					result = choice;
+				}
+			});
+			return result;
+		})();
+		settings.offset = choice.offset;
+		settings.controlledCorrection = choice.controlledCorrection;
+		settings.dataFile = choice.dataFile;
+		settings.videoId = choice.videoId;
+		settings.initial = settings.initial || choice.initial || false;
+		settings.tableFile = '../convert/romaji.xml';
+		youTyping = new YouTyping($('#youtyping'), settings);
+	});
 	</script>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">

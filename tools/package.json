@@ -1,0 +1,27 @@
+{
+  "name": "YouCompiler",
+  "version": "0.0.1",
+  "description": "Collection of compilers that works fine for fumen builders!!",
+  "main": "utx-converter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hakatashi/YouTyping.git"
+  },
+  "keywords": [
+    "YouTyping"
+  ],
+  "author": "hakatashi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hakatashi/YouTyping/issues"
+  },
+  "devDependencies": {
+    "xml2js": "~0.4.4",
+    "optimist": "~0.6.1",
+    "sugar": "~1.4.1",
+    "iconv": "~2.1.4"
+  }
+}

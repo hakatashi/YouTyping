@@ -50,6 +50,14 @@ var Screen = function (canvas, youTyping) {
 			fontSize: 18
 		});
 
+		screen.kanaLyric = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.kanaLyricPosition),
+			content: '',
+			fillColor: 'white',
+			justification: 'center',
+			fontSize: 24
+		});
+
 		screen.judgeEffects = new paper.Group();
 
 		setInterval(function () {
@@ -73,14 +81,14 @@ var Screen = function (canvas, youTyping) {
 		try {
 			// Computes emerge time and vanishing time of item.
 			// This is yet a very simple way without regards for speed changes.
-			youTyping.score.forEach(function (item, index) {
+			youTyping.roll.forEach(function (item, index) {
 				item.emergeTime = (settings.speed * item.time - paddingRight) / settings.speed;
 				item.vanishTime = (settings.speed * item.time + paddingLeft) / settings.speed;
 			});
 
-			logTrace('Computed score Parameters.');
+			logTrace('Computed roll Parameters.');
 		} catch (error) {
-			logTrace('ERROR: Computing score Parameters Faild: ' + error);
+			logTrace('ERROR: Computing roll Parameters Faild: ' + error);
 			return -1;
 		}
 
@@ -88,7 +96,7 @@ var Screen = function (canvas, youTyping) {
 		screen.update();
 
 		screen.hitCircle = new paper.Path.Circle({
-			center: paper.view.bounds.bottomRight.multiply([settings.hitPosition, settings.scoreYpos]),
+			center: paper.view.bounds.bottomRight.multiply([settings.hitPosition, settings.rollYpos]),
 			radius: settings.noteSize,
 			strokeWidth: 1,
 			strokeColor: 'white'
@@ -142,7 +150,7 @@ var Screen = function (canvas, youTyping) {
 		var now = youTyping.now;
 		var runTime = now - youTyping.zeroTime;
 
-		youTyping.score.forEach(function (item, index) {
+		youTyping.roll.forEach(function (item, index) {
 			// X position of the item
 			var position = (item.time - runTime) * setting.speed + setting.width * setting.hitPosition;
 
@@ -152,35 +160,35 @@ var Screen = function (canvas, youTyping) {
 					// create item
 					items[index] = new paper.Group();
 
-					// long line which devides score to measures
-					if (item.type === '=') {
+					// long line which devides roll to measures
+					if (item.type === 'longline') {
 						items[index].longLine = items[index].addChild(new paper.Path.Line({
-							from: [position, setting.scoreYpos * setting.height - setting.longLineHeight / 2],
-							to: [position, setting.scoreYpos * setting.height + setting.longLineHeight / 2],
+							from: [position, setting.rollYpos * setting.height - setting.longLineHeight / 2],
+							to: [position, setting.rollYpos * setting.height + setting.longLineHeight / 2],
 							strokeColor: 'white',
 							strokeWidth: 2
 						}));
 					}
 					// small line
-					if (item.type === '-') {
+					if (item.type === 'line') {
 						items[index].smallLine = items[index].addChild(new paper.Path.Line({
-							from: [position, setting.scoreYpos * setting.height - setting.lineHeight / 2],
-							to: [position, setting.scoreYpos * setting.height + setting.lineHeight / 2],
+							from: [position, setting.rollYpos * setting.height - setting.lineHeight / 2],
+							to: [position, setting.rollYpos * setting.height + setting.lineHeight / 2],
 							strokeColor: 'white',
 							strokeWidth: 1
 						}));
 					}
-					if (item.type === '+') {
+					if (item.type === 'note') {
 						// note
 						items[index].note = items[index].addChild(new paper.Path.Circle({
-							center: [position, setting.scoreYpos * setting.height],
+							center: [position, setting.rollYpos * setting.height],
 							radius: setting.noteSize,
 							strokeWidth: 1,
 							strokeColor: '#aaa'
 						}));
 						// lyric
 						items[index].lyric = items[index].addChild(new paper.PointText({
-							point: [position, setting.scoreYpos * setting.height + setting.noteSize + 50],
+							point: [position, setting.rollYpos * setting.height + setting.noteSize + 50],
 							content: item.remainingText,
 							fillColor: 'white',
 							justification: 'center',
@@ -189,9 +197,9 @@ var Screen = function (canvas, youTyping) {
 						}));
 					}
 					// order stop mark
-					if (item.type === '/') {
+					if (item.type === 'stop') {
 						items[index].orderStop = items[index].addChild(new paper.Path({
-							segments: [[position, setting.scoreYpos * setting.height - setting.noteSize - 30]],
+							segments: [[position, setting.rollYpos * setting.height - setting.noteSize - 30]],
 							fillColor: 'white'
 						}));
 						items[index].orderStop.lineBy([10, -10]);
@@ -210,16 +218,16 @@ var Screen = function (canvas, youTyping) {
 			}
 
 			// update item style
-			if (item.type === '=') {
+			if (item.type === 'longline') {
 				items[index].position.x = position;
 			}
-			if (item.type === '-') {
+			if (item.type === 'line') {
 				items[index].position.x = position;
 			}
-			if (item.type === '/') {
+			if (item.type === 'stop') {
 				items[index].position.x = position;
 			}
-			if (item.type === '+') {
+			if (item.type === 'note') {
 				items[index].position.x = position;
 				if (item.state === youTyping.noteState.CLEARED) {
 					items[index].note.visible = false;
@@ -244,15 +252,19 @@ var Screen = function (canvas, youTyping) {
 	};
 
 	this.onFrame = function (event) {
+		var kanaLyric;
+
 		if (youTyping.player.getPlayerState() === 1) {
 			screen.update();
 		}
+
 		screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
 		screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 		screen.bufferText.content = youTyping.inputBuffer;
-		screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.score[youTyping.currentLyricIndex].text : '';
-		screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.score[youTyping.nextLyricIndex].text : '';
+		screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.roll[youTyping.currentLyricIndex].text : '';
+		screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.roll[youTyping.nextLyricIndex].text : '';
+		// screen.kanaLyric.content = (kanaLyric = youTyping.getKanaLyric()) ? kanaLyric : '';
 
 		screen.judgeEffects.children.forEach(function (judgeEffect) {
 			judgeEffect.controller.onFrame();
