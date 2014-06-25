@@ -412,6 +412,7 @@ var YouTyping = function (element, settings) {
 		],
 		breakCombo: 'bad', // judgement name
 		failureSuspension: 100, // millisecond
+		initial: false, // boolean
 		correction: 0, // millisecond
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
@@ -536,10 +537,14 @@ var YouTyping = function (element, settings) {
 
 				newNoteInfo.appliedRule = minimumRule;
 
+				if (youTyping.settings.initial) {
+					newNoteInfo.remainingText = '';
+					newNoteInfo.inputBuffer = '';
+				}
 				// if new input buffer equals selected rule, the rule is satisfied, and then
 				// rule.after are taken from remaining text.
 				// this can be done by just comparing their length.
-				if (newInputBuffer.length === minimumRule.before.length) {
+				else if (newInputBuffer.length === minimumRule.before.length) {
 					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
 					newNoteInfo.inputBuffer = '';
 
@@ -712,6 +717,8 @@ var YouTyping = function (element, settings) {
 				this.settings[param] = parseFloat(settings[param], 10);
 			} else if (typeof this.settings[param] === 'string') {
 				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'boolean') {
+				this.settings[param] = Boolean(settings[param]);
 			}
 		}
 	}
