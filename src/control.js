@@ -377,7 +377,7 @@ var YouTyping = function (element, settings) {
 		dataFile: 'data.utx',
 		width: 1120, // pixel
 		height: 630, // pixel
-		hitPosition: 0.4, ratio
+		hitPosition: 0.4, // ratio
 		noteSize: 50, // pixel
 		speed: 0.5, // pixel per second
 		rollYpos: 0.5, // ratio
@@ -800,7 +800,7 @@ var YouTyping = function (element, settings) {
 
 	// initialize scorebook
 	this.settings.judges.forEach(function (judge) {
-		this.scorebook[judge.name] = 0;
+		youTyping.scorebook[judge.name] = 0;
 	});
 
 	// Initialize asynchronously
