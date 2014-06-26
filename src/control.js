@@ -661,7 +661,11 @@ var YouTyping = function (element, settings) {
 					markFailed(previousNote);
 				}
 
+				// hit note
 				hitNote(nearestNewNote);
+
+				// record in scorebook
+				youTyping.scorebook[hitJudge]++;
 
 				// breaking combo
 				if (hitJudge === youTyping.settings.breakCombo) {
