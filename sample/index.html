@@ -40,7 +40,7 @@
 			// render choices
 			choices.forEach(function (choice) {
 				$('<a>', {
-					href: './?videoId=' + choice.videoId,
+					href: './?' + $.param($.extend($.extend({}, settings), {videoId: choice.videoId})),
 					text: choice.title
 				})
 				.addClass('btn')
