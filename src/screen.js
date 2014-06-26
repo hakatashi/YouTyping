@@ -192,7 +192,7 @@ var Screen = function (canvas, youTyping) {
 							content: item.remainingText,
 							fillColor: 'white',
 							justification: 'center',
-							fontSize: 20,
+							fontSize: setting.lyricSize,
 							fontFamily: 'sans-serif'
 						}));
 					}

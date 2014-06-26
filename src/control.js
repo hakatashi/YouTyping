@@ -373,6 +373,7 @@ var YouTyping = function (element, settings) {
 		height: 630, // pixel
 		hitPosition: 400, // pixel
 		noteSize: 50, // pixel
+		lyricSize: 20, // pixel
 		speed: 0.5, // pixel per second
 		scoreYpos: 0.5, // ratio
 		longLineHeight: 150, // pixel
