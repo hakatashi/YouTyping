@@ -232,11 +232,6 @@ UpgradeLog*.htm
 # Microsoft Fakes
 FakesAssemblies/
 
-# Build Files
-youtyping.js
-youtyping.min.js
-youtyping.min.map
-
 # Compiler's Outputs
 tools/*.txt
 tools/*.utx
