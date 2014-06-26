@@ -452,9 +452,10 @@ var YouTyping = function (element, settings) {
 	this.combo = 0;
 	this.maxCombo = 0;
 	this.score = 0;
+	this.scorebook = {};
 
 
-	/******************* Methods *******************/
+	/******************* Exposed Methods *******************/
 
 	this.play = function () {
 		youTyping.player.playVideo();
@@ -669,6 +670,11 @@ var YouTyping = function (element, settings) {
 
 				youTyping.combo++;
 
+				// update max combo
+				if (youTyping.combo > youTyping.maxCombo) {
+					youTyping.maxCombo = youTyping.combo;
+				}
+
 				// trigger judgement effect
 				screen.onJudgement({
 					judgement: {
@@ -793,7 +799,6 @@ var YouTyping = function (element, settings) {
 	});
 
 	// initialize scorebook
-	this.scorebook = {};
 	this.settings.judges.forEach(function (judge) {
 		this.scorebook[judge.name] = 0;
 	});
