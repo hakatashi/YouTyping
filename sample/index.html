@@ -68,7 +68,7 @@
 		// render choices
 		choices.forEach(function (choice) {
 			$('<a>', {
-				href: './?id=' + choice.id,
+				href: './?' + $.param($.extend($.extend({}, settings), {id: choice.id})),
 				text: choice.title
 			})
 			.addClass('btn')

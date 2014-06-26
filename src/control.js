@@ -379,6 +379,7 @@ var YouTyping = function (element, settings) {
 		height: 630, // pixel
 		hitPosition: 0.4, // ratio
 		noteSize: 50, // pixel
+		lyricSize: 20, // pixel
 		speed: 0.5, // pixel per second
 		rollYpos: 0.5, // ratio
 		longLineHeight: 150, // pixel
@@ -450,9 +451,12 @@ var YouTyping = function (element, settings) {
 	this.nextLyricIndex = null; // initialized in loadXML()
 
 	this.combo = 0;
+	this.maxCombo = 0;
+	this.score = 0;
+	this.scorebook = {};
 
 
-	/******************* Methods *******************/
+	/******************* Exposed Methods *******************/
 
 	this.play = function () {
 		youTyping.player.playVideo();
@@ -658,7 +662,11 @@ var YouTyping = function (element, settings) {
 					markFailed(previousNote);
 				}
 
+				// hit note
 				hitNote(nearestNewNote);
+
+				// record in scorebook
+				youTyping.scorebook[hitJudge]++;
 
 				// breaking combo
 				if (hitJudge === youTyping.settings.breakCombo) {
@@ -666,6 +674,11 @@ var YouTyping = function (element, settings) {
 				}
 
 				youTyping.combo++;
+
+				// update max combo
+				if (youTyping.combo > youTyping.maxCombo) {
+					youTyping.maxCombo = youTyping.combo;
+				}
 
 				// trigger judgement effect
 				screen.onJudgement({
@@ -774,15 +787,25 @@ var YouTyping = function (element, settings) {
 	// sanitize Screen
 	var callbacks = [
 	'onPlayerStateChange',
+	'onMiss',
 	'onHit',
 	'onJudgement',
+	'onNoteClear',
 	'onLyricChange',
+	'onScoreChange',
+	'onVideoEnd',
+	'onGameEnd',
 	'onError'
 	];
 	callbacks.forEach(function (callback) {
 		if (typeof screen[callback] !== 'function') {
 			screen[callback] = function () {};
 		}
+	});
+
+	// initialize scorebook
+	this.settings.judges.forEach(function (judge) {
+		youTyping.scorebook[judge.name] = 0;
 	});
 
 	// Initialize asynchronously
