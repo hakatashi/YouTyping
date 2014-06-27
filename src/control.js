@@ -141,6 +141,7 @@ var YouTyping = function (element, settings) {
 
 					if (tempItem.type === 'note') {
 						tempItem.state = youTyping.noteState.WAITING;
+						tempItem.judgement = null;
 					}
 
 					youTyping.roll.push(tempItem);
@@ -354,6 +355,9 @@ var YouTyping = function (element, settings) {
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
 		}
+
+		note.judgement = 'failed';
+		youTyping.scorebook.failed++;
 
 		youTyping.combo = 0;
 	};
@@ -577,6 +581,9 @@ var YouTyping = function (element, settings) {
 				note.remainingText = '';
 				youTyping.inputBuffer = '';
 				youTyping.currentNoteIndex = null;
+
+				// record in scorebook
+				youTyping.scorebook[note.judgement]++;
 			} else {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
@@ -662,11 +669,11 @@ var YouTyping = function (element, settings) {
 					markFailed(previousNote);
 				}
 
+				// update current note judgement
+				nearestNote.judgement = hitJudge;
+
 				// hit note
 				hitNote(nearestNewNote);
-
-				// record in scorebook
-				youTyping.scorebook[hitJudge]++;
 
 				// breaking combo
 				if (hitJudge === youTyping.settings.breakCombo) {
@@ -804,6 +811,7 @@ var YouTyping = function (element, settings) {
 	});
 
 	// initialize scorebook
+	youTyping.scorebook.failed = 0;
 	this.settings.judges.forEach(function (judge) {
 		youTyping.scorebook[judge.name] = 0;
 	});
