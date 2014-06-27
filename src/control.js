@@ -352,12 +352,13 @@ var YouTyping = function (element, settings) {
 	var markFailed = function (note) {
 		if (note.state === youTyping.noteState.WAITING) {
 			note.state = youTyping.noteState.FAILED;
+			note.judgement = 'neglect';
+			youTyping.scorebook.neglect++;
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
+			note.judgement = 'failed';
+			youTyping.scorebook.failed++;
 		}
-
-		note.judgement = 'failed';
-		youTyping.scorebook.failed++;
 
 		youTyping.combo = 0;
 	};
@@ -812,6 +813,7 @@ var YouTyping = function (element, settings) {
 
 	// initialize scorebook
 	youTyping.scorebook.failed = 0;
+	youTyping.scorebook.neglect = 0;
 	this.settings.judges.forEach(function (judge) {
 		youTyping.scorebook[judge.name] = 0;
 	});
