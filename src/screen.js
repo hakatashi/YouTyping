@@ -57,7 +57,7 @@ var Screen = function (element, settings) {
 		}
 
 		screen.bufferText = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.bufferTextPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.bufferTextPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'left',
@@ -65,7 +65,7 @@ var Screen = function (element, settings) {
 		});
 
 		screen.currentLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.currentLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.currentLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -73,7 +73,7 @@ var Screen = function (element, settings) {
 		});
 
 		screen.nextLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.nextLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.nextLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -81,7 +81,7 @@ var Screen = function (element, settings) {
 		});
 
 		screen.kanaLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.kanaLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.kanaLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -323,7 +323,6 @@ var Screen = function (element, settings) {
 	// judge effect object
 	var JudgeEffect = function (judgement) {
 		var judgeEffect = this;
-		var settings = youTyping.settings;
 
 		this.item = new paper.Group();
 
