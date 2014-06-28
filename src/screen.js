@@ -100,7 +100,7 @@ var Screen = function (element, settings) {
 		logTrace('Screen Initialized.');
 	};
 
-	this.onResourceReady = function (deffered) {
+	this.onResourceReady = function () {
 		var now = youTyping.now;
 
 		var paddingRight = settings.width * (1 - settings.hitPosition) + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
