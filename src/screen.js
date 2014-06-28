@@ -24,7 +24,15 @@ var Screen = function (element, settings) {
 		bufferTextPosition: [0.2, 0.8], // ratio in screen
 		currentLyricPosition: [0.5, 0.25], // ratio in screen
 		nextLyricPosition: [0.5, 0.3], // ratio in screen
-		kanaLyricPosition: [0.5, 0.8] // ratio in screen
+		kanaLyricPosition: [0.5, 0.8], // ratio in screen
+		judgeColors: {
+			perfect: 'yellow',
+			great: '#2d1',
+			good: '#19a',
+			bad: '#aaa',
+			failed: '#a34',
+			neglect: '#39a'
+		}
 	};
 
 	// default YouTyping setting
@@ -326,17 +334,7 @@ var Screen = function (element, settings) {
 
 		this.item = new paper.Group();
 
-		this.judgeColor = '';
-		switch (judgement.judge) {
-		case 'perfect':
-			this.judgeColor = 'yellow'; break;
-		case 'great':
-			this.judgeColor = '#2d1'; break;
-		case 'good':
-			this.judgeColor = '#19a'; break;
-		case 'bad':
-			this.judgeColor = '#aaa'; break;
-		}
+		this.judgeColor = settings.judgeColors[judgement.judge];
 
 		this.judge = this.item.addChild(new paper.PointText({
 			point: screen.hitCircle.position.add([0, -settings.noteSize - 24]),
@@ -364,6 +362,60 @@ var Screen = function (element, settings) {
 				this.item.remove();
 			}
 		};
+	};
+
+	this.onGameEnd = function () {
+		logTrace('Game Ended.');
+
+		screen.resultCover = new paper.Path.Rectangle(paper.view.bounds);
+		screen.resultCover.fillColor = '#ddd';
+		screen.resultCover.fillColor.alpha = 0;
+
+		screen.resultCover.onFrame = function (event) {
+			this.fillColor.alpha += 0.01;
+			if (this.fillColor.alpha >= 1) {
+				screen.resultCover.onFrame = null;
+				showResult();
+			}
+		};
+	};
+
+	var showResult = function () {
+		var screenSize = paper.view.bounds.bottomRight;
+
+		screen.result = [];
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 100]),
+			content: 'Result:',
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 48,
+			fontFamily: 'sans-serif'
+		}));
+
+		['perfect', 'great', 'good', 'bad', 'failed', 'neglect'].forEach(function (judgement, index) {
+			var color = new paper.Color(settings.judgeColors[judgement]);
+			color.brightness -= 0.3;
+			color.saturation += 0.2;
+			screen.result.push(new paper.PointText({
+				point: screenSize.multiply([0.2, 0]).add([0, 40 * index + 180]),
+				content: judgement + ': ' + youTyping.scorebook[judgement],
+				fillColor: color,
+				justification: 'left',
+				fontSize: 36,
+				fontFamily: 'sans-serif'
+			}));
+		});
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 450]),
+			content: 'Max Combo: ' + youTyping.maxCombo,
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 36,
+			fontFamily: 'sans-serif'
+		}));
 	};
 
 	// Initialization

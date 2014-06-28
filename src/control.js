@@ -152,9 +152,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	var onPlayerStateChange = function (event) {
-		if (screen.onPlayerStateChange) {
-			screen.onPlayerStateChange.call(screen, event);
-		}
+		screen.onPlayerStateChange.call(screen, event);
 
 		switch (event.data) {
 		case YT.PlayerState.ENDED:
@@ -215,6 +213,8 @@ var YouTyping = function (element, settings) {
 				// parse XML and store into YouTyping.roll
 				youTyping.roll = [];
 
+				var lastNote = null;
+
 				$(items).each(function () {
 					var tempItem = {
 						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
@@ -228,10 +228,13 @@ var YouTyping = function (element, settings) {
 					if (tempItem.type === 'note') {
 						tempItem.state = youTyping.noteState.WAITING;
 						tempItem.judgement = null;
+						lastNote = tempItem;
 					}
 
 					youTyping.roll.push(tempItem);
 				});
+
+				youTyping.lastNote = lastNote;
 
 				youTyping.nextLyricIndex = findNextLyric(-1);
 
@@ -447,7 +450,16 @@ var YouTyping = function (element, settings) {
 			youTyping.scorebook.failed++;
 		}
 
+		if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
+		    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
+			endGame();
+		}
+
 		youTyping.combo = 0;
+	};
+
+	var endGame = function () {
+		screen.onGameEnd();
 	};
 
 
@@ -594,6 +606,12 @@ var YouTyping = function (element, settings) {
 			if (newNoteInfo.forcedHit) {
 				youTyping.hit(newNoteInfo.forcedHit, time, true);
 			}
+
+			// if last note is cleared, let's end game
+			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
+			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
+				endGame();
+			}
 		};
 
 		if (key.length !== 1) {
@@ -679,7 +697,7 @@ var YouTyping = function (element, settings) {
 				}
 
 				// trigger judgement effect
-				screen.onJudgement({
+				screen.onJudgement.call(screen, {
 					judgement: {
 						distance: distance,
 						judge: hitJudge,
