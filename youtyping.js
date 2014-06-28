@@ -1,8 +1,11 @@
-/* youtyping.js 06-27-2014 */
+/* youtyping.js 06-28-2014 */
 
-var YouTyping = (function(){
+(function(exports){
 var YouTyping = function (element, settings) {
 	var youTyping = this;
+	var screen = settings.screen;
+
+	/******************* properties *******************/
 
 	this.noteState = {
 		WAITING: 0,
@@ -11,6 +14,89 @@ var YouTyping = function (element, settings) {
 		HITTINGFAILED: 3,
 		FAILED: 4
 	};
+
+	// default settings
+	this.settings = {
+		zeroEstimateSamples: 16, // integer
+		videoId: 'fQ_m5VLhqNg',
+		dataFile: 'data.utx',
+		tableFile: 'convert/romaji.xml',
+		width: 1120, // pixel
+		height: 630, // pixel
+		judges: [ // millisecond
+		{
+			name: 'perfect',
+			from: -50,
+			to: 50
+		},
+		{
+			name: 'great',
+			from: -70,
+			to: 70
+		},
+		{
+			name: 'good',
+			from: -100,
+			to: 100
+		},
+		{
+			name: 'bad',
+			from: -Infinity,
+			to: 150
+		}
+		],
+		breakCombo: 'bad', // judgement name
+		failureSuspension: 100, // millisecond
+		initial: false, // boolean
+		correction: 0, // millisecond
+		controlledCorrection: 0, // millisecond
+		offset: 0, // second
+		volume: 100, // percent
+		playbackQuality: 'default' // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
+	};
+
+	this.startTime = Date.now();
+
+	// roll data
+	this.dataXML = null;
+	this.roll = null;
+
+	// YouTube Iframe Player
+	this.player = null;
+
+	// ZeroTime calculation
+	this.zeroTime = 0;
+	this.zeroTimePad = 0;
+	this.currentTime = 0;
+	this.estimateSamples = [];
+	this.estimatedZero = 0; // exposed only for debugging
+	this.zeroCallFPS = 0; // exposed only for debugging
+
+	// YouTyping.now
+	Object.defineProperty(this, 'now', {
+		get: function () {
+			// note: this is most frequently called property in YouTyping.
+			// In chrome, Date.now is faster than performance.now,
+			// but Firefox is not. Came from http://jsperf.com/new-date-vs-date-now-vs-performance-now/21
+			return window.performance.now();
+		}
+	});
+
+	// key-input conversion table
+	this.table = [];
+
+	this.currentNoteIndex = null;
+	this.inputBuffer = '';
+
+	// lyrics
+	this.currentLyricIndex = null;
+	this.nextLyricIndex = null; // initialized in loadXML()
+
+	this.combo = 0;
+	this.maxCombo = 0;
+	this.score = 0;
+	this.scorebook = {};
+
 
 	/******************* Internal functions *******************/
 
@@ -69,9 +155,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	var onPlayerStateChange = function (event) {
-		if (screen.onPlayerStateChange) {
-			screen.onPlayerStateChange.call(screen, event);
-		}
+		screen.onPlayerStateChange.call(screen, event);
 
 		switch (event.data) {
 		case YT.PlayerState.ENDED:
@@ -132,6 +216,8 @@ var YouTyping = function (element, settings) {
 				// parse XML and store into YouTyping.roll
 				youTyping.roll = [];
 
+				var lastNote = null;
+
 				$(items).each(function () {
 					var tempItem = {
 						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
@@ -144,10 +230,14 @@ var YouTyping = function (element, settings) {
 
 					if (tempItem.type === 'note') {
 						tempItem.state = youTyping.noteState.WAITING;
+						tempItem.judgement = null;
+						lastNote = tempItem;
 					}
 
 					youTyping.roll.push(tempItem);
 				});
+
+				youTyping.lastNote = lastNote;
 
 				youTyping.nextLyricIndex = findNextLyric(-1);
 
@@ -193,12 +283,13 @@ var YouTyping = function (element, settings) {
 					});
 
 					logTrace('Loaded Table File.');
-
-					loadTableDeferred.resolve();
 				} catch (error) {
 					logTrace('ERROR: Table File Parsing Failed: ' + error);
 					loadTableDeferred.reject();
+					return;
 				}
+
+				loadTableDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				logTrace('ERROR: Table File Loading Failed: ' + errorThrown);
@@ -354,109 +445,25 @@ var YouTyping = function (element, settings) {
 	var markFailed = function (note) {
 		if (note.state === youTyping.noteState.WAITING) {
 			note.state = youTyping.noteState.FAILED;
+			note.judgement = 'neglect';
+			youTyping.scorebook.neglect++;
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
+			note.judgement = 'failed';
+			youTyping.scorebook.failed++;
+		}
+
+		if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
+		    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
+			endGame();
 		}
 
 		youTyping.combo = 0;
 	};
 
-
-	/******************* properties *******************/
-
-	this.startTime = Date.now();
-
-	// roll data
-	this.dataXML = null;
-	this.roll = null;
-
-	// YouTube Iframe Player
-	this.player = null;
-
-	// default settings
-	this.settings = {
-		zeroEstimateSamples: 16, // integer
-		videoId: 'fQ_m5VLhqNg',
-		dataFile: 'data.utx',
-		width: 1120, // pixel
-		height: 630, // pixel
-		hitPosition: 0.4, // ratio
-		noteSize: 50, // pixel
-		lyricSize: 20, // pixel
-		speed: 0.5, // pixel per second
-		rollYpos: 0.5, // ratio
-		longLineHeight: 150, // pixel
-		lineHeight: 120, // pixel
-		screenPadding: 30, // pixel
-		bufferTextPosition: [0.2, 0.8], // ratio in screen
-		currentLyricPosition: [0.5, 0.25], // ratio in screen
-		nextLyricPosition: [0.5, 0.3], // ratio in screen
-		kanaLyricPosition: [0.5, 0.8], // ratio in screen
-		judges: [ // millisecond
-		{
-			name: 'perfect',
-			from: -50,
-			to: 50
-		},
-		{
-			name: 'great',
-			from: -70,
-			to: 70
-		},
-		{
-			name: 'good',
-			from: -100,
-			to: 100
-		},
-		{
-			name: 'bad',
-			from: -Infinity,
-			to: 150
-		}
-		],
-		breakCombo: 'bad', // judgement name
-		failureSuspension: 100, // millisecond
-		initial: false, // boolean
-		correction: 0, // millisecond
-		controlledCorrection: 0, // millisecond
-		offset: 0, // second
-		volume: 100, // percent
-		playbackQuality: 'default', // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
-		tableFile: 'convert/romaji.xml'
+	var endGame = function () {
+		screen.onGameEnd();
 	};
-
-	// ZeroTime calculation
-	this.zeroTime = 0;
-	this.zeroTimePad = 0;
-	this.currentTime = 0;
-	this.estimateSamples = [];
-	this.estimatedZero = 0; // exposed only for debugging
-	this.zeroCallFPS = 0; // exposed only for debugging
-
-	// YouTyping.now
-	Object.defineProperty(this, 'now', {
-		get: function () {
-			// note: this is most frequently called property in YouTyping.
-			// In chrome, Date.now is faster than performance.now,
-			// but Firefox is not. Came from http://jsperf.com/new-date-vs-date-now-vs-performance-now/21
-			return window.performance.now();
-		}
-	});
-
-	// key-input conversion table
-	this.table = [];
-
-	this.currentNoteIndex = null;
-	this.inputBuffer = '';
-
-	// lyrics
-	this.currentLyricIndex = null;
-	this.nextLyricIndex = null; // initialized in loadXML()
-
-	this.combo = 0;
-	this.maxCombo = 0;
-	this.score = 0;
-	this.scorebook = {};
 
 
 	/******************* Exposed Methods *******************/
@@ -580,6 +587,9 @@ var YouTyping = function (element, settings) {
 				note.remainingText = '';
 				youTyping.inputBuffer = '';
 				youTyping.currentNoteIndex = null;
+
+				// record in scorebook
+				youTyping.scorebook[note.judgement]++;
 			} else {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
@@ -598,6 +608,12 @@ var YouTyping = function (element, settings) {
 			// force hit
 			if (newNoteInfo.forcedHit) {
 				youTyping.hit(newNoteInfo.forcedHit, time, true);
+			}
+
+			// if last note is cleared, let's end game
+			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
+			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
+				endGame();
 			}
 		};
 
@@ -665,11 +681,11 @@ var YouTyping = function (element, settings) {
 					markFailed(previousNote);
 				}
 
+				// update current note judgement
+				nearestNote.judgement = hitJudge;
+
 				// hit note
 				hitNote(nearestNewNote);
-
-				// record in scorebook
-				youTyping.scorebook[hitJudge]++;
 
 				// breaking combo
 				if (hitJudge === youTyping.settings.breakCombo) {
@@ -684,7 +700,7 @@ var YouTyping = function (element, settings) {
 				}
 
 				// trigger judgement effect
-				screen.onJudgement({
+				screen.onJudgement.call(screen, {
 					judgement: {
 						distance: distance,
 						judge: hitJudge,
@@ -745,50 +761,10 @@ var YouTyping = function (element, settings) {
 	this.zeroTimePad = this.correction - this.settings.offset * 1000;
 	this.zeroTime = this.correction - this.settings.offset * 1000;
 
-	// setup DOM
-	/*
-	* div(this.DOM.wrap)
-	* |-div#youtyping-player(this.DOM.player)
-	* \-canvas#youtyping-screen(this.DOM.screen)
-	*/
-	this.DOM = {
-		wrap: element.css({
-			width: this.settings.width + 'px',
-			height: this.settings.height + 'px',
-			margin: '0 auto',
-			position: 'relative'
-		}),
-
-		player: $('<div/>', {
-			id: 'youtyping-player'
-		}).appendTo(element).css({
-			width: this.settings.width + 'px',
-			height: this.settings.height + 'px',
-			display: 'block',
-			'z-index': 0
-		}),
-
-		screen: $('<canvas/>', {
-			id: 'youtyping-screen',
-			'data-paper-keepalive': 'true',
-			width: this.settings.width.toString(),
-			height: this.settings.height.toString()
-		}).appendTo(element).css({
-			width: this.settings.width + 'px',
-			height: this.settings.height + 'px',
-			position: 'absolute',
-			top: 0,
-			left: 0,
-			'z-index': 100
-		})
-	};
-
-	// create YouTyping screen instance
-	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
-	var screen = this.screen;
-
 	// sanitize Screen
 	var callbacks = [
+	'onResourceReady',
+	'onGameReady',
 	'onPlayerStateChange',
 	'onMiss',
 	'onHit',
@@ -807,6 +783,8 @@ var YouTyping = function (element, settings) {
 	});
 
 	// initialize scorebook
+	youTyping.scorebook.failed = 0;
+	youTyping.scorebook.neglect = 0;
 	this.settings.judges.forEach(function (judge) {
 		youTyping.scorebook[judge.name] = 0;
 	});
@@ -816,11 +794,10 @@ var YouTyping = function (element, settings) {
 	$.when(
 		$.when(
 			loadDataXML(),
-			$.Deferred(this.screen.setup).promise()
-		).done(this.screen.load),
-		loadTable(),
+			loadTable()
+		).done(screen.onResourceReady),
 		setupPlayer()
-	).done(this.screen.ready)
+	).done(screen.onGameReady)
 	.fail(function () {
 		logTrace('ERROR: Initialization Failed...');
 	});
@@ -829,18 +806,56 @@ var YouTyping = function (element, settings) {
 
 // Class Screen defines canvas part of YouTyping.
 // One YouTyping have only one Screen as child, and vice versa.
-var Screen = function (canvas, youTyping) {
+var Screen = function (element, settings) {
 	var screen = this;
 
 	var FPS = 0;
-
-	this.canvas = canvas;
 
 	// All notes and lines will be stored in this variable and managed
 	// in key which represents index.
 	this.items = {};
 
-	this.setup = function (deferred) {
+	// default screen settings
+	this.settings = {
+		width: 1120, // pixel
+		height: 630, // pixel
+		hitPosition: 0.4, // ratio
+		speed: 0.5, // pixel per second
+		noteSize: 50, // pixel
+		lyricSize: 20, // pixel
+		rollYpos: 0.5, // ratio
+		longLineHeight: 150, // pixel
+		lineHeight: 120, // pixel
+		screenPadding: 30, // pixel
+		bufferTextPosition: [0.2, 0.8], // ratio in screen
+		currentLyricPosition: [0.5, 0.25], // ratio in screen
+		nextLyricPosition: [0.5, 0.3], // ratio in screen
+		kanaLyricPosition: [0.5, 0.8], // ratio in screen
+		judgeColors: {
+			perfect: 'yellow',
+			great: '#2d1',
+			good: '#19a',
+			bad: '#aaa',
+			failed: '#a34',
+			neglect: '#39a'
+		}
+	};
+
+	// default YouTyping setting
+	var youTypingSettings = {
+		videoId: 'fQ_m5VLhqNg',
+		dataFile: 'data.utx',
+		tableFile: 'convert/romaji.xml',
+		initial: false, // boolean
+		correction: 0, // millisecond
+		controlledCorrection: 0, // millisecond
+		offset: 0, // second
+		volume: 100, // percent
+		playbackQuality: 'default',
+		screen: screen
+	};
+
+	this.initialize = function () {
 		paper.setup(screen.canvas);
 
 		screen.cover = new paper.Path.Rectangle(paper.view.bounds);
@@ -856,7 +871,7 @@ var Screen = function (canvas, youTyping) {
 		}
 
 		screen.bufferText = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.bufferTextPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.bufferTextPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'left',
@@ -864,7 +879,7 @@ var Screen = function (canvas, youTyping) {
 		});
 
 		screen.currentLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.currentLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.currentLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -872,7 +887,7 @@ var Screen = function (canvas, youTyping) {
 		});
 
 		screen.nextLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.nextLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.nextLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -880,7 +895,7 @@ var Screen = function (canvas, youTyping) {
 		});
 
 		screen.kanaLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.kanaLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.kanaLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -896,12 +911,10 @@ var Screen = function (canvas, youTyping) {
 			youTyping.zeroCallFPS = 0; // not good
 		}, 1000);
 
-		logTrace('Screen is Set.');
-		deferred.resolve();
+		logTrace('Screen Initialized.');
 	};
 
-	this.load = function (deffered) {
-		var settings = youTyping.settings;
+	this.onResourceReady = function () {
 		var now = youTyping.now;
 
 		var paddingRight = settings.width * (1 - settings.hitPosition) + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
@@ -932,7 +945,7 @@ var Screen = function (canvas, youTyping) {
 		});
 	};
 
-	this.ready = function () {
+	this.onGameReady = function () {
 		screen.pressEnter = new paper.PointText({
 			point: paper.view.bounds.bottomRight.multiply([0.5, 0.8]),
 			content: 'Press enter or click here.',
@@ -950,7 +963,7 @@ var Screen = function (canvas, youTyping) {
 		paper.tool.onKeyDown = triggerStartScreen;
 		screen.pressEnter.onMouseDown = triggerStartScreen;
 
-		logTrace('Screen is Ready.');
+		logTrace('Game is Ready.');
 	};
 
 	this.start = function () {
@@ -973,7 +986,6 @@ var Screen = function (canvas, youTyping) {
 
 	// layout notes and lines fitting to current time
 	this.update = function () {
-		var setting = youTyping.settings;
 		var items = screen.items;
 
 		var now = youTyping.now;
@@ -981,7 +993,7 @@ var Screen = function (canvas, youTyping) {
 
 		youTyping.roll.forEach(function (item, index) {
 			// X position of the item
-			var position = (item.time - runTime) * setting.speed + setting.width * setting.hitPosition;
+			var position = (item.time - runTime) * settings.speed + settings.width * settings.hitPosition;
 
 			// if index-th item doesn't exists in screen
 			if (!(index in items)) {
@@ -992,8 +1004,8 @@ var Screen = function (canvas, youTyping) {
 					// long line which devides roll to measures
 					if (item.type === 'longline') {
 						items[index].longLine = items[index].addChild(new paper.Path.Line({
-							from: [position, setting.rollYpos * setting.height - setting.longLineHeight / 2],
-							to: [position, setting.rollYpos * setting.height + setting.longLineHeight / 2],
+							from: [position, settings.rollYpos * settings.height - settings.longLineHeight / 2],
+							to: [position, settings.rollYpos * settings.height + settings.longLineHeight / 2],
 							strokeColor: 'white',
 							strokeWidth: 2
 						}));
@@ -1001,8 +1013,8 @@ var Screen = function (canvas, youTyping) {
 					// small line
 					if (item.type === 'line') {
 						items[index].smallLine = items[index].addChild(new paper.Path.Line({
-							from: [position, setting.rollYpos * setting.height - setting.lineHeight / 2],
-							to: [position, setting.rollYpos * setting.height + setting.lineHeight / 2],
+							from: [position, settings.rollYpos * settings.height - settings.lineHeight / 2],
+							to: [position, settings.rollYpos * settings.height + settings.lineHeight / 2],
 							strokeColor: 'white',
 							strokeWidth: 1
 						}));
@@ -1010,25 +1022,25 @@ var Screen = function (canvas, youTyping) {
 					if (item.type === 'note') {
 						// note
 						items[index].note = items[index].addChild(new paper.Path.Circle({
-							center: [position, setting.rollYpos * setting.height],
-							radius: setting.noteSize,
+							center: [position, settings.rollYpos * settings.height],
+							radius: settings.noteSize,
 							strokeWidth: 1,
 							strokeColor: '#aaa'
 						}));
 						// lyric
 						items[index].lyric = items[index].addChild(new paper.PointText({
-							point: [position, setting.rollYpos * setting.height + setting.noteSize + 50],
+							point: [position, settings.rollYpos * settings.height + settings.noteSize + 50],
 							content: item.remainingText,
 							fillColor: 'white',
 							justification: 'center',
-							fontSize: setting.lyricSize,
+							fontSize: settings.lyricSize,
 							fontFamily: 'sans-serif'
 						}));
 					}
 					// order stop mark
 					if (item.type === 'stop') {
 						items[index].orderStop = items[index].addChild(new paper.Path({
-							segments: [[position, setting.rollYpos * setting.height - setting.noteSize - 30]],
+							segments: [[position, settings.rollYpos * settings.height - settings.noteSize - 30]],
 							fillColor: 'white'
 						}));
 						items[index].orderStop.lineBy([10, -10]);
@@ -1106,11 +1118,11 @@ var Screen = function (canvas, youTyping) {
 	this.onPlayerStateChange = function (event) {
 		// hide mouse cursor when playing
 		if (event.data === YT.PlayerState.PLAYING) {
-			youTyping.DOM.screen.css({
+			$(screen.DOM.screen).css({
 				cursor: 'none'
 			});
 		} else {
-			youTyping.DOM.screen.css({
+			$(screen.DOM.screen).css({
 				cursor: 'auto'
 			});
 		}
@@ -1125,21 +1137,10 @@ var Screen = function (canvas, youTyping) {
 	// judge effect object
 	var JudgeEffect = function (judgement) {
 		var judgeEffect = this;
-		var settings = youTyping.settings;
 
 		this.item = new paper.Group();
 
-		this.judgeColor = '';
-		switch (judgement.judge) {
-		case 'perfect':
-			this.judgeColor = 'yellow'; break;
-		case 'great':
-			this.judgeColor = '#2d1'; break;
-		case 'good':
-			this.judgeColor = '#19a'; break;
-		case 'bad':
-			this.judgeColor = '#aaa'; break;
-		}
+		this.judgeColor = settings.judgeColors[judgement.judge];
 
 		this.judge = this.item.addChild(new paper.PointText({
 			point: screen.hitCircle.position.add([0, -settings.noteSize - 24]),
@@ -1168,6 +1169,137 @@ var Screen = function (canvas, youTyping) {
 			}
 		};
 	};
+
+	this.onGameEnd = function () {
+		logTrace('Game Ended.');
+
+		screen.resultCover = new paper.Path.Rectangle(paper.view.bounds);
+		screen.resultCover.fillColor = '#ddd';
+		screen.resultCover.fillColor.alpha = 0;
+
+		screen.resultCover.onFrame = function (event) {
+			this.fillColor.alpha += 0.01;
+			if (this.fillColor.alpha >= 1) {
+				screen.resultCover.onFrame = null;
+				showResult();
+			}
+		};
+	};
+
+	var showResult = function () {
+		var screenSize = paper.view.bounds.bottomRight;
+
+		screen.result = [];
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 100]),
+			content: 'Result:',
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 48,
+			fontFamily: 'sans-serif'
+		}));
+
+		['perfect', 'great', 'good', 'bad', 'failed', 'neglect'].forEach(function (judgement, index) {
+			var color = new paper.Color(settings.judgeColors[judgement]);
+			color.brightness -= 0.3;
+			color.saturation += 0.2;
+			screen.result.push(new paper.PointText({
+				point: screenSize.multiply([0.2, 0]).add([0, 40 * index + 180]),
+				content: judgement + ': ' + youTyping.scorebook[judgement],
+				fillColor: color,
+				justification: 'left',
+				fontSize: 36,
+				fontFamily: 'sans-serif'
+			}));
+		});
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 450]),
+			content: 'Max Combo: ' + youTyping.maxCombo,
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 36,
+			fontFamily: 'sans-serif'
+		}));
+	};
+
+	// Initialization
+
+	// override default screen settings
+	for (var param in settings) {
+		if (settings.hasOwnProperty(param)) {
+			if (this.settings[param] === undefined) {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'number') {
+				this.settings[param] = parseFloat(settings[param], 10);
+			} else if (typeof this.settings[param] === 'string') {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'boolean') {
+				this.settings[param] = Boolean(settings[param]);
+			}
+		}
+	}
+
+	// override default YouTyping settings
+	for (param in youTypingSettings) {
+		if (youTypingSettings.hasOwnProperty(param)) {
+			if (typeof this.settings[param] !== 'undefined') {
+				youTypingSettings[param] = this.settings[param];
+			}
+		}
+	}
+
+	// shorthand
+	settings = this.settings;
+
+	// setup DOM
+	/*
+	* div(this.DOM.wrap)
+	* |-div#youtyping-player(this.DOM.player)
+	* \-canvas#youtyping-screen(this.DOM.screen)
+	*/
+	this.DOM = {
+		wrap: element.css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			margin: '0 auto',
+			position: 'relative'
+		})[0],
+
+		player: $('<div/>', {
+			id: 'youtyping-player'
+		}).appendTo(element).css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			display: 'block',
+			'z-index': 0
+		})[0],
+
+		screen: $('<canvas/>', {
+			id: 'youtyping-screen',
+			'data-paper-keepalive': 'true',
+			width: this.settings.width.toString(),
+			height: this.settings.height.toString()
+		}).appendTo(element).css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			position: 'absolute',
+			top: 0,
+			left: 0,
+			'z-index': 100
+		})[0]
+	};
+
+	this.canvas = this.DOM.screen;
+
+	youTypingSettings.width = this.settings.width;
+	youTypingSettings.height = this.settings.height;
+
+	this.youTyping = new YouTyping(this.DOM.player, youTypingSettings);
+	var youTyping = this.youTyping; // just a shorthand
+
+	this.initialize();
 };
 
 
@@ -1224,5 +1356,6 @@ var generateID = function () {
 };
 
 
-return YouTyping;
-}());
+exports.YouTyping = YouTyping;
+exports.Screen = Screen;
+}(typeof window === 'undefined' ? module.exports : window));
