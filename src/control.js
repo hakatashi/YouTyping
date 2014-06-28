@@ -52,7 +52,20 @@ var YouTyping = function (element, settings) {
 		playbackQuality: 'default' // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
 	};
 
-	this.startTime = Date.now();
+	// override default settings
+	for (var param in settings) {
+		if (settings.hasOwnProperty(param)) {
+			if (this.settings[param] === undefined) {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'number') {
+				this.settings[param] = parseFloat(settings[param], 10);
+			} else if (typeof this.settings[param] === 'string') {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'boolean') {
+				this.settings[param] = Boolean(settings[param]);
+			}
+		}
+	}
 
 	// roll data
 	this.dataXML = null;
@@ -60,14 +73,6 @@ var YouTyping = function (element, settings) {
 
 	// YouTube Iframe Player
 	this.player = null;
-
-	// ZeroTime calculation
-	this.zeroTime = 0;
-	this.zeroTimePad = 0;
-	this.currentTime = 0;
-	this.estimateSamples = [];
-	this.estimatedZero = 0; // exposed only for debugging
-	this.zeroCallFPS = 0; // exposed only for debugging
 
 	// YouTyping.now
 	Object.defineProperty(this, 'now', {
@@ -81,18 +86,6 @@ var YouTyping = function (element, settings) {
 
 	// key-input conversion table
 	this.table = [];
-
-	this.currentNoteIndex = null;
-	this.inputBuffer = '';
-
-	// lyrics
-	this.currentLyricIndex = null;
-	this.nextLyricIndex = null; // initialized in loadXML()
-
-	this.combo = 0;
-	this.maxCombo = 0;
-	this.score = 0;
-	this.scorebook = {};
 
 
 	/******************* Internal functions *******************/
@@ -208,35 +201,7 @@ var YouTyping = function (element, settings) {
 			success: function (data, textStatus, jqXHR) {
 				youTyping.dataXML = $(data).find('data').first();
 
-				var items = youTyping.dataXML.find('roll > item');
-
-				// parse XML and store into YouTyping.roll
-				youTyping.roll = [];
-
-				var lastNote = null;
-
-				$(items).each(function () {
-					var tempItem = {
-						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
-						type: $(this).attr('type')
-					};
-
-					if ($(this).has('text')) {
-						tempItem.text = tempItem.remainingText = $(this).children('text').text();
-					}
-
-					if (tempItem.type === 'note') {
-						tempItem.state = youTyping.noteState.WAITING;
-						tempItem.judgement = null;
-						lastNote = tempItem;
-					}
-
-					youTyping.roll.push(tempItem);
-				});
-
-				youTyping.lastNote = lastNote;
-
-				youTyping.nextLyricIndex = findNextLyric(-1);
+				initializeRoll();
 
 				logTrace('Loaded XML File.');
 
@@ -249,6 +214,39 @@ var YouTyping = function (element, settings) {
 		});
 
 		return loadXMLDeferred.promise();
+	};
+
+	// initialize roll data for when loading and resetting
+	var initializeRoll = function () {
+		var items = youTyping.dataXML.find('roll > item');
+
+		// parse XML and store into YouTyping.roll
+		youTyping.roll = [];
+
+		var lastNote = null;
+
+		$(items).each(function () {
+			var tempItem = {
+				time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
+				type: $(this).attr('type')
+			};
+
+			if ($(this).has('text')) {
+				tempItem.text = tempItem.remainingText = $(this).children('text').text();
+			}
+
+			if (tempItem.type === 'note') {
+				tempItem.state = youTyping.noteState.WAITING;
+				tempItem.judgement = null;
+				lastNote = tempItem;
+			}
+
+			youTyping.roll.push(tempItem);
+		});
+
+		youTyping.lastNote = lastNote;
+
+		youTyping.nextLyricIndex = findNextLyric(-1);
 	};
 
 	var loadTableDeferred;
@@ -467,7 +465,7 @@ var YouTyping = function (element, settings) {
 
 	this.play = function () {
 		youTyping.player.playVideo();
-		setInterval(gameLoop, 10);
+		youTyping.gameLoopId = setInterval(gameLoop, 10);
 	};
 
 	// hit key
@@ -708,6 +706,21 @@ var YouTyping = function (element, settings) {
 		}
 	};
 
+	// abort currently playing game and restart YouTyping
+	this.reset = function () {
+		// stop game loop
+		clearInterval(youTyping.gameLoopId);
+		// re-initialize YouTyping
+		youTyping.initialize();
+		// and re-initialize roll
+		initializeRoll();
+
+		// stop video
+		youTyping.player.stopVideo();
+		// and seek to offset
+		youTyping.player.seekTo(youTyping.settings.offset);
+	};
+
 	// get kana version of currently playing lyric
 	this.getKanaLyric = function (lyricIndex) {
 		if (typeof lyricIndex === 'undefined') {
@@ -737,54 +750,65 @@ var YouTyping = function (element, settings) {
 
 	/******************* Initialization *******************/
 
-	// override default settings
-	for (var param in settings) {
-		if (settings.hasOwnProperty(param)) {
-			if (this.settings[param] === undefined) {
-				this.settings[param] = settings[param];
-			} else if (typeof this.settings[param] === 'number') {
-				this.settings[param] = parseFloat(settings[param], 10);
-			} else if (typeof this.settings[param] === 'string') {
-				this.settings[param] = settings[param];
-			} else if (typeof this.settings[param] === 'boolean') {
-				this.settings[param] = Boolean(settings[param]);
+	this.initialize = function () {
+		// ZeroTime calculation
+		youTyping.zeroTime = 0;
+		youTyping.zeroTimePad = 0;
+		youTyping.currentTime = 0;
+		youTyping.estimateSamples = [];
+		youTyping.estimatedZero = 0; // exposed only for debugging
+		youTyping.zeroCallFPS = 0; // exposed only for debugging
+
+		// calculate correction
+		youTyping.correction = youTyping.settings.correction + youTyping.settings.controlledCorrection + youTyping.settings.offset * 1000;
+		// initialize zeroTime
+		youTyping.zeroTimePad = youTyping.correction - youTyping.settings.offset * 1000;
+		youTyping.zeroTime = youTyping.correction - youTyping.settings.offset * 1000;
+
+		// key input
+		youTyping.currentNoteIndex = null;
+		youTyping.inputBuffer = '';
+
+		// lyrics
+		youTyping.currentLyricIndex = null;
+		youTyping.nextLyricIndex = null; // initialized in loadXML()
+
+		// score and combo
+		youTyping.combo = 0;
+		youTyping.maxCombo = 0;
+		youTyping.score = 0;
+
+		// initialize scorebook
+		youTyping.scorebook = {};
+		youTyping.scorebook.failed = 0;
+		youTyping.scorebook.neglect = 0;
+		youTyping.settings.judges.forEach(function (judge) {
+			youTyping.scorebook[judge.name] = 0;
+		});
+
+		// sanitize Screen
+		var callbacks = [
+		'onResourceReady',
+		'onGameReady',
+		'onPlayerStateChange',
+		'onMiss',
+		'onHit',
+		'onJudgement',
+		'onNoteClear',
+		'onLyricChange',
+		'onScoreChange',
+		'onVideoEnd',
+		'onGameEnd',
+		'onError'
+		];
+		callbacks.forEach(function (callback) {
+			if (typeof screen[callback] !== 'function') {
+				screen[callback] = function () {};
 			}
-		}
-	}
+		});
+	};
 
-	// calculate correction
-	this.correction = this.settings.correction + this.settings.controlledCorrection + this.settings.offset * 1000;
-	// initialize zeroTime
-	this.zeroTimePad = this.correction - this.settings.offset * 1000;
-	this.zeroTime = this.correction - this.settings.offset * 1000;
-
-	// sanitize Screen
-	var callbacks = [
-	'onResourceReady',
-	'onGameReady',
-	'onPlayerStateChange',
-	'onMiss',
-	'onHit',
-	'onJudgement',
-	'onNoteClear',
-	'onLyricChange',
-	'onScoreChange',
-	'onVideoEnd',
-	'onGameEnd',
-	'onError'
-	];
-	callbacks.forEach(function (callback) {
-		if (typeof screen[callback] !== 'function') {
-			screen[callback] = function () {};
-		}
-	});
-
-	// initialize scorebook
-	youTyping.scorebook.failed = 0;
-	youTyping.scorebook.neglect = 0;
-	this.settings.judges.forEach(function (judge) {
-		youTyping.scorebook[judge.name] = 0;
-	});
+	this.initialize();
 
 	// Initialize asynchronously
 	// http://stackoverflow.com/questions/22346345/
