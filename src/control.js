@@ -1,5 +1,8 @@
 var YouTyping = function (element, settings) {
 	var youTyping = this;
+	var screen = settings.screen;
+
+	/******************* properties *******************/
 
 	this.noteState = {
 		WAITING: 0,
@@ -8,6 +11,89 @@ var YouTyping = function (element, settings) {
 		HITTINGFAILED: 3,
 		FAILED: 4
 	};
+
+	// default settings
+	this.settings = {
+		zeroEstimateSamples: 16, // integer
+		videoId: 'fQ_m5VLhqNg',
+		dataFile: 'data.utx',
+		tableFile: 'convert/romaji.xml',
+		width: 1120, // pixel
+		height: 630, // pixel
+		judges: [ // millisecond
+		{
+			name: 'perfect',
+			from: -50,
+			to: 50
+		},
+		{
+			name: 'great',
+			from: -70,
+			to: 70
+		},
+		{
+			name: 'good',
+			from: -100,
+			to: 100
+		},
+		{
+			name: 'bad',
+			from: -Infinity,
+			to: 150
+		}
+		],
+		breakCombo: 'bad', // judgement name
+		failureSuspension: 100, // millisecond
+		initial: false, // boolean
+		correction: 0, // millisecond
+		controlledCorrection: 0, // millisecond
+		offset: 0, // second
+		volume: 100, // percent
+		playbackQuality: 'default' // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
+	};
+
+	this.startTime = Date.now();
+
+	// roll data
+	this.dataXML = null;
+	this.roll = null;
+
+	// YouTube Iframe Player
+	this.player = null;
+
+	// ZeroTime calculation
+	this.zeroTime = 0;
+	this.zeroTimePad = 0;
+	this.currentTime = 0;
+	this.estimateSamples = [];
+	this.estimatedZero = 0; // exposed only for debugging
+	this.zeroCallFPS = 0; // exposed only for debugging
+
+	// YouTyping.now
+	Object.defineProperty(this, 'now', {
+		get: function () {
+			// note: this is most frequently called property in YouTyping.
+			// In chrome, Date.now is faster than performance.now,
+			// but Firefox is not. Came from http://jsperf.com/new-date-vs-date-now-vs-performance-now/21
+			return window.performance.now();
+		}
+	});
+
+	// key-input conversion table
+	this.table = [];
+
+	this.currentNoteIndex = null;
+	this.inputBuffer = '';
+
+	// lyrics
+	this.currentLyricIndex = null;
+	this.nextLyricIndex = null; // initialized in loadXML()
+
+	this.combo = 0;
+	this.maxCombo = 0;
+	this.score = 0;
+	this.scorebook = {};
+
 
 	/******************* Internal functions *******************/
 
@@ -66,9 +152,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	var onPlayerStateChange = function (event) {
-		if (screen.onPlayerStateChange) {
-			screen.onPlayerStateChange.call(screen, event);
-		}
+		screen.onPlayerStateChange.call(screen, event);
 
 		switch (event.data) {
 		case YT.PlayerState.ENDED:
@@ -129,6 +213,8 @@ var YouTyping = function (element, settings) {
 				// parse XML and store into YouTyping.roll
 				youTyping.roll = [];
 
+				var lastNote = null;
+
 				$(items).each(function () {
 					var tempItem = {
 						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
@@ -141,10 +227,14 @@ var YouTyping = function (element, settings) {
 
 					if (tempItem.type === 'note') {
 						tempItem.state = youTyping.noteState.WAITING;
+						tempItem.judgement = null;
+						lastNote = tempItem;
 					}
 
 					youTyping.roll.push(tempItem);
 				});
+
+				youTyping.lastNote = lastNote;
 
 				youTyping.nextLyricIndex = findNextLyric(-1);
 
@@ -190,12 +280,13 @@ var YouTyping = function (element, settings) {
 					});
 
 					logTrace('Loaded Table File.');
-
-					loadTableDeferred.resolve();
 				} catch (error) {
 					logTrace('ERROR: Table File Parsing Failed: ' + error);
 					loadTableDeferred.reject();
+					return;
 				}
+
+				loadTableDeferred.resolve();
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				logTrace('ERROR: Table File Loading Failed: ' + errorThrown);
@@ -351,109 +442,25 @@ var YouTyping = function (element, settings) {
 	var markFailed = function (note) {
 		if (note.state === youTyping.noteState.WAITING) {
 			note.state = youTyping.noteState.FAILED;
+			note.judgement = 'neglect';
+			youTyping.scorebook.neglect++;
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
+			note.judgement = 'failed';
+			youTyping.scorebook.failed++;
+		}
+
+		if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
+		    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
+			endGame();
 		}
 
 		youTyping.combo = 0;
 	};
 
-
-	/******************* properties *******************/
-
-	this.startTime = Date.now();
-
-	// roll data
-	this.dataXML = null;
-	this.roll = null;
-
-	// YouTube Iframe Player
-	this.player = null;
-
-	// default settings
-	this.settings = {
-		zeroEstimateSamples: 16, // integer
-		videoId: 'fQ_m5VLhqNg',
-		dataFile: 'data.utx',
-		width: 1120, // pixel
-		height: 630, // pixel
-		hitPosition: 0.4, // ratio
-		noteSize: 50, // pixel
-		lyricSize: 20, // pixel
-		speed: 0.5, // pixel per second
-		rollYpos: 0.5, // ratio
-		longLineHeight: 150, // pixel
-		lineHeight: 120, // pixel
-		screenPadding: 30, // pixel
-		bufferTextPosition: [0.2, 0.8], // ratio in screen
-		currentLyricPosition: [0.5, 0.25], // ratio in screen
-		nextLyricPosition: [0.5, 0.3], // ratio in screen
-		kanaLyricPosition: [0.5, 0.8], // ratio in screen
-		judges: [ // millisecond
-		{
-			name: 'perfect',
-			from: -50,
-			to: 50
-		},
-		{
-			name: 'great',
-			from: -70,
-			to: 70
-		},
-		{
-			name: 'good',
-			from: -100,
-			to: 100
-		},
-		{
-			name: 'bad',
-			from: -Infinity,
-			to: 150
-		}
-		],
-		breakCombo: 'bad', // judgement name
-		failureSuspension: 100, // millisecond
-		initial: false, // boolean
-		correction: 0, // millisecond
-		controlledCorrection: 0, // millisecond
-		offset: 0, // second
-		volume: 100, // percent
-		playbackQuality: 'default', // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
-		tableFile: 'convert/romaji.xml'
+	var endGame = function () {
+		screen.onGameEnd();
 	};
-
-	// ZeroTime calculation
-	this.zeroTime = 0;
-	this.zeroTimePad = 0;
-	this.currentTime = 0;
-	this.estimateSamples = [];
-	this.estimatedZero = 0; // exposed only for debugging
-	this.zeroCallFPS = 0; // exposed only for debugging
-
-	// YouTyping.now
-	Object.defineProperty(this, 'now', {
-		get: function () {
-			// note: this is most frequently called property in YouTyping.
-			// In chrome, Date.now is faster than performance.now,
-			// but Firefox is not. Came from http://jsperf.com/new-date-vs-date-now-vs-performance-now/21
-			return window.performance.now();
-		}
-	});
-
-	// key-input conversion table
-	this.table = [];
-
-	this.currentNoteIndex = null;
-	this.inputBuffer = '';
-
-	// lyrics
-	this.currentLyricIndex = null;
-	this.nextLyricIndex = null; // initialized in loadXML()
-
-	this.combo = 0;
-	this.maxCombo = 0;
-	this.score = 0;
-	this.scorebook = {};
 
 
 	/******************* Exposed Methods *******************/
@@ -577,6 +584,9 @@ var YouTyping = function (element, settings) {
 				note.remainingText = '';
 				youTyping.inputBuffer = '';
 				youTyping.currentNoteIndex = null;
+
+				// record in scorebook
+				youTyping.scorebook[note.judgement]++;
 			} else {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
@@ -595,6 +605,12 @@ var YouTyping = function (element, settings) {
 			// force hit
 			if (newNoteInfo.forcedHit) {
 				youTyping.hit(newNoteInfo.forcedHit, time, true);
+			}
+
+			// if last note is cleared, let's end game
+			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
+			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
+				endGame();
 			}
 		};
 
@@ -662,11 +678,11 @@ var YouTyping = function (element, settings) {
 					markFailed(previousNote);
 				}
 
+				// update current note judgement
+				nearestNote.judgement = hitJudge;
+
 				// hit note
 				hitNote(nearestNewNote);
-
-				// record in scorebook
-				youTyping.scorebook[hitJudge]++;
 
 				// breaking combo
 				if (hitJudge === youTyping.settings.breakCombo) {
@@ -681,7 +697,7 @@ var YouTyping = function (element, settings) {
 				}
 
 				// trigger judgement effect
-				screen.onJudgement({
+				screen.onJudgement.call(screen, {
 					judgement: {
 						distance: distance,
 						judge: hitJudge,
@@ -742,50 +758,10 @@ var YouTyping = function (element, settings) {
 	this.zeroTimePad = this.correction - this.settings.offset * 1000;
 	this.zeroTime = this.correction - this.settings.offset * 1000;
 
-	// setup DOM
-	/*
-	* div(this.DOM.wrap)
-	* |-div#youtyping-player(this.DOM.player)
-	* \-canvas#youtyping-screen(this.DOM.screen)
-	*/
-	this.DOM = {
-		wrap: element.css({
-			width: this.settings.width + 'px',
-			height: this.settings.height + 'px',
-			margin: '0 auto',
-			position: 'relative'
-		}),
-
-		player: $('<div/>', {
-			id: 'youtyping-player'
-		}).appendTo(element).css({
-			width: this.settings.width + 'px',
-			height: this.settings.height + 'px',
-			display: 'block',
-			'z-index': 0
-		}),
-
-		screen: $('<canvas/>', {
-			id: 'youtyping-screen',
-			'data-paper-keepalive': 'true',
-			width: this.settings.width.toString(),
-			height: this.settings.height.toString()
-		}).appendTo(element).css({
-			width: this.settings.width + 'px',
-			height: this.settings.height + 'px',
-			position: 'absolute',
-			top: 0,
-			left: 0,
-			'z-index': 100
-		})
-	};
-
-	// create YouTyping screen instance
-	this.screen = new Screen(document.getElementById('youtyping-screen'), this);
-	var screen = this.screen;
-
 	// sanitize Screen
 	var callbacks = [
+	'onResourceReady',
+	'onGameReady',
 	'onPlayerStateChange',
 	'onMiss',
 	'onHit',
@@ -804,6 +780,8 @@ var YouTyping = function (element, settings) {
 	});
 
 	// initialize scorebook
+	youTyping.scorebook.failed = 0;
+	youTyping.scorebook.neglect = 0;
 	this.settings.judges.forEach(function (judge) {
 		youTyping.scorebook[judge.name] = 0;
 	});
@@ -813,11 +791,10 @@ var YouTyping = function (element, settings) {
 	$.when(
 		$.when(
 			loadDataXML(),
-			$.Deferred(this.screen.setup).promise()
-		).done(this.screen.load),
-		loadTable(),
+			loadTable()
+		).done(screen.onResourceReady),
 		setupPlayer()
-	).done(this.screen.ready)
+	).done(screen.onGameReady)
 	.fail(function () {
 		logTrace('ERROR: Initialization Failed...');
 	});

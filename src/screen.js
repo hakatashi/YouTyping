@@ -1,17 +1,55 @@
 // Class Screen defines canvas part of YouTyping.
 // One YouTyping have only one Screen as child, and vice versa.
-var Screen = function (canvas, youTyping) {
+var Screen = function (element, settings) {
 	var screen = this;
 
 	var FPS = 0;
-
-	this.canvas = canvas;
 
 	// All notes and lines will be stored in this variable and managed
 	// in key which represents index.
 	this.items = {};
 
-	this.setup = function (deferred) {
+	// default screen settings
+	this.settings = {
+		width: 1120, // pixel
+		height: 630, // pixel
+		hitPosition: 0.4, // ratio
+		speed: 0.5, // pixel per second
+		noteSize: 50, // pixel
+		lyricSize: 20, // pixel
+		rollYpos: 0.5, // ratio
+		longLineHeight: 150, // pixel
+		lineHeight: 120, // pixel
+		screenPadding: 30, // pixel
+		bufferTextPosition: [0.2, 0.8], // ratio in screen
+		currentLyricPosition: [0.5, 0.25], // ratio in screen
+		nextLyricPosition: [0.5, 0.3], // ratio in screen
+		kanaLyricPosition: [0.5, 0.8], // ratio in screen
+		judgeColors: {
+			perfect: 'yellow',
+			great: '#2d1',
+			good: '#19a',
+			bad: '#aaa',
+			failed: '#a34',
+			neglect: '#39a'
+		}
+	};
+
+	// default YouTyping setting
+	var youTypingSettings = {
+		videoId: 'fQ_m5VLhqNg',
+		dataFile: 'data.utx',
+		tableFile: 'convert/romaji.xml',
+		initial: false, // boolean
+		correction: 0, // millisecond
+		controlledCorrection: 0, // millisecond
+		offset: 0, // second
+		volume: 100, // percent
+		playbackQuality: 'default',
+		screen: screen
+	};
+
+	this.initialize = function () {
 		paper.setup(screen.canvas);
 
 		screen.cover = new paper.Path.Rectangle(paper.view.bounds);
@@ -27,7 +65,7 @@ var Screen = function (canvas, youTyping) {
 		}
 
 		screen.bufferText = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.bufferTextPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.bufferTextPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'left',
@@ -35,7 +73,7 @@ var Screen = function (canvas, youTyping) {
 		});
 
 		screen.currentLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.currentLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.currentLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -43,7 +81,7 @@ var Screen = function (canvas, youTyping) {
 		});
 
 		screen.nextLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.nextLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.nextLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -51,7 +89,7 @@ var Screen = function (canvas, youTyping) {
 		});
 
 		screen.kanaLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(youTyping.settings.kanaLyricPosition),
+			point: paper.view.bounds.bottomRight.multiply(settings.kanaLyricPosition),
 			content: '',
 			fillColor: 'white',
 			justification: 'center',
@@ -67,12 +105,10 @@ var Screen = function (canvas, youTyping) {
 			youTyping.zeroCallFPS = 0; // not good
 		}, 1000);
 
-		logTrace('Screen is Set.');
-		deferred.resolve();
+		logTrace('Screen Initialized.');
 	};
 
-	this.load = function (deffered) {
-		var settings = youTyping.settings;
+	this.onResourceReady = function () {
 		var now = youTyping.now;
 
 		var paddingRight = settings.width * (1 - settings.hitPosition) + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
@@ -103,7 +139,7 @@ var Screen = function (canvas, youTyping) {
 		});
 	};
 
-	this.ready = function () {
+	this.onGameReady = function () {
 		screen.pressEnter = new paper.PointText({
 			point: paper.view.bounds.bottomRight.multiply([0.5, 0.8]),
 			content: 'Press enter or click here.',
@@ -121,7 +157,7 @@ var Screen = function (canvas, youTyping) {
 		paper.tool.onKeyDown = triggerStartScreen;
 		screen.pressEnter.onMouseDown = triggerStartScreen;
 
-		logTrace('Screen is Ready.');
+		logTrace('Game is Ready.');
 	};
 
 	this.start = function () {
@@ -144,7 +180,6 @@ var Screen = function (canvas, youTyping) {
 
 	// layout notes and lines fitting to current time
 	this.update = function () {
-		var setting = youTyping.settings;
 		var items = screen.items;
 
 		var now = youTyping.now;
@@ -152,7 +187,7 @@ var Screen = function (canvas, youTyping) {
 
 		youTyping.roll.forEach(function (item, index) {
 			// X position of the item
-			var position = (item.time - runTime) * setting.speed + setting.width * setting.hitPosition;
+			var position = (item.time - runTime) * settings.speed + settings.width * settings.hitPosition;
 
 			// if index-th item doesn't exists in screen
 			if (!(index in items)) {
@@ -163,8 +198,8 @@ var Screen = function (canvas, youTyping) {
 					// long line which devides roll to measures
 					if (item.type === 'longline') {
 						items[index].longLine = items[index].addChild(new paper.Path.Line({
-							from: [position, setting.rollYpos * setting.height - setting.longLineHeight / 2],
-							to: [position, setting.rollYpos * setting.height + setting.longLineHeight / 2],
+							from: [position, settings.rollYpos * settings.height - settings.longLineHeight / 2],
+							to: [position, settings.rollYpos * settings.height + settings.longLineHeight / 2],
 							strokeColor: 'white',
 							strokeWidth: 2
 						}));
@@ -172,8 +207,8 @@ var Screen = function (canvas, youTyping) {
 					// small line
 					if (item.type === 'line') {
 						items[index].smallLine = items[index].addChild(new paper.Path.Line({
-							from: [position, setting.rollYpos * setting.height - setting.lineHeight / 2],
-							to: [position, setting.rollYpos * setting.height + setting.lineHeight / 2],
+							from: [position, settings.rollYpos * settings.height - settings.lineHeight / 2],
+							to: [position, settings.rollYpos * settings.height + settings.lineHeight / 2],
 							strokeColor: 'white',
 							strokeWidth: 1
 						}));
@@ -181,25 +216,25 @@ var Screen = function (canvas, youTyping) {
 					if (item.type === 'note') {
 						// note
 						items[index].note = items[index].addChild(new paper.Path.Circle({
-							center: [position, setting.rollYpos * setting.height],
-							radius: setting.noteSize,
+							center: [position, settings.rollYpos * settings.height],
+							radius: settings.noteSize,
 							strokeWidth: 1,
 							strokeColor: '#aaa'
 						}));
 						// lyric
 						items[index].lyric = items[index].addChild(new paper.PointText({
-							point: [position, setting.rollYpos * setting.height + setting.noteSize + 50],
+							point: [position, settings.rollYpos * settings.height + settings.noteSize + 50],
 							content: item.remainingText,
 							fillColor: 'white',
 							justification: 'center',
-							fontSize: setting.lyricSize,
+							fontSize: settings.lyricSize,
 							fontFamily: 'sans-serif'
 						}));
 					}
 					// order stop mark
 					if (item.type === 'stop') {
 						items[index].orderStop = items[index].addChild(new paper.Path({
-							segments: [[position, setting.rollYpos * setting.height - setting.noteSize - 30]],
+							segments: [[position, settings.rollYpos * settings.height - settings.noteSize - 30]],
 							fillColor: 'white'
 						}));
 						items[index].orderStop.lineBy([10, -10]);
@@ -277,11 +312,11 @@ var Screen = function (canvas, youTyping) {
 	this.onPlayerStateChange = function (event) {
 		// hide mouse cursor when playing
 		if (event.data === YT.PlayerState.PLAYING) {
-			youTyping.DOM.screen.css({
+			$(screen.DOM.screen).css({
 				cursor: 'none'
 			});
 		} else {
-			youTyping.DOM.screen.css({
+			$(screen.DOM.screen).css({
 				cursor: 'auto'
 			});
 		}
@@ -296,21 +331,10 @@ var Screen = function (canvas, youTyping) {
 	// judge effect object
 	var JudgeEffect = function (judgement) {
 		var judgeEffect = this;
-		var settings = youTyping.settings;
 
 		this.item = new paper.Group();
 
-		this.judgeColor = '';
-		switch (judgement.judge) {
-		case 'perfect':
-			this.judgeColor = 'yellow'; break;
-		case 'great':
-			this.judgeColor = '#2d1'; break;
-		case 'good':
-			this.judgeColor = '#19a'; break;
-		case 'bad':
-			this.judgeColor = '#aaa'; break;
-		}
+		this.judgeColor = settings.judgeColors[judgement.judge];
 
 		this.judge = this.item.addChild(new paper.PointText({
 			point: screen.hitCircle.position.add([0, -settings.noteSize - 24]),
@@ -339,4 +363,135 @@ var Screen = function (canvas, youTyping) {
 			}
 		};
 	};
+
+	this.onGameEnd = function () {
+		logTrace('Game Ended.');
+
+		screen.resultCover = new paper.Path.Rectangle(paper.view.bounds);
+		screen.resultCover.fillColor = '#ddd';
+		screen.resultCover.fillColor.alpha = 0;
+
+		screen.resultCover.onFrame = function (event) {
+			this.fillColor.alpha += 0.01;
+			if (this.fillColor.alpha >= 1) {
+				screen.resultCover.onFrame = null;
+				showResult();
+			}
+		};
+	};
+
+	var showResult = function () {
+		var screenSize = paper.view.bounds.bottomRight;
+
+		screen.result = [];
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 100]),
+			content: 'Result:',
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 48,
+			fontFamily: 'sans-serif'
+		}));
+
+		['perfect', 'great', 'good', 'bad', 'failed', 'neglect'].forEach(function (judgement, index) {
+			var color = new paper.Color(settings.judgeColors[judgement]);
+			color.brightness -= 0.3;
+			color.saturation += 0.2;
+			screen.result.push(new paper.PointText({
+				point: screenSize.multiply([0.2, 0]).add([0, 40 * index + 180]),
+				content: judgement + ': ' + youTyping.scorebook[judgement],
+				fillColor: color,
+				justification: 'left',
+				fontSize: 36,
+				fontFamily: 'sans-serif'
+			}));
+		});
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 450]),
+			content: 'Max Combo: ' + youTyping.maxCombo,
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 36,
+			fontFamily: 'sans-serif'
+		}));
+	};
+
+	// Initialization
+
+	// override default screen settings
+	for (var param in settings) {
+		if (settings.hasOwnProperty(param)) {
+			if (this.settings[param] === undefined) {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'number') {
+				this.settings[param] = parseFloat(settings[param], 10);
+			} else if (typeof this.settings[param] === 'string') {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'boolean') {
+				this.settings[param] = Boolean(settings[param]);
+			}
+		}
+	}
+
+	// override default YouTyping settings
+	for (param in youTypingSettings) {
+		if (youTypingSettings.hasOwnProperty(param)) {
+			if (typeof this.settings[param] !== 'undefined') {
+				youTypingSettings[param] = this.settings[param];
+			}
+		}
+	}
+
+	// shorthand
+	settings = this.settings;
+
+	// setup DOM
+	/*
+	* div(this.DOM.wrap)
+	* |-div#youtyping-player(this.DOM.player)
+	* \-canvas#youtyping-screen(this.DOM.screen)
+	*/
+	this.DOM = {
+		wrap: element.css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			margin: '0 auto',
+			position: 'relative'
+		})[0],
+
+		player: $('<div/>', {
+			id: 'youtyping-player'
+		}).appendTo(element).css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			display: 'block',
+			'z-index': 0
+		})[0],
+
+		screen: $('<canvas/>', {
+			id: 'youtyping-screen',
+			'data-paper-keepalive': 'true',
+			width: this.settings.width.toString(),
+			height: this.settings.height.toString()
+		}).appendTo(element).css({
+			width: this.settings.width + 'px',
+			height: this.settings.height + 'px',
+			position: 'absolute',
+			top: 0,
+			left: 0,
+			'z-index': 100
+		})[0]
+	};
+
+	this.canvas = this.DOM.screen;
+
+	youTypingSettings.width = this.settings.width;
+	youTypingSettings.height = this.settings.height;
+
+	this.youTyping = new YouTyping(this.DOM.player, youTypingSettings);
+	var youTyping = this.youTyping; // just a shorthand
+
+	this.initialize();
 };

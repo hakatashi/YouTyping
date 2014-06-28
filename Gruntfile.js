@@ -4,8 +4,8 @@ module.exports = function (grunt) {
 		concat: {
 			options: {
 			    separator: '\n\n',
-			    banner: '/* youtyping.js <%= grunt.template.today("mm-dd-yyyy") %> */\n\nvar YouTyping = (function(){\n',
-			    footer: '\n\nreturn YouTyping;\n}());'
+			    banner: '/* youtyping.js <%= grunt.template.today("mm-dd-yyyy") %> */\n\n(function(exports){\n',
+			    footer: '\n\nexports.YouTyping = YouTyping;\nexports.Screen = Screen;\n}(typeof window === \'undefined\' ? module.exports : window));'
 			},
 			dist: {
 				src: ['src/*.js'],
@@ -44,6 +44,7 @@ module.exports = function (grunt) {
 				options: {
 					undef: true,
 					browser: true,
+					node: true,
 					jquery: true,
 					devel: true,
 					globals: {
