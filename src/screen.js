@@ -171,14 +171,28 @@ var Screen = function (element, settings) {
 	var triggerHitNote = function (event) {
 		if (event.type === 'keydown' && event.key === 'escape') {
 			event.preventDefault();
-
+			screen.reset();
 		}
-
 		if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
 			// suspend default operation on browser by keydown
 			event.preventDefault();
 			youTyping.hit(event.key);
 		}
+	};
+
+	this.reset = function () {
+		youTyping.reset();
+		// remove all items
+		for (var item in screen.items) {
+			if (screen.items.hasOwnProperty(item)) {
+				screen.items[item].remove();
+			}
+		}
+		screen.items = {};
+		screen.hitCircle.remove();
+		screen.onResourceReady();
+		// trigger onGameReady
+		screen.onGameReady();
 	};
 
 	// layout notes and lines fitting to current time
@@ -370,6 +384,9 @@ var Screen = function (element, settings) {
 
 	this.onGameEnd = function () {
 		logTrace('Game Ended.');
+
+		// unbind keys
+		paper.tool.onKeyDown = null;
 
 		screen.resultCover = new paper.Path.Rectangle(paper.view.bounds);
 		screen.resultCover.fillColor = '#ddd';
