@@ -1,4 +1,4 @@
-/* youtyping.js 06-28-2014 */
+/* youtyping.js 06-29-2014 */
 
 (function(exports){
 var YouTyping = function (element, settings) {
@@ -55,7 +55,20 @@ var YouTyping = function (element, settings) {
 		playbackQuality: 'default' // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
 	};
 
-	this.startTime = Date.now();
+	// override default settings
+	for (var param in settings) {
+		if (settings.hasOwnProperty(param)) {
+			if (this.settings[param] === undefined) {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'number') {
+				this.settings[param] = parseFloat(settings[param], 10);
+			} else if (typeof this.settings[param] === 'string') {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'boolean') {
+				this.settings[param] = Boolean(settings[param]);
+			}
+		}
+	}
 
 	// roll data
 	this.dataXML = null;
@@ -63,14 +76,6 @@ var YouTyping = function (element, settings) {
 
 	// YouTube Iframe Player
 	this.player = null;
-
-	// ZeroTime calculation
-	this.zeroTime = 0;
-	this.zeroTimePad = 0;
-	this.currentTime = 0;
-	this.estimateSamples = [];
-	this.estimatedZero = 0; // exposed only for debugging
-	this.zeroCallFPS = 0; // exposed only for debugging
 
 	// YouTyping.now
 	Object.defineProperty(this, 'now', {
@@ -84,18 +89,6 @@ var YouTyping = function (element, settings) {
 
 	// key-input conversion table
 	this.table = [];
-
-	this.currentNoteIndex = null;
-	this.inputBuffer = '';
-
-	// lyrics
-	this.currentLyricIndex = null;
-	this.nextLyricIndex = null; // initialized in loadXML()
-
-	this.combo = 0;
-	this.maxCombo = 0;
-	this.score = 0;
-	this.scorebook = {};
 
 
 	/******************* Internal functions *******************/
@@ -135,7 +128,8 @@ var YouTyping = function (element, settings) {
 				controls: 0,
 				showinfo: 0,
 				modestbranding: 1,
-				wmode: 'opaque' // thanks http://stackoverflow.com/questions/6826386/
+				// thanks http://stackoverflow.com/questions/6826386/
+				wmode: 'opaque'
 			},
 			events: {
 				onReady: onPlayerReady,
@@ -163,6 +157,10 @@ var YouTyping = function (element, settings) {
 			break;
 		case YT.PlayerState.PLAYING:
 			logTrace('Player Started.');
+			// reset zero time samples
+			if (youTyping.isPlayingGame) {
+				youTyping.estimateSamples = [];
+			}
 			break;
 		case YT.PlayerState.PAUSED:
 			logTrace('Player Paused.');
@@ -207,39 +205,11 @@ var YouTyping = function (element, settings) {
 			url: youTyping.settings.dataFile,
 			type: 'get',
 			datatype: 'xml',
-			timeout: 1000,
+			timeout: 10000,
 			success: function (data, textStatus, jqXHR) {
 				youTyping.dataXML = $(data).find('data').first();
 
-				var items = youTyping.dataXML.find('roll > item');
-
-				// parse XML and store into YouTyping.roll
-				youTyping.roll = [];
-
-				var lastNote = null;
-
-				$(items).each(function () {
-					var tempItem = {
-						time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
-						type: $(this).attr('type')
-					};
-
-					if ($(this).has('text')) {
-						tempItem.text = tempItem.remainingText = $(this).children('text').text();
-					}
-
-					if (tempItem.type === 'note') {
-						tempItem.state = youTyping.noteState.WAITING;
-						tempItem.judgement = null;
-						lastNote = tempItem;
-					}
-
-					youTyping.roll.push(tempItem);
-				});
-
-				youTyping.lastNote = lastNote;
-
-				youTyping.nextLyricIndex = findNextLyric(-1);
+				initializeRoll();
 
 				logTrace('Loaded XML File.');
 
@@ -254,6 +224,39 @@ var YouTyping = function (element, settings) {
 		return loadXMLDeferred.promise();
 	};
 
+	// initialize roll data for when loading and resetting
+	var initializeRoll = function () {
+		var items = youTyping.dataXML.find('roll > item');
+
+		// parse XML and store into YouTyping.roll
+		youTyping.roll = [];
+
+		var lastNote = null;
+
+		$(items).each(function () {
+			var tempItem = {
+				time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
+				type: $(this).attr('type')
+			};
+
+			if ($(this).has('text')) {
+				tempItem.text = tempItem.remainingText = $(this).children('text').text();
+			}
+
+			if (tempItem.type === 'note') {
+				tempItem.state = youTyping.noteState.WAITING;
+				tempItem.judgement = null;
+				lastNote = tempItem;
+			}
+
+			youTyping.roll.push(tempItem);
+		});
+
+		youTyping.lastNote = lastNote;
+
+		youTyping.nextLyricIndex = findNextLyric(-1);
+	};
+
 	var loadTableDeferred;
 	var loadTable = function () {
 		// initialize deferred
@@ -263,7 +266,7 @@ var YouTyping = function (element, settings) {
 			url: youTyping.settings.tableFile,
 			type: 'get',
 			datatype: 'xml',
-			timeout: 1000,
+			timeout: 10000,
 			success: function (data, textStatus, jqXHR) {
 				try {
 					youTyping.table = [];
@@ -360,38 +363,43 @@ var YouTyping = function (element, settings) {
 		var gotCurrentTime = youTyping.player.getCurrentTime();
 		var now = youTyping.now;
 
-		if (gotCurrentTime === youTyping.settings.offset) { // if playing time is zero `ZeroTime` is immediately `now`!
-			youTyping.zeroTimePad = now - youTyping.settings.offset * 1000 + youTyping.correction;
-			youTyping.zeroTime = now - youTyping.settings.offset * 1000 + youTyping.correction;
-		} else if (youTyping.currentTime !== gotCurrentTime && gotCurrentTime > youTyping.settings.offset) { // if Current Time jumped
-			youTyping.currentTime = gotCurrentTime;
-			youTyping.estimatedZero = now - youTyping.currentTime * 1000;
+		if (youTyping.player.getPlayerState() === YT.PlayerState.PLAYING) {
+			if (youTyping.currentTime !== gotCurrentTime && gotCurrentTime > youTyping.settings.offset) { // if Current Time jumped
+				youTyping.currentTime = gotCurrentTime;
+				youTyping.estimatedZero = now - youTyping.currentTime * 1000;
 
-			// Estimated zero time is stored in estimatesamples and
-			// we assume that correct zero time is average of recent
-			// `zeroEstimateSamples` items of samples
-			// because it contains great ranges of error.
-			// We also introduced `zeroTimePad` to supress a sudden change of zeroTime.
-			// It contains correct zero time and sudden-change-supressed zero time
-			// will be stored in `zeroTime`.
-			youTyping.estimateSamples.push(youTyping.estimatedZero);
-			if (youTyping.estimateSamples.length > youTyping.settings.zeroEstimateSamples) {
-				youTyping.estimateSamples.shift();
+				// Estimated zero time is stored in estimatesamples and
+				// we assume that correct zero time is average of recent
+				// `zeroEstimateSamples` items of samples
+				// because it contains great ranges of error.
+				// We also introduced `zeroTimePad` to supress a sudden change of zeroTime.
+				// It contains correct zero time and sudden-change-supressed zero time
+				// will be stored in `zeroTime`.
+				youTyping.estimateSamples.push(youTyping.estimatedZero);
+				if (youTyping.estimateSamples.length > youTyping.settings.zeroEstimateSamples) {
+					youTyping.estimateSamples.shift();
+				}
+				// just go hack :)
+				var estimatedSum = youTyping.estimateSamples.reduce(function (previous, current) {
+					return previous + current;
+				});
+
+				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
+				youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.correction;
+
+				youTyping.zeroCallFPS++;
 			}
-			// just go hack :)
-			var estimatedSum = youTyping.estimateSamples.reduce(function (previous, current) {
-				return previous + current;
-			});
-
-			// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
-			youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.correction;
-
-			youTyping.zeroCallFPS++;
+			// if player is playing, set youTyping.time according to zero time, against the case when player is stopping.
+			youTyping.time = now - youTyping.zeroTime;
+			// pad zero time on every frames
+			youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
+		} else {
+			// if player is stopping, set zero time according to youTyping.time, against the case when player is playing.
+			youTyping.zeroTime = youTyping.zeroTimePad = now - youTyping.settings.offset * 1000 + youTyping.correction - youTyping.time;
 		}
-		youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
 
 		// mark past notes as failed
-		var time = now - youTyping.zeroTime;
+		var time = youTyping.time;
 		var previousLiveNote = null;
 		var previousLiveNoteIndex = null;
 		youTyping.roll.forEach(function (note, index) {
@@ -462,6 +470,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	var endGame = function () {
+		youTyping.isPlayingGame = false;
 		screen.onGameEnd();
 	};
 
@@ -470,7 +479,8 @@ var YouTyping = function (element, settings) {
 
 	this.play = function () {
 		youTyping.player.playVideo();
-		setInterval(gameLoop, 10);
+		youTyping.isPlayingGame = true;
+		youTyping.gameLoopId = setInterval(gameLoop, 10);
 	};
 
 	// hit key
@@ -688,6 +698,7 @@ var YouTyping = function (element, settings) {
 				hitNote(nearestNewNote);
 
 				// breaking combo
+				// TODO: when hit judge is poor than break combo
 				if (hitJudge === youTyping.settings.breakCombo) {
 					youTyping.combo = 0;
 				}
@@ -709,6 +720,23 @@ var YouTyping = function (element, settings) {
 				});
 			}
 		}
+	};
+
+	// abort currently playing game and restart YouTyping
+	this.reset = function () {
+		// stop game loop
+		clearInterval(youTyping.gameLoopId);
+		// re-initialize YouTyping
+		youTyping.initialize();
+		// and re-initialize roll
+		initializeRoll();
+		// also break the flag
+		youTyping.isPlayingGame = false;
+
+		// stop video
+		youTyping.player.stopVideo();
+		// and seek to offset
+		youTyping.player.seekTo(youTyping.settings.offset);
 	};
 
 	// get kana version of currently playing lyric
@@ -740,54 +768,71 @@ var YouTyping = function (element, settings) {
 
 	/******************* Initialization *******************/
 
-	// override default settings
-	for (var param in settings) {
-		if (settings.hasOwnProperty(param)) {
-			if (this.settings[param] === undefined) {
-				this.settings[param] = settings[param];
-			} else if (typeof this.settings[param] === 'number') {
-				this.settings[param] = parseFloat(settings[param], 10);
-			} else if (typeof this.settings[param] === 'string') {
-				this.settings[param] = settings[param];
-			} else if (typeof this.settings[param] === 'boolean') {
-				this.settings[param] = Boolean(settings[param]);
+	this.initialize = function () {
+		// ZeroTime calculation
+		youTyping.zeroTime = 0;
+		youTyping.zeroTimePad = 0;
+		youTyping.currentTime = 0;
+		youTyping.estimateSamples = [];
+		youTyping.estimatedZero = 0; // exposed only for debugging
+		youTyping.zeroCallFPS = 0; // exposed only for debugging
+
+		// calculate correction
+		youTyping.correction = youTyping.settings.correction + youTyping.settings.controlledCorrection + youTyping.settings.offset * 1000;
+		// initialize zeroTime
+		youTyping.zeroTimePad = youTyping.correction - youTyping.settings.offset * 1000;
+		youTyping.zeroTime = youTyping.correction - youTyping.settings.offset * 1000;
+
+		// time in roll
+		youTyping.time = 0;
+
+		// key input
+		youTyping.currentNoteIndex = null;
+		youTyping.inputBuffer = '';
+
+		// lyrics
+		youTyping.currentLyricIndex = null;
+		youTyping.nextLyricIndex = null; // initialized in loadXML()
+
+		// game state
+		youTyping.isPlayingGame = false;
+
+		// score and combo
+		youTyping.combo = 0;
+		youTyping.maxCombo = 0;
+		youTyping.score = 0;
+
+		// initialize scorebook
+		youTyping.scorebook = {};
+		youTyping.scorebook.failed = 0;
+		youTyping.scorebook.neglect = 0;
+		youTyping.settings.judges.forEach(function (judge) {
+			youTyping.scorebook[judge.name] = 0;
+		});
+
+		// sanitize Screen
+		var callbacks = [
+		'onResourceReady',
+		'onGameReady',
+		'onPlayerStateChange',
+		'onMiss',
+		'onHit',
+		'onJudgement',
+		'onNoteClear',
+		'onLyricChange',
+		'onScoreChange',
+		'onVideoEnd',
+		'onGameEnd',
+		'onError'
+		];
+		callbacks.forEach(function (callback) {
+			if (typeof screen[callback] !== 'function') {
+				screen[callback] = function () {};
 			}
-		}
-	}
+		});
+	};
 
-	// calculate correction
-	this.correction = this.settings.correction + this.settings.controlledCorrection + this.settings.offset * 1000;
-	// initialize zeroTime
-	this.zeroTimePad = this.correction - this.settings.offset * 1000;
-	this.zeroTime = this.correction - this.settings.offset * 1000;
-
-	// sanitize Screen
-	var callbacks = [
-	'onResourceReady',
-	'onGameReady',
-	'onPlayerStateChange',
-	'onMiss',
-	'onHit',
-	'onJudgement',
-	'onNoteClear',
-	'onLyricChange',
-	'onScoreChange',
-	'onVideoEnd',
-	'onGameEnd',
-	'onError'
-	];
-	callbacks.forEach(function (callback) {
-		if (typeof screen[callback] !== 'function') {
-			screen[callback] = function () {};
-		}
-	});
-
-	// initialize scorebook
-	youTyping.scorebook.failed = 0;
-	youTyping.scorebook.neglect = 0;
-	this.settings.judges.forEach(function (judge) {
-		youTyping.scorebook[judge.name] = 0;
-	});
+	this.initialize();
 
 	// Initialize asynchronously
 	// http://stackoverflow.com/questions/22346345/
@@ -804,8 +849,6 @@ var YouTyping = function (element, settings) {
 };
 
 
-// Class Screen defines canvas part of YouTyping.
-// One YouTyping have only one Screen as child, and vice versa.
 var Screen = function (element, settings) {
 	var screen = this;
 
@@ -863,7 +906,7 @@ var Screen = function (element, settings) {
 		screen.cover.fillColor.alpha = 0.7;
 
 		screen.debugTexts = [];
-		for (var i = 0; i < 5; i++) {
+		for (var i = 0; i < 6; i++) {
 			var index = screen.debugTexts.push(new paper.PointText([20, 20 * (i + 1)]));
 			screen.debugText = screen.debugTexts[index - 1];
 			screen.debugText.justification = 'left';
@@ -973,15 +1016,20 @@ var Screen = function (element, settings) {
 		paper.view.onFrame = screen.onFrame;
 
 		youTyping.play();
-
-		var triggerHitNote = function (event) {
-			if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
-				// suspend default operation on browser by keydown
-				event.preventDefault();
-				youTyping.hit(event.key);
-			}
-		};
 		paper.tool.onKeyDown = triggerHitNote;
+	};
+
+	var triggerHitNote = function (event) {
+		if (event.type === 'keydown' && event.key === 'escape') {
+			event.preventDefault();
+
+		}
+
+		if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
+			// suspend default operation on browser by keydown
+			event.preventDefault();
+			youTyping.hit(event.key);
+		}
 	};
 
 	// layout notes and lines fitting to current time
@@ -1102,6 +1150,7 @@ var Screen = function (element, settings) {
 		screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
 		screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
+		screen.debugTexts[5].content = 'Time: ' + youTyping.time.toFixed(2);
 		screen.bufferText.content = youTyping.inputBuffer;
 		screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.roll[youTyping.currentLyricIndex].text : '';
 		screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.roll[youTyping.nextLyricIndex].text : '';
