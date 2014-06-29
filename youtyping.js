@@ -733,10 +733,10 @@ var YouTyping = function (element, settings) {
 		// also break the flag
 		youTyping.isPlayingGame = false;
 
-		// stop video
-		youTyping.player.stopVideo();
 		// and seek to offset
 		youTyping.player.seekTo(youTyping.settings.offset);
+		// stop video
+		youTyping.player.stopVideo();
 	};
 
 	// get kana version of currently playing lyric
