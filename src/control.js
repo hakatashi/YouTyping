@@ -383,12 +383,13 @@ var YouTyping = function (element, settings) {
 
 				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
 				youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.correction;
-				youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
 
 				youTyping.zeroCallFPS++;
 			}
 			// if player is playing, set youTyping.time according to zero time, against the case when player is stopping.
 			youTyping.time = now - youTyping.zeroTime;
+			// pad zero time on every frames
+			youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
 		} else {
 			// if player is stopping, set zero time according to youTyping.time, against the case when player is playing.
 			youTyping.zeroTime = youTyping.zeroTimePad = now - youTyping.settings.offset * 1000 + youTyping.correction - youTyping.time;
