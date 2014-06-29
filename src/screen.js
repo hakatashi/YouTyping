@@ -57,7 +57,7 @@ var Screen = function (element, settings) {
 		screen.cover.fillColor.alpha = 0.7;
 
 		screen.debugTexts = [];
-		for (var i = 0; i < 5; i++) {
+		for (var i = 0; i < 6; i++) {
 			var index = screen.debugTexts.push(new paper.PointText([20, 20 * (i + 1)]));
 			screen.debugText = screen.debugTexts[index - 1];
 			screen.debugText.justification = 'left';
@@ -167,15 +167,20 @@ var Screen = function (element, settings) {
 		paper.view.onFrame = screen.onFrame;
 
 		youTyping.play();
-
-		var triggerHitNote = function (event) {
-			if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
-				// suspend default operation on browser by keydown
-				event.preventDefault();
-				youTyping.hit(event.key);
-			}
-		};
 		paper.tool.onKeyDown = triggerHitNote;
+	};
+
+	var triggerHitNote = function (event) {
+		if (event.type === 'keydown' && event.key === 'escape') {
+			event.preventDefault();
+
+		}
+
+		if (youTyping.player.getPlayerState() === 1 && event.type === 'keydown') {
+			// suspend default operation on browser by keydown
+			event.preventDefault();
+			youTyping.hit(event.key);
+		}
 	};
 
 	// layout notes and lines fitting to current time
@@ -296,6 +301,7 @@ var Screen = function (element, settings) {
 		screen.debugTexts[1].content = 'Measured Zero: ' + youTyping.estimatedZero.toFixed(2);
 		screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
+		screen.debugTexts[5].content = 'Time: ' + youTyping.time.toFixed(2);
 		screen.bufferText.content = youTyping.inputBuffer;
 		screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.roll[youTyping.currentLyricIndex].text : '';
 		screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.roll[youTyping.nextLyricIndex].text : '';
