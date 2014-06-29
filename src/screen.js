@@ -1,5 +1,3 @@
-// Class Screen defines canvas part of YouTyping.
-// One YouTyping have only one Screen as child, and vice versa.
 var Screen = function (element, settings) {
 	var screen = this;
 
