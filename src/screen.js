@@ -30,7 +30,8 @@ var Screen = function (element, settings) {
 			bad: '#aaa',
 			failed: '#a34',
 			neglect: '#39a'
-		}
+		},
+		cursorHideTime: 1000 // millisecond
 	};
 
 	// default YouTyping setting
@@ -326,17 +327,28 @@ var Screen = function (element, settings) {
 		FPS++;
 	};
 
+	var hideCursorId = null;
+
 	// YouTube onStateChange event supplied from YouTyping
 	this.onPlayerStateChange = function (event) {
 		// hide mouse cursor when playing
 		if (event.data === YT.PlayerState.PLAYING) {
-			$(screen.DOM.screen).css({
-				cursor: 'none'
-			});
+			paper.tool.onMouseMove = function () {
+				$(screen.DOM.screen).css({
+					cursor: 'auto'
+				});
+				clearTimeout(hideCursorId);
+				hideCursorId = setTimeout(function () {
+					$(screen.DOM.screen).css({
+						cursor: 'none'
+					});
+				}, settings.cursorHideTime);
+			};
 		} else {
 			$(screen.DOM.screen).css({
 				cursor: 'auto'
 			});
+			paper.tool.onMouseMove = null;
 		}
 	};
 
