@@ -799,6 +799,9 @@ var YouTyping = function (element, settings) {
 		youTyping.maxCombo = 0;
 		youTyping.score = 0;
 
+		// replay and keypress manager
+		youTyping.replay = [];
+
 		// initialize scorebook
 		youTyping.scorebook = {};
 		youTyping.scorebook.failed = 0;
