@@ -471,6 +471,14 @@ var YouTyping = function (element, settings) {
 		screen.onGameEnd();
 	};
 
+	var getLastKeyHit = function () {
+		if (youTyping.replay.length === 0) {
+			return null;
+		} else {
+			return youTyping.replay[youTyping.replay.length - 1];
+		}
+	};
+
 
 	/******************* Exposed Methods *******************/
 
@@ -624,9 +632,22 @@ var YouTyping = function (element, settings) {
 			}
 		};
 
+		// key hit must be single stroke
 		if (key.length !== 1) {
 			return;
 		}
+
+		// key hit mustn't fire before last key hit
+		var lastKeyHit = getLastKeyHit();
+		if (lastKeyHit && time < lastKeyHit.time) {
+			return;
+		}
+
+		// record key hit to replay
+		youTyping.replay.push({
+			time: time,
+			key: key
+		});
 
 		// if currently hitting some note, try to hit it to complete
 		if (youTyping.currentNoteIndex !== null) {

@@ -52,6 +52,9 @@
 	}
 	];
 
+	// quick access
+	var youTyping, screen;
+
 	choices.forEach(function (choice) {
 		choice.id = choice.id || choice.videoId;
 		choice.file = choice.file || choice.videoId;
@@ -93,6 +96,7 @@
 		settings.initial = settings.initial || choice.initial || false;
 		settings.tableFile = '../convert/romaji.xml';
 		screen = new Screen($('#youtyping'), settings);
+		youTyping = screen.youTyping;
 	});
 	</script>
 	<link rel="stylesheet" type="text/css" href="style.css">
