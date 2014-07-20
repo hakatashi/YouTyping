@@ -236,6 +236,9 @@ FakesAssemblies/
 youtyping.js
 youtyping.min.js
 youtyping.min.map
+youtyping-screen.js
+youtyping-screen.min.js
+youtyping-screen.min.map
 
 # Compiler's Outputs
 tools/*.txt
