@@ -3,22 +3,43 @@ module.exports = function (grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		concat: {
 			options: {
-			    separator: '\n\n',
-			    banner: '/* youtyping.js <%= grunt.template.today("mm-dd-yyyy") %> */\n\n(function(exports){\n',
-			    footer: '\n\nexports.YouTyping = YouTyping;\nexports.Screen = Screen;\n}(typeof window === \'undefined\' ? module.exports : window));'
+			    separator: '\n\n'
 			},
-			dist: {
-				src: ['src/*.js'],
-				dest: 'youtyping.js'
+			youtyping: {
+				src: ['src/control.js', 'src/util.js'],
+				dest: 'youtyping.js',
+				options: {
+					banner: '/* youtyping.js <%= grunt.template.today("mm-dd-yyyy") %> */\n\n(function(exports){\n',
+					footer: '\n\nexports.YouTyping = YouTyping;\n}(typeof window === \'undefined\' ? module.exports : window));'
+				}
+			},
+			screen: {
+				src: ['src/screen.js', 'src/util.js'],
+				dest: 'youtyping-screen.js',
+				options: {
+					banner: '/* youtyping-screen.js <%= grunt.template.today("mm-dd-yyyy") %> */\n\n(function(exports){\n',
+					footer: '\n\nexports.Screen = Screen;\n}(typeof window === \'undefined\' ? module.exports : window));'
+				}
 			}
 		},
 		uglify: {
-			options: {
-				banner: '/* youtyping.js <%= grunt.template.today("mm-dd-yyyy") %> */\n'
-			},
-			dist: {
+			youtyping: {
+				options: {
+					banner: '/* youtyping.js <%= grunt.template.today("mm-dd-yyyy") %> */\n'
+				},
 				files: {
-					'youtyping.min.js': ['<%= concat.dist.dest %>']
+					'youtyping.min.js': ['<%= concat.youtyping.dest %>']
+				},
+				options: {
+					sourceMap: true
+				}
+			},
+			screen: {
+				options: {
+					banner: '/* youtyping-screen.js <%= grunt.template.today("mm-dd-yyyy") %> */\n'
+				},
+				files: {
+					'youtyping-screen.min.js': ['<%= concat.screen.dest %>']
 				},
 				options: {
 					sourceMap: true
@@ -39,7 +60,7 @@ module.exports = function (grunt) {
 			src: {
 				src: ['src/*.js']
 			},
-			build: {
+			youtyping: {
 				src: ['youtyping.js'],
 				options: {
 					undef: true,
@@ -52,6 +73,24 @@ module.exports = function (grunt) {
 						YT: false,
 						// paper.js
 						paper: false
+					}
+				}
+			},
+			screen: {
+				src: ['youtyping-screen.js'],
+				options: {
+					undef: true,
+					browser: true,
+					node: true,
+					jquery: true,
+					devel: true,
+					globals: {
+						// YouTube Iframe Player API
+						YT: false,
+						// paper.js
+						paper: false,
+						// YouTyping interfaces
+						YouTyping: true
 					}
 				}
 			}

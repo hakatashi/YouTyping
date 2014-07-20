@@ -8,7 +8,6 @@ Test is running [here](http://hakatashi.github.io/YouTyping/sample/).
 # Features
 
 * Full unicode support
-* Work on every modern browser and OS
 * Modulize UI functionarity to make replacement easy
 
 # Build
