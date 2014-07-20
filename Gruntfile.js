@@ -60,8 +60,24 @@ module.exports = function (grunt) {
 			src: {
 				src: ['src/*.js']
 			},
-			build: {
-				src: ['youtyping.js', 'youtyping-screen.js'],
+			youtyping: {
+				src: ['youtyping.js'],
+				options: {
+					undef: true,
+					browser: true,
+					node: true,
+					jquery: true,
+					devel: true,
+					globals: {
+						// YouTube Iframe Player API
+						YT: false,
+						// paper.js
+						paper: false
+					}
+				}
+			},
+			screen: {
+				src: ['youtyping-screen.js'],
 				options: {
 					undef: true,
 					browser: true,
@@ -74,8 +90,7 @@ module.exports = function (grunt) {
 						// paper.js
 						paper: false,
 						// YouTyping interfaces
-						YouTyping: true,
-						Screen: true
+						YouTyping: true
 					}
 				}
 			}
