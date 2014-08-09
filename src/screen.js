@@ -348,6 +348,7 @@ var Screen = function (element, settings) {
 			$(screen.DOM.screen).css({
 				cursor: 'auto'
 			});
+			clearTimeout(hideCursorId);
 			paper.tool.onMouseMove = null;
 		}
 	};
