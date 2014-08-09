@@ -60,7 +60,7 @@
 	];
 
 	// quick access
-	var youTyping, screen;
+	var youTyping, youScreen;
 
 	choices.forEach(function (choice) {
 		choice.id = choice.id || choice.videoId;
@@ -102,8 +102,8 @@
 		settings.videoId = choice.videoId;
 		settings.initial = settings.initial || choice.initial || false;
 		settings.tableFile = '../convert/romaji.xml';
-		screen = new Screen($('#youtyping'), settings);
-		youTyping = screen.youTyping;
+		youScreen = new Screen($('#youtyping'), settings);
+		youTyping = youScreen.youTyping;
 	});
 	</script>
 	<link rel="stylesheet" type="text/css" href="style.css">

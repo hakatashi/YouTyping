@@ -141,6 +141,10 @@ var YouTyping = function (element, settings) {
 
 		youTyping.player.setVolume(youTyping.settings.volume);
 		youTyping.player.setPlaybackQuality(youTyping.settings.playbackQuality);
+		// play and immediately pause video to make playerState unstarted or paused.
+		// this is required to make video seekable even in inactive.
+		youTyping.player.playVideo();
+		youTyping.player.pauseVideo();
 
 		setupPlayerDeferred.resolve();
 	};
@@ -484,8 +488,18 @@ var YouTyping = function (element, settings) {
 
 	this.play = function () {
 		youTyping.player.playVideo();
+		youTyping.player.seekTo(youTyping.settings.offset);
+
 		youTyping.isPlayingGame = true;
 		youTyping.gameLoopId = setInterval(gameLoop, 10);
+
+		setTimeout(function () {
+			// if still buffering after 3 seconds
+			if (youTyping.player.getPlayerState() === YT.PlayerState.BUFFERING) {
+				// seek again... fix problems in long video
+				youTyping.player.seekTo(youTyping.settings.offset);
+			}
+		}, 3000);
 	};
 
 	// hit key
