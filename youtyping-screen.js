@@ -1,4 +1,4 @@
-/* youtyping-screen.js 07-21-2014 */
+/* youtyping-screen.js 08-10-2014 */
 
 (function(exports){
 var Screen = function (element, settings) {
@@ -40,6 +40,7 @@ var Screen = function (element, settings) {
 	// default YouTyping setting
 	var youTypingSettings = {
 		videoId: 'fQ_m5VLhqNg',
+		videoStop: 0,
 		dataFile: 'data.utx',
 		tableFile: 'convert/romaji.xml',
 		initial: false, // boolean
@@ -351,6 +352,7 @@ var Screen = function (element, settings) {
 			$(screen.DOM.screen).css({
 				cursor: 'auto'
 			});
+			clearTimeout(hideCursorId);
 			paper.tool.onMouseMove = null;
 		}
 	};
