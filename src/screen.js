@@ -111,8 +111,12 @@ var Screen = function (element, settings) {
 	this.onResourceReady = function () {
 		var now = youTyping.now;
 
-		var paddingRight = settings.width * (1 - settings.hitPosition) + settings.noteSize + settings.screenPadding; // distance from hit line to right edge
-		var paddingLeft = settings.width * settings.hitPosition + settings.noteSize + settings.screenPadding; // distance from hit line to left edge
+		// distance from hit line to right edge
+		var paddingRight = settings.width * (1 - settings.hitPosition)
+		                   + settings.noteSize + settings.screenPadding;
+		// distance from hit line to left edge
+		var paddingLeft = settings.width * settings.hitPosition
+		                  + settings.noteSize + settings.screenPadding;
 
 		try {
 			// Computes emerge time and vanishing time of item.
@@ -132,7 +136,10 @@ var Screen = function (element, settings) {
 		screen.update();
 
 		screen.hitCircle = new paper.Path.Circle({
-			center: paper.view.bounds.bottomRight.multiply([settings.hitPosition, settings.rollYpos]),
+			center: paper.view.bounds.bottomRight.multiply([
+				settings.hitPosition,
+				settings.rollYpos
+			]),
 			radius: settings.noteSize,
 			strokeWidth: 1,
 			strokeColor: 'white'
@@ -148,7 +155,8 @@ var Screen = function (element, settings) {
 			fillColor: 'white'
 		});
 		var triggerStartScreen = function (event) {
-			if ((event.type === 'keydown' && event.key === 'enter') || event.type === 'mousedown') {
+			if ((event.type === 'keydown' && event.key === 'enter')
+			    || event.type === 'mousedown') {
 				screen.pressEnter.remove();
 				paper.tool.onKeyDown = null; // unbind
 				screen.start();
@@ -206,7 +214,8 @@ var Screen = function (element, settings) {
 
 		youTyping.roll.forEach(function (item, index) {
 			// X position of the item
-			var position = (item.time - runTime) * settings.speed + settings.width * settings.hitPosition;
+			var position = (item.time - runTime) * settings.speed
+			               + settings.width * settings.hitPosition;
 
 			// if index-th item doesn't exists in screen
 			if (!(index in items)) {
@@ -217,8 +226,14 @@ var Screen = function (element, settings) {
 					// long line which devides roll to measures
 					if (item.type === 'longline') {
 						items[index].longLine = items[index].addChild(new paper.Path.Line({
-							from: [position, settings.rollYpos * settings.height - settings.longLineHeight / 2],
-							to: [position, settings.rollYpos * settings.height + settings.longLineHeight / 2],
+							from: [
+								position,
+								settings.rollYpos * settings.height - settings.longLineHeight / 2
+							],
+							to: [
+								position,
+								settings.rollYpos * settings.height + settings.longLineHeight / 2
+							],
 							strokeColor: 'white',
 							strokeWidth: 2
 						}));
@@ -226,8 +241,14 @@ var Screen = function (element, settings) {
 					// small line
 					if (item.type === 'line') {
 						items[index].smallLine = items[index].addChild(new paper.Path.Line({
-							from: [position, settings.rollYpos * settings.height - settings.lineHeight / 2],
-							to: [position, settings.rollYpos * settings.height + settings.lineHeight / 2],
+							from: [
+								position,
+								settings.rollYpos * settings.height - settings.lineHeight / 2
+							],
+							to: [
+								position,
+								settings.rollYpos * settings.height + settings.lineHeight / 2
+							],
 							strokeColor: 'white',
 							strokeWidth: 1
 						}));
@@ -242,7 +263,10 @@ var Screen = function (element, settings) {
 						}));
 						// lyric
 						items[index].lyric = items[index].addChild(new paper.PointText({
-							point: [position, settings.rollYpos * settings.height + settings.noteSize + 50],
+							point: [
+								position,
+								settings.rollYpos * settings.height + settings.noteSize + 50
+							],
 							content: item.remainingText,
 							fillColor: 'white',
 							justification: 'center',
@@ -253,7 +277,12 @@ var Screen = function (element, settings) {
 					// order stop mark
 					if (item.type === 'stop') {
 						items[index].orderStop = items[index].addChild(new paper.Path({
-							segments: [[position, settings.rollYpos * settings.height - settings.noteSize - 30]],
+							segments: [
+								[
+									position,
+									settings.rollYpos * settings.height - settings.noteSize - 30
+								]
+							],
 							fillColor: 'white'
 						}));
 						items[index].orderStop.lineBy([10, -10]);
@@ -317,8 +346,12 @@ var Screen = function (element, settings) {
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 		screen.debugTexts[5].content = 'Time: ' + youTyping.time.toFixed(2);
 		screen.bufferText.content = youTyping.inputBuffer;
-		screen.currentLyric.content = youTyping.currentLyricIndex ? youTyping.roll[youTyping.currentLyricIndex].text : '';
-		screen.nextLyric.content = youTyping.nextLyricIndex ? youTyping.roll[youTyping.nextLyricIndex].text : '';
+		screen.currentLyric.content = youTyping.currentLyricIndex
+		                              ? youTyping.roll[youTyping.currentLyricIndex].text
+		                              : '';
+		screen.nextLyric.content = youTyping.nextLyricIndex
+		                           ? youTyping.roll[youTyping.nextLyricIndex].text
+		                           : '';
 		// screen.kanaLyric.content = (kanaLyric = youTyping.getKanaLyric()) ? kanaLyric : '';
 
 		screen.judgeEffects.children.forEach(function (judgeEffect) {
