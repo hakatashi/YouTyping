@@ -37,6 +37,7 @@ var Screen = function (element, settings) {
 	// default YouTyping setting
 	var youTypingSettings = {
 		videoId: 'fQ_m5VLhqNg',
+		videoStop: 0,
 		dataFile: 'data.utx',
 		tableFile: 'convert/romaji.xml',
 		initial: false, // boolean

@@ -48,6 +48,7 @@ var YouTyping = function (element, settings) {
 		correction: 0, // millisecond
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
+		videoStop: 0, //second
 		volume: 100, // percent
 		playbackQuality: 'default' // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
 	};
@@ -362,9 +363,10 @@ var YouTyping = function (element, settings) {
 		***************/
 
 		var gotCurrentTime = youTyping.player.getCurrentTime();
+		var gotPlayerState = youTyping.player.getPlayerState();
 		var now = youTyping.now;
 
-		if (youTyping.player.getPlayerState() === YT.PlayerState.PLAYING) {
+		if (gotPlayerState === YT.PlayerState.PLAYING) {
 			if (youTyping.currentTime !== gotCurrentTime && gotCurrentTime > youTyping.settings.offset) { // if Current Time jumped
 				youTyping.currentTime = gotCurrentTime;
 				youTyping.estimatedZero = now - youTyping.currentTime * 1000;
@@ -388,14 +390,22 @@ var YouTyping = function (element, settings) {
 				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
 				youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.correction;
 
+				// stop video when the time exceeded
+				if (youTyping.settings.videoStop !== 0 && gotCurrentTime > youTyping.settings.videoStop) {
+					youTyping.player.stopVideo();
+				}
+
 				youTyping.zeroCallFPS++;
 			}
 			// if player is playing, set youTyping.time according to zero time, against the case when player is stopping.
 			youTyping.time = now - youTyping.zeroTime;
 			// pad zero time on every frames
 			youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
+		} else if (gotPlayerState === YT.PlayerState.ENDED) {
+			// if video ended and game is still playing, zeroTime is fixed. nothing to do here.
 		} else {
-			// if player is stopping, set zero time according to youTyping.time, against the case when player is playing.
+			// if player is stopping, we're waiting for starting video.
+			// set zero time according to youTyping.time, against the case when player is playing.
 			youTyping.zeroTime = youTyping.zeroTimePad = now - youTyping.settings.offset * 1000 + youTyping.correction - youTyping.time;
 		}
 
