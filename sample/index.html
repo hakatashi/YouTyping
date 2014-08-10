@@ -50,17 +50,25 @@
 		offset: 9,
 		controlledCorrection: -60,
 		initial: true
+	},
+	{
+		videoId: 'he4SEp2DjMA',
+		file: 'he4SEp2DjMA-udonge',
+		title: '患部で止まってすぐ溶ける ～ 狂気の優曇華院',
+		offset: 313,
+		videoStop: 493
 	}
 	];
 
 	// quick access
-	var youTyping, screen;
+	var youTyping, youScreen;
 
 	choices.forEach(function (choice) {
 		choice.id = choice.id || choice.videoId;
 		choice.file = choice.file || choice.videoId;
 		choice.dataFile = choice.dataFile || (choice.file + '.utx');
 		choice.offset = choice.offset || 0;
+		choice.videoStop = choice.videoStop || 0;
 		choice.controlledCorrection = choice.controlledCorrection || 0;
 	})
 
@@ -94,10 +102,11 @@
 		settings.controlledCorrection = choice.controlledCorrection;
 		settings.dataFile = choice.dataFile;
 		settings.videoId = choice.videoId;
+		settings.videoStop = choice.videoStop;
 		settings.initial = settings.initial || choice.initial || false;
 		settings.tableFile = '../convert/romaji.xml';
-		screen = new Screen($('#youtyping'), settings);
-		youTyping = screen.youTyping;
+		youScreen = new Screen($('#youtyping'), settings);
+		youTyping = youScreen.youTyping;
 	});
 	</script>
 	<link rel="stylesheet" type="text/css" href="style.css">
