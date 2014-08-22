@@ -709,11 +709,11 @@ var YouTyping = function (element, settings) {
 				var distance = item.time - time;
 
 				if (
+					worstJudge.from <= distance && distance <= worstJudge.to &&
 					// Luckily `positive number` > null is always true :)
 					index > youTyping.currentNoteIndex &&
 					item.state === youTyping.noteState.WAITING &&
-					Math.abs(distance) < Math.abs(nearestDistance) &&
-					worstJudge.from <= distance && distance <= worstJudge.to
+					Math.abs(distance) < Math.abs(nearestDistance)
 				) {
 					var newNoteInfo = preHitNote(index);
 
