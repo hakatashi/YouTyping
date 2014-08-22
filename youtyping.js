@@ -1,4 +1,4 @@
-/* youtyping.js 08-10-2014 */
+/* youtyping.js 08-22-2014 */
 
 (function(exports){
 var YouTyping = function (element, settings) {
@@ -53,7 +53,7 @@ var YouTyping = function (element, settings) {
 		offset: 0, // second
 		videoStop: 0, //second
 		volume: 100, // percent
-		playbackQuality: 'default' // string: https://developers.google.com/youtube/iframe_api_reference#Playback_quality
+		playbackQuality: 'default' // string
 	};
 
 	// override default settings
@@ -83,7 +83,8 @@ var YouTyping = function (element, settings) {
 		get: function () {
 			// note: this is most frequently called property in YouTyping.
 			// In chrome, Date.now is faster than performance.now,
-			// but Firefox is not. Came from http://jsperf.com/new-date-vs-date-now-vs-performance-now/21
+			// but Firefox is not.
+			// Came from http://jsperf.com/new-date-vs-date-now-vs-performance-now/21
 			return window.performance.now();
 		}
 	});
@@ -183,19 +184,32 @@ var YouTyping = function (element, settings) {
 		// from https://developers.google.com/youtube/iframe_api_reference
 		switch (event.data) {
 		case 2:
-			logTrace('ERROR: The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.');
+			logTrace(
+'ERROR: The request contains an invalid parameter value.\
+ For example, this error occurs if you specify a video ID that does not have 11 characters,\
+ or if the video ID contains invalid characters,\
+ such as exclamation points or asterisks.');
 			break;
 		case 5:
-			logTrace('ERROR: The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.');
+			logTrace(
+'ERROR: The requested content cannot be played in an HTML5 player\
+ or another error related to the HTML5 player has occurred.');
 			break;
 		case 100:
-			logTrace('ERROR: The video requested was not found. This error occurs when a video has been removed (for any reason) or has been marked as private.');
+			logTrace(
+'ERROR: The video requested was not found.\
+ This error occurs when a video has been removed (for any reason)\
+ or has been marked as private.');
 			break;
 		case 101:
-			logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
+			logTrace(
+'ERROR: The owner of the requested video does not allow it\
+ to be played in embedded players.');
 			break;
 		case 150:
-			logTrace('ERROR: The owner of the requested video does not allow it to be played in embedded players.');
+			logTrace(
+'ERROR: The owner of the requested video does not allow it\
+ to be played in embedded players.');
 			break;
 		}
 		setupPlayerDeferred.reject();
@@ -357,20 +371,22 @@ var YouTyping = function (element, settings) {
 		correct playing time by taking average of measuring. That's `ZeroTime`.
 
 		YouTyping loops to get current playing time from API (to `gotCurrentTime`)
-		with enough interval time (10ms) to detect when the `getCurrentTime()` time jumped up to another value.
-		And each time `gotCurrentTime` jumped (nameed `ZeroCall`),
-		YouTyping assumes the time to be correct and counts backward to estimate when this video started,
-		so the time is nameed `ZeroTime`. Then the current playing time of video will be calculated by `ZeroTime` and
-		current time taken from browser clock (very highly resoluted as <1ms).
+		with enough interval time (10ms) to detect when the `getCurrentTime()` time
+		jumped up to another value. And each time `gotCurrentTime` jumped (nameed `ZeroCall`),
+		YouTyping assumes the time to be correct and counts backward to estimate
+		when this video started, so the time is nameed `ZeroTime`. Then the current playing time
+		of video will be calculated by `ZeroTime` and current time taken from browser clock
+		(very highly resoluted as <1ms).
 
 		***************/
 
+		var now = youTyping.now;
 		var gotCurrentTime = youTyping.player.getCurrentTime();
 		var gotPlayerState = youTyping.player.getPlayerState();
-		var now = youTyping.now;
 
 		if (gotPlayerState === YT.PlayerState.PLAYING) {
-			if (youTyping.currentTime !== gotCurrentTime && gotCurrentTime > youTyping.settings.offset) { // if Current Time jumped
+			if (youTyping.currentTime !== gotCurrentTime
+			    && gotCurrentTime > youTyping.settings.offset) { // if Current Time jumped
 				youTyping.currentTime = gotCurrentTime;
 				youTyping.estimatedZero = now - youTyping.currentTime * 1000;
 
@@ -390,26 +406,33 @@ var YouTyping = function (element, settings) {
 					return previous + current;
 				});
 
-				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is modested into `zeroTime`.
-				youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length + youTyping.correction;
+				// `zeroTimePad` is actual estimated ZeroTime and real displayed ZeroTime is
+				// modested into `zeroTime`.
+				youTyping.zeroTimePad = estimatedSum / youTyping.estimateSamples.length
+				                        + youTyping.correction;
 
 				// stop video when the time exceeded
-				if (youTyping.settings.videoStop !== 0 && gotCurrentTime > youTyping.settings.videoStop) {
+				if (youTyping.settings.videoStop !== 0
+				    && gotCurrentTime > youTyping.settings.videoStop) {
 					youTyping.player.stopVideo();
 				}
 
 				youTyping.zeroCallFPS++;
 			}
-			// if player is playing, set youTyping.time according to zero time, against the case when player is stopping.
+			// if player is playing, set youTyping.time according to zero time,
+			// against the case when player is stopping.
 			youTyping.time = now - youTyping.zeroTime;
 			// pad zero time on every frames
-			youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9 + youTyping.zeroTimePad;
+			youTyping.zeroTime = (youTyping.zeroTime - youTyping.zeroTimePad) * 0.9
+			                     + youTyping.zeroTimePad;
 		} else if (gotPlayerState === YT.PlayerState.ENDED) {
 			// if video ended and game is still playing, zeroTime is fixed. nothing to do here.
 		} else {
 			// if player is stopping, we're waiting for starting video.
 			// set zero time according to youTyping.time, against the case when player is playing.
-			youTyping.zeroTime = youTyping.zeroTimePad = now - youTyping.settings.offset * 1000 + youTyping.correction - youTyping.time;
+			youTyping.zeroTime = youTyping.zeroTimePad
+			                   = now - youTyping.settings.offset * 1000
+			                     + youTyping.correction - youTyping.time;
 		}
 
 		// mark past notes as failed
@@ -418,9 +441,11 @@ var YouTyping = function (element, settings) {
 		var previousLiveNoteIndex = null;
 		youTyping.roll.forEach(function (note, index) {
 			// if it's note and passed
-			if (note.type === 'note' && note.time + youTyping.settings.failureSuspension < time) {
+			if (note.type === 'note'
+			    && note.time + youTyping.settings.failureSuspension < time) {
 				// and if the note is live
-				if (note.state === youTyping.noteState.WAITING || note.state === youTyping.noteState.HITTING) {
+				if (note.state === youTyping.noteState.WAITING
+				 || note.state === youTyping.noteState.HITTING) {
 					// and if previous live note exists
 					if (previousLiveNote) {
 						// mark it failed
@@ -517,7 +542,7 @@ var YouTyping = function (element, settings) {
 
 	// hit key
 	// TODO: make HitEvent interface
-	this.hit = function (key, time, forceHit) {
+	this.hit = function (key, time) {
 		if (!time) {
 			time = youTyping.now - youTyping.zeroTime;
 		}
@@ -577,8 +602,7 @@ var YouTyping = function (element, settings) {
 				return false;
 			} else { // if any rule matches
 				var newNoteInfo = {
-					noteIndex: noteIndex,
-					forcedHit: null
+					noteIndex: noteIndex
 				};
 
 				// take the rule of minimum length (for some comforts)
@@ -603,11 +627,6 @@ var YouTyping = function (element, settings) {
 				else if (newInputBuffer.length === minimumRule.before.length) {
 					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
 					newNoteInfo.inputBuffer = '';
-
-					if (minimumRule.next) {
-						// https://github.com/hakatashi/YouTyping/wiki/Forced-hit
-						newNoteInfo.forcedHit = minimumRule.next;
-					}
 				} else {
 					newNoteInfo.remainingText = note.remainingText;
 					newNoteInfo.inputBuffer = newInputBuffer;
@@ -641,16 +660,12 @@ var YouTyping = function (element, settings) {
 			// mark all the previous note failed
 			youTyping.roll.forEach(function (item, index) {
 				if (item.type === 'note' && item.time < note.time) {
-					if (item.state === youTyping.noteState.WAITING || item.state === youTyping.noteState.HITTING) {
+					if (item.state === youTyping.noteState.WAITING
+					    || item.state === youTyping.noteState.HITTING) {
 						markFailed(item);
 					}
 				}
 			});
-
-			// force hit
-			if (newNoteInfo.forcedHit) {
-				youTyping.hit(newNoteInfo.forcedHit, time, true);
-			}
 
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
@@ -687,22 +702,28 @@ var YouTyping = function (element, settings) {
 		}
 
 		// search for nearest note that matches currently passed key rule
+		var worstJudge = youTyping.settings.judges[youTyping.settings.judges.length - 1];
+
 		var nearestNote = null;
 		var nearestNewNote = null;
 		var nearestDistance = Infinity;
 		youTyping.roll.forEach(function (item, index) {
 			if (item.type === 'note') {
+				var distance = item.time - time;
+
 				if (
-					index > youTyping.currentNoteIndex && // Luckily `positive number` > null is always true :)
+					// Luckily `positive number` > null is always true :)
+					index > youTyping.currentNoteIndex &&
 					item.state === youTyping.noteState.WAITING &&
-					Math.abs(item.time - time) < Math.abs(nearestDistance)
+					Math.abs(distance) < Math.abs(nearestDistance) &&
+					worstJudge.from <= distance && distance <= worstJudge.to
 				) {
 					var newNoteInfo = preHitNote(index);
 
 					if (newNoteInfo) {
 						nearestNote = item;
 						nearestNewNote = newNoteInfo;
-						nearestDistance = item.time - time;
+						nearestDistance = distance;
 					}
 				}
 			}
@@ -723,14 +744,9 @@ var YouTyping = function (element, settings) {
 				return false;
 			});
 
-			// force hit
-			if (forceHit && hitJudge === null) {
-				// apply the most 'baaad' judge
-				hitJudge = youTyping.judges[youTyping.judges.length - 1].name;
-			}
-
 			if (hitJudge !== null) {
-				// if currently hitting other note now, it will be marked as HITTINGFAILED
+				// if currently hitting other note now, it will be
+				// marked as HITTINGFAILED
 				if (youTyping.currentNoteIndex !== null) {
 					var previousNote = youTyping.roll[youTyping.currentNoteIndex];
 					markFailed(previousNote);
@@ -823,7 +839,9 @@ var YouTyping = function (element, settings) {
 		youTyping.zeroCallFPS = 0; // exposed only for debugging
 
 		// calculate correction
-		youTyping.correction = youTyping.settings.correction + youTyping.settings.controlledCorrection + youTyping.settings.offset * 1000;
+		youTyping.correction = youTyping.settings.correction
+		                       + youTyping.settings.controlledCorrection
+		                       + youTyping.settings.offset * 1000;
 		// initialize zeroTime
 		youTyping.zeroTimePad = youTyping.correction - youTyping.settings.offset * 1000;
 		youTyping.zeroTime = youTyping.correction - youTyping.settings.offset * 1000;
