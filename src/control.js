@@ -377,9 +377,9 @@ var YouTyping = function (element, settings) {
 
 		***************/
 
+		var now = youTyping.now;
 		var gotCurrentTime = youTyping.player.getCurrentTime();
 		var gotPlayerState = youTyping.player.getPlayerState();
-		var now = youTyping.now;
 
 		if (gotPlayerState === YT.PlayerState.PLAYING) {
 			if (youTyping.currentTime !== gotCurrentTime
@@ -539,7 +539,7 @@ var YouTyping = function (element, settings) {
 
 	// hit key
 	// TODO: make HitEvent interface
-	this.hit = function (key, time, forceHit) {
+	this.hit = function (key, time) {
 		if (!time) {
 			time = youTyping.now - youTyping.zeroTime;
 		}
@@ -599,8 +599,7 @@ var YouTyping = function (element, settings) {
 				return false;
 			} else { // if any rule matches
 				var newNoteInfo = {
-					noteIndex: noteIndex,
-					forcedHit: null
+					noteIndex: noteIndex
 				};
 
 				// take the rule of minimum length (for some comforts)
@@ -625,11 +624,6 @@ var YouTyping = function (element, settings) {
 				else if (newInputBuffer.length === minimumRule.before.length) {
 					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
 					newNoteInfo.inputBuffer = '';
-
-					if (minimumRule.next) {
-						// https://github.com/hakatashi/YouTyping/wiki/Forced-hit
-						newNoteInfo.forcedHit = minimumRule.next;
-					}
 				} else {
 					newNoteInfo.remainingText = note.remainingText;
 					newNoteInfo.inputBuffer = newInputBuffer;
@@ -670,11 +664,6 @@ var YouTyping = function (element, settings) {
 				}
 			});
 
-			// force hit
-			if (newNoteInfo.forcedHit) {
-				youTyping.hit(newNoteInfo.forcedHit, time, true);
-			}
-
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
 			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
@@ -710,22 +699,28 @@ var YouTyping = function (element, settings) {
 		}
 
 		// search for nearest note that matches currently passed key rule
+		var worstJudge = youTyping.settings.judges[youTyping.settings.judges.length - 1];
+
 		var nearestNote = null;
 		var nearestNewNote = null;
 		var nearestDistance = Infinity;
 		youTyping.roll.forEach(function (item, index) {
 			if (item.type === 'note') {
+				var distance = item.time - time;
+
 				if (
-					index > youTyping.currentNoteIndex && // Luckily `positive number` > null is always true :)
+					// Luckily `positive number` > null is always true :)
+					index > youTyping.currentNoteIndex &&
 					item.state === youTyping.noteState.WAITING &&
-					Math.abs(item.time - time) < Math.abs(nearestDistance)
+					Math.abs(distance) < Math.abs(nearestDistance) &&
+					worstJudge.from <= distance && distance <= worstJudge.to
 				) {
 					var newNoteInfo = preHitNote(index);
 
 					if (newNoteInfo) {
 						nearestNote = item;
 						nearestNewNote = newNoteInfo;
-						nearestDistance = item.time - time;
+						nearestDistance = distance;
 					}
 				}
 			}
@@ -746,14 +741,9 @@ var YouTyping = function (element, settings) {
 				return false;
 			});
 
-			// force hit
-			if (forceHit && hitJudge === null) {
-				// apply the most 'baaad' judge
-				hitJudge = youTyping.judges[youTyping.judges.length - 1].name;
-			}
-
 			if (hitJudge !== null) {
-				// if currently hitting other note now, it will be marked as HITTINGFAILED
+				// if currently hitting other note now, it will be
+				// marked as HITTINGFAILED
 				if (youTyping.currentNoteIndex !== null) {
 					var previousNote = youTyping.roll[youTyping.currentNoteIndex];
 					markFailed(previousNote);
