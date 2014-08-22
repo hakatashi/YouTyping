@@ -55,7 +55,9 @@ module.exports = function (grunt) {
 				forin: true,
 				newcap: true,
 				nonbsp: true,
-				quotmark: true
+				quotmark: true,
+				multistr: true,
+				laxbreak: true
 			},
 			src: {
 				src: ['src/*.js']
