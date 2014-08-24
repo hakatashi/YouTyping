@@ -579,8 +579,7 @@ var YouTyping = function (element, settings) {
 			youTyping.scorebook.neglect++;
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
-			note.judgement = 'failed';
-			youTyping.scorebook.failed++;
+			youTyping.scorebook.failed[note.judgement]++;
 		}
 
 		if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
@@ -767,7 +766,7 @@ var YouTyping = function (element, settings) {
 				youTyping.currentNoteIndex = null;
 
 				// record in scorebook
-				youTyping.scorebook[note.judgement]++;
+				youTyping.scorebook.cleared[note.judgement]++;
 			} else {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
@@ -838,8 +837,7 @@ var YouTyping = function (element, settings) {
 
 				if (
 					(
-						forceHit
-						|| (
+						forceHit || (
 							worstJudge.from <= distance
 							&& distance <= worstJudge.to
 						)
@@ -1010,10 +1008,12 @@ var YouTyping = function (element, settings) {
 
 		// initialize scorebook
 		youTyping.scorebook = {};
-		youTyping.scorebook.failed = 0;
+		youTyping.scorebook.failed = {};
+		youTyping.scorebook.cleared = {};
 		youTyping.scorebook.neglect = 0;
 		youTyping.settings.judges.forEach(function (judge) {
-			youTyping.scorebook[judge.name] = 0;
+			youTyping.scorebook.failed[judge.name] = 0;
+			youTyping.scorebook.cleared[judge.name] = 0;
 		});
 
 		// sanitize Screen

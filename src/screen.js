@@ -463,13 +463,35 @@ var Screen = function (element, settings) {
 			fontFamily: 'sans-serif'
 		}));
 
-		['perfect', 'great', 'good', 'bad', 'failed', 'neglect'].forEach(function (judgement, index) {
+		[
+			'perfect',
+			'great',
+			'good',
+			'bad',
+			'failed',
+			'neglect'
+		].forEach(function (judgement, index) {
 			var color = new paper.Color(settings.judgeColors[judgement]);
 			color.brightness -= 0.3;
 			color.saturation += 0.2;
+
+			var content = 0;
+
+			if (judgement === 'neglect') {
+				content = youTyping.scorebook.neglect;
+			} else if (judgement === 'failed') {
+				for (var score in youTyping.scorebook.failed) {
+					if (youTyping.scorebook.failed.hasOwnProperty(score)) {
+						content += youTyping.scorebook.failed[score];
+					}
+				}
+			} else {
+				content = youTyping.scorebook.cleared[judgement];
+			}
+
 			screen.result.push(new paper.PointText({
 				point: screenSize.multiply([0.2, 0]).add([0, 40 * index + 180]),
-				content: judgement + ': ' + youTyping.scorebook[judgement],
+				content: judgement + ': ' + content,
 				fillColor: color,
 				justification: 'left',
 				fontSize: 36,
