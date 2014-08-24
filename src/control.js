@@ -24,22 +24,26 @@ var YouTyping = function (element, settings) {
 		{
 			name: 'perfect',
 			from: -50,
-			to: 50
+			to: 50,
+			weight: 1.0
 		},
 		{
 			name: 'great',
 			from: -70,
-			to: 70
+			to: 70,
+			weight: 0.6
 		},
 		{
 			name: 'good',
 			from: -100,
-			to: 100
+			to: 100,
+			weight: 0.2
 		},
 		{
 			name: 'bad',
 			from: -Infinity,
-			to: 150
+			to: 150,
+			weight: 0.0
 		}
 		],
 		breakCombo: 'bad', // judgement name
@@ -600,6 +604,34 @@ var YouTyping = function (element, settings) {
 		}
 	};
 
+	var calculateScore = function () {
+		var scoredWeight = 0;
+
+		youTyping.roll.forEach(function (item) {
+			if (item.type === 'note') {
+				if (item.judgement) {
+					var weight = null;
+
+					youTyping.settings.judges.forEach(function (judge) {
+						if (judge.name === item.judgement) {
+							weight = judge.weight;
+						}
+					});
+
+					if (weight !== null) {
+						if (item.state === youTyping.noteState.CLEARED) {
+							scoredWeight += item.weight * weight;
+						} else {
+							scoredWeight += item.weight * weight * 0.5;
+						}
+					}
+				}
+			}
+		});
+
+		youTyping.score = 700000 * scoredWeight / youTyping.totalWeight;
+	};
+
 
 	/******************* Exposed Methods *******************/
 
@@ -746,6 +778,9 @@ var YouTyping = function (element, settings) {
 				}
 			});
 
+			// recalculate score
+			calculateScore();
+
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
 			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
@@ -856,7 +891,8 @@ var YouTyping = function (element, settings) {
 						distance: distance,
 						judge: hitJudge,
 						combo: youTyping.combo
-					}
+					},
+					noteIndex: nearestNewNote
 				});
 			}
 		}
@@ -907,6 +943,8 @@ var YouTyping = function (element, settings) {
 
 
 	/******************* Initialization *******************/
+
+	youTyping.totalWeight = 0;
 
 	this.initialize = function () {
 		// ZeroTime calculation

@@ -57,7 +57,7 @@ var Screen = function (element, settings) {
 		screen.cover.fillColor.alpha = 0.7;
 
 		screen.debugTexts = [];
-		for (var i = 0; i < 6; i++) {
+		for (var i = 0; i < 7; i++) {
 			var index = screen.debugTexts.push(new paper.PointText([20, 20 * (i + 1)]));
 			screen.debugText = screen.debugTexts[index - 1];
 			screen.debugText.justification = 'left';
@@ -345,6 +345,7 @@ var Screen = function (element, settings) {
 		screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 		screen.debugTexts[5].content = 'Time: ' + youTyping.time.toFixed(2);
+		screen.debugTexts[6].content = 'Score: ' + Math.floor(youTyping.score);
 		screen.bufferText.content = youTyping.inputBuffer;
 		screen.currentLyric.content = youTyping.currentLyricIndex
 		                              ? youTyping.roll[youTyping.currentLyricIndex].text
