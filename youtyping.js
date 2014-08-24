@@ -1,4 +1,4 @@
-/* youtyping.js 08-22-2014 */
+/* youtyping.js 08-24-2014 */
 
 (function(exports){
 var YouTyping = function (element, settings) {
@@ -27,22 +27,26 @@ var YouTyping = function (element, settings) {
 		{
 			name: 'perfect',
 			from: -50,
-			to: 50
+			to: 50,
+			weight: 1.0
 		},
 		{
 			name: 'great',
 			from: -70,
-			to: 70
+			to: 70,
+			weight: 0.6
 		},
 		{
 			name: 'good',
 			from: -100,
-			to: 100
+			to: 100,
+			weight: 0.2
 		},
 		{
 			name: 'bad',
 			from: -Infinity,
-			to: 150
+			to: 150,
+			weight: 0.0
 		}
 		],
 		breakCombo: 'bad', // judgement name
@@ -252,20 +256,30 @@ var YouTyping = function (element, settings) {
 
 		var lastNote = null;
 
+		var virtualCombo = 0;
+
 		$(items).each(function () {
 			var tempItem = {
-				time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
+				// convert to millisecond
+				time: parseFloat($(this).attr('time')) * 1000,
 				type: $(this).attr('type')
 			};
 
 			if ($(this).has('text')) {
-				tempItem.text = tempItem.remainingText = $(this).children('text').text();
+				         tempItem.text =
+				tempItem.remainingText = $(this).children('text').text();
 			}
 
 			if (tempItem.type === 'note') {
 				tempItem.state = youTyping.noteState.WAITING;
 				tempItem.judgement = null;
 				lastNote = tempItem;
+
+				if (virtualCombo < 100) {
+					virtualCombo++;
+				}
+
+				youTyping.totalCombo += virtualCombo;
 			}
 
 			youTyping.roll.push(tempItem);
@@ -320,6 +334,88 @@ var YouTyping = function (element, settings) {
 		});
 
 		return loadTableDeferred.promise();
+	};
+
+	// evaluate weight of each notes and compute scores of each notes
+	var calculateWeight = function () {
+		var sumOfWeight = 0;
+
+		youTyping.roll.forEach(function (item) {
+			if (item.type === 'note') {
+				var romanized = romanizeString(item.text);
+
+				if (romanized === null) {
+					throw new Error('Note ' + item.text + ' cannot be romanized');
+				}
+
+				item.romaji = romanized;
+				item.weight = romanized.length;
+				sumOfWeight += item.weight;
+			}
+		});
+
+		youTyping.totalWeight = sumOfWeight;
+	};
+
+	// romanize given string in (maybe) minimum expression
+	// TODO: Consider effect of next note. Currently 'あっ' can only be
+	// romanized as 'altu'.
+	var romanizeString = function (string, next) {
+		var minimumStrokePerCharacter = Infinity;
+		var maximumCharacter = 0;
+		var minimumRule = null;
+
+		youTyping.table.forEach(function (rule) {
+			var strokePerCharacter = null;
+			if (rule.next) {
+				strokePerCharacter = (rule.before.length - 1) / rule.after.length;
+			} else {
+				strokePerCharacter = rule.before.length / rule.after.length;
+			}
+
+			if (
+				// rule matches given next string
+					// fmm...this can cause some problem. We'll soon invent
+					// more neat method to calculate romanized and please wait.
+				// (!next || rule.before[0] === next)
+				// and rule matches given string
+				startsWith(string, rule.after)
+				// and there are margins for satisfying 'next' rule
+				&& (!rule.next || string.length > rule.next.length)
+				// and also this rule is 'minimum'
+				&& (
+					minimumStrokePerCharacter > strokePerCharacter
+					|| (
+						minimumStrokePerCharacter === strokePerCharacter
+						&& maximumCharacter < rule.after.length
+					)
+				)
+			) {
+				minimumStrokePerCharacter = strokePerCharacter;
+				maximumCharacter = rule.after.length;
+				minimumRule = rule;
+			}
+		});
+
+		if (minimumRule === null) {
+			return null;
+		}
+
+		assert(string.length >= minimumRule.after.length);
+
+		var remainingString = string.slice(minimumRule.after.length);
+
+		if (remainingString.length === 0) {
+			return minimumRule.before;
+		} else {
+			var remainingRomaji = romanizeString(remainingString, minimumRule.next);
+
+			if (remainingRomaji === null) {
+				return null;
+			} else {
+				return minimumRule.before + remainingRomaji;
+			}
+		}
 	};
 
 	// return next valid note
@@ -496,8 +592,7 @@ var YouTyping = function (element, settings) {
 			youTyping.scorebook.neglect++;
 		} else if (note.state === youTyping.noteState.HITTING) {
 			note.state = youTyping.noteState.HITTINGFAILED;
-			note.judgement = 'failed';
-			youTyping.scorebook.failed++;
+			youTyping.scorebook.failed[note.judgement]++;
 		}
 
 		if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
@@ -521,6 +616,37 @@ var YouTyping = function (element, settings) {
 		}
 	};
 
+	var updateScore = function () {
+		var scoredWeight = 0;
+
+		youTyping.roll.forEach(function (item) {
+			if (item.type === 'note') {
+				if (item.judgement) {
+					var weight = null;
+
+					youTyping.settings.judges.forEach(function (judge) {
+						if (judge.name === item.judgement) {
+							weight = judge.weight;
+						}
+					});
+
+					if (weight !== null) {
+						if (item.state === youTyping.noteState.CLEARED) {
+							scoredWeight += item.weight * weight;
+						} else {
+							scoredWeight += item.weight * weight * 0.5;
+						}
+					}
+				}
+			}
+		});
+
+		youTyping.score = Math.floor(
+			70000 * scoredWeight / youTyping.totalWeight
+			+ 30000 * youTyping.scoredCombo / youTyping.totalCombo
+		) * 10;
+	};
+
 
 	/******************* Exposed Methods *******************/
 
@@ -542,7 +668,7 @@ var YouTyping = function (element, settings) {
 
 	// hit key
 	// TODO: make HitEvent interface
-	this.hit = function (key, time) {
+	this.hit = function (key, time, forceHit) {
 		if (!time) {
 			time = youTyping.now - youTyping.zeroTime;
 		}
@@ -602,7 +728,8 @@ var YouTyping = function (element, settings) {
 				return false;
 			} else { // if any rule matches
 				var newNoteInfo = {
-					noteIndex: noteIndex
+					noteIndex: noteIndex,
+					forcedHit: null
 				};
 
 				// take the rule of minimum length (for some comforts)
@@ -627,6 +754,11 @@ var YouTyping = function (element, settings) {
 				else if (newInputBuffer.length === minimumRule.before.length) {
 					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
 					newNoteInfo.inputBuffer = '';
+
+					if (minimumRule.next) {
+						// https://github.com/hakatashi/YouTyping/wiki/Forced-hit
+						newNoteInfo.forcedHit = minimumRule.next;
+					}
 				} else {
 					newNoteInfo.remainingText = note.remainingText;
 					newNoteInfo.inputBuffer = newInputBuffer;
@@ -650,7 +782,7 @@ var YouTyping = function (element, settings) {
 				youTyping.currentNoteIndex = null;
 
 				// record in scorebook
-				youTyping.scorebook[note.judgement]++;
+				youTyping.scorebook.cleared[note.judgement]++;
 			} else {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
@@ -666,6 +798,11 @@ var YouTyping = function (element, settings) {
 					}
 				}
 			});
+
+			// force hit
+			if (newNoteInfo.forcedHit) {
+				youTyping.hit(newNoteInfo.forcedHit, time, true);
+			}
 
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
@@ -697,6 +834,7 @@ var YouTyping = function (element, settings) {
 
 			if (newNoteInfo) { // if current note is hit-able
 				hitNote(newNoteInfo);
+				updateScore();
 				return;
 			}
 		}
@@ -712,11 +850,16 @@ var YouTyping = function (element, settings) {
 				var distance = item.time - time;
 
 				if (
+					(
+						forceHit || (
+							worstJudge.from <= distance
+							&& distance <= worstJudge.to
+						)
+					)
 					// Luckily `positive number` > null is always true :)
-					index > youTyping.currentNoteIndex &&
-					item.state === youTyping.noteState.WAITING &&
-					Math.abs(distance) < Math.abs(nearestDistance) &&
-					worstJudge.from <= distance && distance <= worstJudge.to
+					&& index > youTyping.currentNoteIndex
+					&& item.state === youTyping.noteState.WAITING
+					&& Math.abs(distance) < Math.abs(nearestDistance)
 				) {
 					var newNoteInfo = preHitNote(index);
 
@@ -744,6 +887,12 @@ var YouTyping = function (element, settings) {
 				return false;
 			});
 
+			// force hit
+			if (forceHit && hitJudge === null) {
+				// apply the most 'baaad' judge
+				hitJudge = youTyping.judges[youTyping.judges.length - 1].name;
+			}
+
 			if (hitJudge !== null) {
 				// if currently hitting other note now, it will be
 				// marked as HITTINGFAILED
@@ -755,14 +904,16 @@ var YouTyping = function (element, settings) {
 				// update current note judgement
 				nearestNote.judgement = hitJudge;
 
-				// hit note
-				hitNote(nearestNewNote);
 
 				// breaking combo
 				// TODO: when hit judge is poor than break combo
 				if (hitJudge === youTyping.settings.breakCombo) {
 					youTyping.combo = 0;
 				}
+
+				// hit note
+				// combo may be reset here
+				hitNote(nearestNewNote);
 
 				youTyping.combo++;
 
@@ -771,13 +922,23 @@ var YouTyping = function (element, settings) {
 					youTyping.maxCombo = youTyping.combo;
 				}
 
+				// score combo bonus
+				if (youTyping.combo > 100) {
+					youTyping.scoredCombo += 100;
+				} else {
+					youTyping.scoredCombo += youTyping.combo;
+				}
+
+				updateScore();
+
 				// trigger judgement effect
 				screen.onJudgement.call(screen, {
 					judgement: {
 						distance: distance,
 						judge: hitJudge,
 						combo: youTyping.combo
-					}
+					},
+					noteIndex: nearestNewNote
 				});
 			}
 		}
@@ -829,6 +990,9 @@ var YouTyping = function (element, settings) {
 
 	/******************* Initialization *******************/
 
+	youTyping.totalWeight = 0;
+	youTyping.totalCombo = 0;
+
 	this.initialize = function () {
 		// ZeroTime calculation
 		youTyping.zeroTime = 0;
@@ -864,16 +1028,19 @@ var YouTyping = function (element, settings) {
 		youTyping.combo = 0;
 		youTyping.maxCombo = 0;
 		youTyping.score = 0;
+		youTyping.scoredCombo = 0;
 
 		// replay and keypress manager
 		youTyping.replay = [];
 
 		// initialize scorebook
 		youTyping.scorebook = {};
-		youTyping.scorebook.failed = 0;
+		youTyping.scorebook.failed = {};
+		youTyping.scorebook.cleared = {};
 		youTyping.scorebook.neglect = 0;
 		youTyping.settings.judges.forEach(function (judge) {
-			youTyping.scorebook[judge.name] = 0;
+			youTyping.scorebook.failed[judge.name] = 0;
+			youTyping.scorebook.cleared[judge.name] = 0;
 		});
 
 		// sanitize Screen
@@ -906,7 +1073,10 @@ var YouTyping = function (element, settings) {
 		$.when(
 			loadDataXML(),
 			loadTable()
-		).done(screen.onResourceReady),
+		).done(
+			calculateWeight,
+			screen.onResourceReady
+		),
 		setupPlayer()
 	).done(screen.onGameReady)
 	.fail(function () {
@@ -966,6 +1136,17 @@ var generateID = function () {
 	}
 	return id;
 };
+
+// http://stackoverflow.com/questions/15313418/
+function assert(condition, message) {
+	if (!condition) {
+		message = message || 'Assertion failed';
+		if (typeof Error !== 'undefined') {
+			throw new Error(message);
+		}
+		throw message; // Fallback
+	}
+}
 
 
 exports.YouTyping = YouTyping;

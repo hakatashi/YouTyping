@@ -1,4 +1,4 @@
-/* youtyping-screen.js 08-22-2014 */
+/* youtyping-screen.js 08-24-2014 */
 
 (function(exports){
 var Screen = function (element, settings) {
@@ -26,6 +26,7 @@ var Screen = function (element, settings) {
 		currentLyricPosition: [0.5, 0.25], // ratio in screen
 		nextLyricPosition: [0.5, 0.3], // ratio in screen
 		kanaLyricPosition: [0.5, 0.8], // ratio in screen
+		scoreTextPosition: [0.9, 0.1], // ratio in screen
 		judgeColors: {
 			perfect: 'yellow',
 			great: '#2d1',
@@ -60,12 +61,20 @@ var Screen = function (element, settings) {
 		screen.cover.fillColor.alpha = 0.7;
 
 		screen.debugTexts = [];
-		for (var i = 0; i < 6; i++) {
+		for (var i = 0; i < 7; i++) {
 			var index = screen.debugTexts.push(new paper.PointText([20, 20 * (i + 1)]));
 			screen.debugText = screen.debugTexts[index - 1];
 			screen.debugText.justification = 'left';
 			screen.debugText.fillColor = 'white';
 		}
+
+		screen.scoreText = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(settings.scoreTextPosition),
+			content: '0',
+			fillColor: 'white',
+			justification: 'right',
+			fontSize: 36
+		});
 
 		screen.bufferText = new paper.PointText({
 			point: paper.view.bounds.bottomRight.multiply(settings.bufferTextPosition),
@@ -107,6 +116,8 @@ var Screen = function (element, settings) {
 			screen.debugTexts[2].content = 'Zerocall FPS: ' + youTyping.zeroCallFPS;
 			youTyping.zeroCallFPS = 0; // not good
 		}, 1000);
+
+		screen.scorePad = 0;
 
 		logTrace('Screen Initialized.');
 	};
@@ -355,6 +366,8 @@ var Screen = function (element, settings) {
 		screen.nextLyric.content = youTyping.nextLyricIndex
 		                           ? youTyping.roll[youTyping.nextLyricIndex].text
 		                           : '';
+		screen.scorePad += (youTyping.score - screen.scorePad) * 0.5;
+		screen.scoreText.content = Math.round(screen.scorePad);
 		// screen.kanaLyric.content = (kanaLyric = youTyping.getKanaLyric()) ? kanaLyric : '';
 
 		screen.judgeEffects.children.forEach(function (judgeEffect) {
@@ -465,13 +478,35 @@ var Screen = function (element, settings) {
 			fontFamily: 'sans-serif'
 		}));
 
-		['perfect', 'great', 'good', 'bad', 'failed', 'neglect'].forEach(function (judgement, index) {
+		[
+			'perfect',
+			'great',
+			'good',
+			'bad',
+			'failed',
+			'neglect'
+		].forEach(function (judgement, index) {
 			var color = new paper.Color(settings.judgeColors[judgement]);
 			color.brightness -= 0.3;
 			color.saturation += 0.2;
+
+			var content = 0;
+
+			if (judgement === 'neglect') {
+				content = youTyping.scorebook.neglect;
+			} else if (judgement === 'failed') {
+				for (var score in youTyping.scorebook.failed) {
+					if (youTyping.scorebook.failed.hasOwnProperty(score)) {
+						content += youTyping.scorebook.failed[score];
+					}
+				}
+			} else {
+				content = youTyping.scorebook.cleared[judgement];
+			}
+
 			screen.result.push(new paper.PointText({
 				point: screenSize.multiply([0.2, 0]).add([0, 40 * index + 180]),
-				content: judgement + ': ' + youTyping.scorebook[judgement],
+				content: judgement + ': ' + content,
 				fillColor: color,
 				justification: 'left',
 				fontSize: 36,
@@ -482,6 +517,15 @@ var Screen = function (element, settings) {
 		screen.result.push(new paper.PointText({
 			point: screenSize.multiply([0.2, 0]).add([0, 450]),
 			content: 'Max Combo: ' + youTyping.maxCombo,
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 36,
+			fontFamily: 'sans-serif'
+		}));
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 500]),
+			content: 'Score: ' + youTyping.score,
 			fillColor: 'black',
 			justification: 'left',
 			fontSize: 36,
@@ -619,6 +663,17 @@ var generateID = function () {
 	}
 	return id;
 };
+
+// http://stackoverflow.com/questions/15313418/
+function assert(condition, message) {
+	if (!condition) {
+		message = message || 'Assertion failed';
+		if (typeof Error !== 'undefined') {
+			throw new Error(message);
+		}
+		throw message; // Fallback
+	}
+}
 
 
 exports.Screen = Screen;
