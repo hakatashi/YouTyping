@@ -336,6 +336,8 @@ var YouTyping = function (element, settings) {
 				sumOfWeight += item.weight;
 			}
 		});
+
+		youTyping.totalWeight = sumOfWeight;
 	};
 
 	// romanize given string in (maybe) minimum expression
@@ -356,9 +358,11 @@ var YouTyping = function (element, settings) {
 
 			if (
 				// rule matches given next string
-				(!next || rule.before[0] === next)
+					// fmm...this can cause some problem. We'll soon invent
+					// more neat method to calculate romanized and please wait.
+				// (!next || rule.before[0] === next)
 				// and rule matches given string
-				&& startsWith(string, rule.after)
+				startsWith(string, rule.after)
 				// and there are margins for satisfying 'next' rule
 				&& (!rule.next || string.length > rule.next.length)
 				// and also this rule is 'minimum'
