@@ -319,6 +319,84 @@ var YouTyping = function (element, settings) {
 		return loadTableDeferred.promise();
 	};
 
+	// evaluate weight of each notes and compute scores of each notes
+	var calculateWeight = function () {
+		var sumOfWeight = 0;
+
+		youTyping.roll.forEach(function (item) {
+			if (item.type === 'note') {
+				var romanized = romanizeString(item.text);
+
+				if (romanized === null) {
+					throw new Error('Note ' + item.text + ' cannot be romanized');
+				}
+
+				item.romaji = romanized;
+				item.weight = romanized.length;
+				sumOfWeight += item.weight;
+			}
+		});
+	};
+
+	// romanize given string in (maybe) minimum expression
+	// TODO: Consider effect of next note. Currently 'あっ' can only be
+	// romanized as 'altu'.
+	var romanizeString = function (string, next) {
+		var minimumStrokePerCharacter = Infinity;
+		var maximumCharacter = 0;
+		var minimumRule = null;
+
+		youTyping.table.forEach(function (rule) {
+			var strokePerCharacter = null;
+			if (rule.next) {
+				strokePerCharacter = (rule.before.length - 1) / rule.after.length;
+			} else {
+				strokePerCharacter = rule.before.length / rule.after.length;
+			}
+
+			if (
+				// rule matches given next string
+				(!next || rule.before[0] === next)
+				// and rule matches given string
+				&& startsWith(string, rule.after)
+				// and there are margins for satisfying 'next' rule
+				&& (!rule.next || string.length > rule.next.length)
+				// and also this rule is 'minimum'
+				&& (
+					minimumStrokePerCharacter > strokePerCharacter
+					|| (
+						minimumStrokePerCharacter === strokePerCharacter
+						&& maximumCharacter < rule.after.length
+					)
+				)
+			) {
+				minimumStrokePerCharacter = strokePerCharacter;
+				maximumCharacter = rule.after.length;
+				minimumRule = rule;
+			}
+		});
+
+		if (minimumRule === null) {
+			return null;
+		}
+
+		assert(string.length >= minimumRule.after.length);
+
+		var remainingString = string.slice(minimumRule.after.length);
+
+		if (remainingString.length === 0) {
+			return minimumRule.before;
+		} else {
+			var remainingRomaji = romanizeString(remainingString, minimumRule.next);
+
+			if (remainingRomaji === null) {
+				return null;
+			} else {
+				return minimumRule.before + remainingRomaji;
+			}
+		}
+	};
+
 	// return next valid note
 	var findNextNote = function (noteIndex) {
 		var nextNote = null;
@@ -903,7 +981,10 @@ var YouTyping = function (element, settings) {
 		$.when(
 			loadDataXML(),
 			loadTable()
-		).done(screen.onResourceReady),
+		).done(
+			calculateWeight,
+			screen.onResourceReady
+		),
 		setupPlayer()
 	).done(screen.onGameReady)
 	.fail(function () {
