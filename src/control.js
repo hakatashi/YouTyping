@@ -603,7 +603,7 @@ var YouTyping = function (element, settings) {
 		}
 	};
 
-	var calculateScore = function () {
+	var updateScore = function () {
 		var scoredWeight = 0;
 
 		youTyping.roll.forEach(function (item) {
@@ -789,7 +789,7 @@ var YouTyping = function (element, settings) {
 			}
 
 			// recalculate score
-			calculateScore();
+			updateScore();
 
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
