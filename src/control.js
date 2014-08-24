@@ -253,20 +253,30 @@ var YouTyping = function (element, settings) {
 
 		var lastNote = null;
 
+		var virtualCombo = 0;
+
 		$(items).each(function () {
 			var tempItem = {
-				time: parseFloat($(this).attr('time')) * 1000, // convert to millisecond
+				// convert to millisecond
+				time: parseFloat($(this).attr('time')) * 1000,
 				type: $(this).attr('type')
 			};
 
 			if ($(this).has('text')) {
-				tempItem.text = tempItem.remainingText = $(this).children('text').text();
+				         tempItem.text =
+				tempItem.remainingText = $(this).children('text').text();
 			}
 
 			if (tempItem.type === 'note') {
 				tempItem.state = youTyping.noteState.WAITING;
 				tempItem.judgement = null;
 				lastNote = tempItem;
+
+				if (virtualCombo < 100) {
+					virtualCombo++;
+				}
+
+				youTyping.totalCombo += virtualCombo;
 			}
 
 			youTyping.roll.push(tempItem);
@@ -628,7 +638,10 @@ var YouTyping = function (element, settings) {
 			}
 		});
 
-		youTyping.score = 700000 * scoredWeight / youTyping.totalWeight;
+		youTyping.score = Math.floor(
+			70000 * scoredWeight / youTyping.totalWeight
+			+ 30000 * youTyping.scoredCombo / youTyping.totalCombo
+		) * 10;
 	};
 
 
@@ -788,9 +801,6 @@ var YouTyping = function (element, settings) {
 				youTyping.hit(newNoteInfo.forcedHit, time, true);
 			}
 
-			// recalculate score
-			updateScore();
-
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
 			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
@@ -821,6 +831,7 @@ var YouTyping = function (element, settings) {
 
 			if (newNoteInfo) { // if current note is hit-able
 				hitNote(newNoteInfo);
+				updateScore();
 				return;
 			}
 		}
@@ -890,8 +901,6 @@ var YouTyping = function (element, settings) {
 				// update current note judgement
 				nearestNote.judgement = hitJudge;
 
-				// hit note
-				hitNote(nearestNewNote);
 
 				// breaking combo
 				// TODO: when hit judge is poor than break combo
@@ -899,12 +908,25 @@ var YouTyping = function (element, settings) {
 					youTyping.combo = 0;
 				}
 
+				// hit note
+				// combo may be reset here
+				hitNote(nearestNewNote);
+
 				youTyping.combo++;
 
 				// update max combo
 				if (youTyping.combo > youTyping.maxCombo) {
 					youTyping.maxCombo = youTyping.combo;
 				}
+
+				// score combo bonus
+				if (youTyping.combo > 100) {
+					youTyping.scoredCombo += 100;
+				} else {
+					youTyping.scoredCombo += youTyping.combo;
+				}
+
+				updateScore();
 
 				// trigger judgement effect
 				screen.onJudgement.call(screen, {
@@ -966,6 +988,7 @@ var YouTyping = function (element, settings) {
 	/******************* Initialization *******************/
 
 	youTyping.totalWeight = 0;
+	youTyping.totalCombo = 0;
 
 	this.initialize = function () {
 		// ZeroTime calculation
@@ -1002,6 +1025,7 @@ var YouTyping = function (element, settings) {
 		youTyping.combo = 0;
 		youTyping.maxCombo = 0;
 		youTyping.score = 0;
+		youTyping.scoredCombo = 0;
 
 		// replay and keypress manager
 		youTyping.replay = [];

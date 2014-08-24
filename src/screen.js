@@ -23,6 +23,7 @@ var Screen = function (element, settings) {
 		currentLyricPosition: [0.5, 0.25], // ratio in screen
 		nextLyricPosition: [0.5, 0.3], // ratio in screen
 		kanaLyricPosition: [0.5, 0.8], // ratio in screen
+		scoreTextPosition: [0.9, 0.1], // ratio in screen
 		judgeColors: {
 			perfect: 'yellow',
 			great: '#2d1',
@@ -64,6 +65,14 @@ var Screen = function (element, settings) {
 			screen.debugText.fillColor = 'white';
 		}
 
+		screen.scoreText = new paper.PointText({
+			point: paper.view.bounds.bottomRight.multiply(settings.scoreTextPosition),
+			content: '0',
+			fillColor: 'white',
+			justification: 'right',
+			fontSize: 36
+		});
+
 		screen.bufferText = new paper.PointText({
 			point: paper.view.bounds.bottomRight.multiply(settings.bufferTextPosition),
 			content: '',
@@ -104,6 +113,8 @@ var Screen = function (element, settings) {
 			screen.debugTexts[2].content = 'Zerocall FPS: ' + youTyping.zeroCallFPS;
 			youTyping.zeroCallFPS = 0; // not good
 		}, 1000);
+
+		screen.scorePad = 0;
 
 		logTrace('Screen Initialized.');
 	};
@@ -345,7 +356,6 @@ var Screen = function (element, settings) {
 		screen.debugTexts[3].content = 'Active Objects: ' + paper.project.activeLayer.children.length;
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 		screen.debugTexts[5].content = 'Time: ' + youTyping.time.toFixed(2);
-		screen.debugTexts[6].content = 'Score: ' + Math.floor(youTyping.score);
 		screen.bufferText.content = youTyping.inputBuffer;
 		screen.currentLyric.content = youTyping.currentLyricIndex
 		                              ? youTyping.roll[youTyping.currentLyricIndex].text
@@ -353,6 +363,8 @@ var Screen = function (element, settings) {
 		screen.nextLyric.content = youTyping.nextLyricIndex
 		                           ? youTyping.roll[youTyping.nextLyricIndex].text
 		                           : '';
+		screen.scorePad += (youTyping.score - screen.scorePad) * 0.5;
+		screen.scoreText.content = Math.round(screen.scorePad);
 		// screen.kanaLyric.content = (kanaLyric = youTyping.getKanaLyric()) ? kanaLyric : '';
 
 		screen.judgeEffects.children.forEach(function (judgeEffect) {
@@ -502,6 +514,15 @@ var Screen = function (element, settings) {
 		screen.result.push(new paper.PointText({
 			point: screenSize.multiply([0.2, 0]).add([0, 450]),
 			content: 'Max Combo: ' + youTyping.maxCombo,
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 36,
+			fontFamily: 'sans-serif'
+		}));
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 500]),
+			content: 'Score: ' + youTyping.score,
 			fillColor: 'black',
 			justification: 'left',
 			fontSize: 36,
