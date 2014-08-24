@@ -653,7 +653,7 @@ var YouTyping = function (element, settings) {
 
 	// hit key
 	// TODO: make HitEvent interface
-	this.hit = function (key, time) {
+	this.hit = function (key, time, forceHit) {
 		if (!time) {
 			time = youTyping.now - youTyping.zeroTime;
 		}
@@ -713,7 +713,8 @@ var YouTyping = function (element, settings) {
 				return false;
 			} else { // if any rule matches
 				var newNoteInfo = {
-					noteIndex: noteIndex
+					noteIndex: noteIndex,
+					forcedHit: null
 				};
 
 				// take the rule of minimum length (for some comforts)
@@ -738,6 +739,11 @@ var YouTyping = function (element, settings) {
 				else if (newInputBuffer.length === minimumRule.before.length) {
 					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
 					newNoteInfo.inputBuffer = '';
+
+					if (minimumRule.next) {
+						// https://github.com/hakatashi/YouTyping/wiki/Forced-hit
+						newNoteInfo.forcedHit = minimumRule.next;
+					}
 				} else {
 					newNoteInfo.remainingText = note.remainingText;
 					newNoteInfo.inputBuffer = newInputBuffer;
@@ -777,6 +783,11 @@ var YouTyping = function (element, settings) {
 					}
 				}
 			});
+
+			// force hit
+			if (newNoteInfo.forcedHit) {
+				youTyping.hit(newNoteInfo.forcedHit, time, true);
+			}
 
 			// recalculate score
 			calculateScore();
@@ -826,11 +837,17 @@ var YouTyping = function (element, settings) {
 				var distance = item.time - time;
 
 				if (
-					worstJudge.from <= distance && distance <= worstJudge.to &&
+					(
+						forceHit
+						|| (
+							worstJudge.from <= distance
+							&& distance <= worstJudge.to
+						)
+					)
 					// Luckily `positive number` > null is always true :)
-					index > youTyping.currentNoteIndex &&
-					item.state === youTyping.noteState.WAITING &&
-					Math.abs(distance) < Math.abs(nearestDistance)
+					&& index > youTyping.currentNoteIndex
+					&& item.state === youTyping.noteState.WAITING
+					&& Math.abs(distance) < Math.abs(nearestDistance)
 				) {
 					var newNoteInfo = preHitNote(index);
 
@@ -857,6 +874,12 @@ var YouTyping = function (element, settings) {
 				}
 				return false;
 			});
+
+			// force hit
+			if (forceHit && hitJudge === null) {
+				// apply the most 'baaad' judge
+				hitJudge = youTyping.judges[youTyping.judges.length - 1].name;
+			}
 
 			if (hitJudge !== null) {
 				// if currently hitting other note now, it will be
