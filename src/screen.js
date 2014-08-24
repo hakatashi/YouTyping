@@ -410,6 +410,8 @@ var Screen = function (element, settings) {
 	var JudgeEffect = function (judgement) {
 		var judgeEffect = this;
 
+		this.bornTime = new Date();
+
 		this.item = new paper.Group();
 
 		this.judgeColor = settings.judgeColors[judgement.judge];
@@ -432,9 +434,12 @@ var Screen = function (element, settings) {
 			fontFamily: 'sans-serif'
 		}));
 
+		this.initialPosition = this.item.position;
+
 		this.onFrame = function (event) {
-			this.item.translate([0, -3]);
-			this.item.opacity -= 0.02;
+			this.item.position.y = this.initialPosition.y
+			                       - (new Date() - this.bornTime) * 0.2;
+			this.item.opacity = 1 - (new Date() - this.bornTime) * 0.001;
 
 			if (this.item.opacity < 0) {
 				this.item.remove();
