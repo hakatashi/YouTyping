@@ -31,13 +31,13 @@ var YouTyping = function (element, settings) {
 			name: 'great',
 			from: -70,
 			to: 70,
-			weight: 0.6
+			weight: 0.5
 		},
 		{
 			name: 'good',
 			from: -100,
 			to: 100,
-			weight: 0.2
+			weight: 0.25
 		},
 		{
 			name: 'bad',
