@@ -34,13 +34,13 @@ var YouTyping = function (element, settings) {
 			name: 'great',
 			from: -70,
 			to: 70,
-			weight: 0.6
+			weight: 0.5
 		},
 		{
 			name: 'good',
 			from: -100,
 			to: 100,
-			weight: 0.2
+			weight: 0.25
 		},
 		{
 			name: 'bad',
@@ -275,7 +275,7 @@ var YouTyping = function (element, settings) {
 				tempItem.judgement = null;
 				lastNote = tempItem;
 
-				if (virtualCombo < 100) {
+				if (virtualCombo < 50) {
 					virtualCombo++;
 				}
 
@@ -923,8 +923,8 @@ var YouTyping = function (element, settings) {
 				}
 
 				// score combo bonus
-				if (youTyping.combo > 100) {
-					youTyping.scoredCombo += 100;
+				if (youTyping.combo > 50) {
+					youTyping.scoredCombo += 50;
 				} else {
 					youTyping.scoredCombo += youTyping.combo;
 				}
