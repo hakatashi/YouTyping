@@ -272,7 +272,7 @@ var YouTyping = function (element, settings) {
 				tempItem.judgement = null;
 				lastNote = tempItem;
 
-				if (virtualCombo < 100) {
+				if (virtualCombo < 50) {
 					virtualCombo++;
 				}
 
@@ -920,8 +920,8 @@ var YouTyping = function (element, settings) {
 				}
 
 				// score combo bonus
-				if (youTyping.combo > 100) {
-					youTyping.scoredCombo += 100;
+				if (youTyping.combo > 50) {
+					youTyping.scoredCombo += 50;
 				} else {
 					youTyping.scoredCombo += youTyping.combo;
 				}
