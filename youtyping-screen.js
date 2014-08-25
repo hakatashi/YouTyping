@@ -1,4 +1,4 @@
-/* youtyping-screen.js 08-24-2014 */
+/* youtyping-screen.js 08-25-2014 */
 
 (function(exports){
 var Screen = function (element, settings) {
