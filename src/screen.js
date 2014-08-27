@@ -533,6 +533,15 @@ var Screen = function (element, settings) {
 			fontSize: 36,
 			fontFamily: 'sans-serif'
 		}));
+
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 550]),
+			content: 'HighScore: ' + youTyping.highScore,
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 36,
+			fontFamily: 'sans-serif'
+		}));
 	};
 
 	// Initialization

@@ -579,7 +579,9 @@ var YouTyping = function (element, settings) {
 					youTyping.currentLyricIndex = index;
 					youTyping.nextLyricIndex = findNextLyric(index);
 				}
-			} else if (note.type === youTyping.itemType.STOP && note.time < time) { // if order stop marks
+			}
+			// if order stop marks
+			else if (note.type === youTyping.itemType.STOP && note.time < time) {
 				// cancel current lyric
 				if (youTyping.currentLyricIndex < index) {
 					youTyping.currentLyricIndex = null;
@@ -622,6 +624,18 @@ var YouTyping = function (element, settings) {
 
 	var endGame = function () {
 		youTyping.isPlayingGame = false;
+
+		// Update high score
+		if (youTyping.highScore <= youTyping.score) {
+			youTyping.highScore = youTyping.score;
+			youTyping.highScoreReplay = youTyping.replay;
+		}
+
+		localStorage.YouTyping = JSON.stringify({
+			highScore: youTyping.highScore,
+			highScoreReplay: youTyping.highScoreReplay
+		});
+
 		screen.onGameEnd();
 	};
 
@@ -1059,6 +1073,15 @@ var YouTyping = function (element, settings) {
 			youTyping.scorebook.failed[judge.name] = 0;
 			youTyping.scorebook.cleared[judge.name] = 0;
 		});
+
+		// load data from local storage
+		var storagedData = {};
+		if (window.localStorage !== undefined
+		    && window.localStorage.YouTyping !== undefined) {
+			storagedData = JSON.parse(window.localStorage.YouTyping);
+		}
+		youTyping.highScore = storagedData.highScore || 0;
+		youTyping.highScoreReplay = storagedData.highScoreReplay || [];
 
 		// sanitize Screen
 		var callbacks = [
