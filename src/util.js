@@ -60,3 +60,15 @@ function assert(condition, message) {
 		throw message; // Fallback
 	}
 }
+
+String.prototype.mapsTo = function (table) {
+	for (var key in table) {
+		if (table.hasOwnProperty(key)) {
+			if (this.valueOf() === key) {
+				return table[key];
+			}
+		}
+	}
+
+	return null;
+};

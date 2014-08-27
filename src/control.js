@@ -12,6 +12,14 @@ var YouTyping = function (element, settings) {
 		FAILED: 4
 	};
 
+	this.itemType = {
+		LINE: 0,
+		LONGLINE: 1,
+		NOTE: 2,
+		LYRIC: 3,
+		STOP: 4
+	};
+
 	// default settings
 	this.settings = {
 		zeroEstimateSamples: 16, // integer
@@ -259,15 +267,27 @@ var YouTyping = function (element, settings) {
 			var tempItem = {
 				// convert to millisecond
 				time: parseFloat($(this).attr('time')) * 1000,
-				type: $(this).attr('type')
+				type: $(this).attr('type').mapsTo({
+					line: youTyping.itemType.LINE,
+					longline: youTyping.itemType.LONGLINE,
+					note: youTyping.itemType.NOTE,
+					lyric: youTyping.itemType.LYRIC,
+					stop: youTyping.itemType.STOP
+				})
 			};
+
+			if (tempItem.type === null) {
+				logTrace('ERROR: Unknown item type ' + $(this).attr('type'));
+				loadXMLDeferred.reject();
+				return;
+			}
 
 			if ($(this).has('text')) {
 				         tempItem.text =
 				tempItem.remainingText = $(this).children('text').text();
 			}
 
-			if (tempItem.type === 'note') {
+			if (tempItem.type === youTyping.itemType.NOTE) {
 				tempItem.state = youTyping.noteState.WAITING;
 				tempItem.judgement = null;
 				lastNote = tempItem;
@@ -338,7 +358,7 @@ var YouTyping = function (element, settings) {
 		var sumOfWeight = 0;
 
 		youTyping.roll.forEach(function (item) {
-			if (item.type === 'note') {
+			if (item.type === youTyping.itemType.NOTE) {
 				var romanized = romanizeString(item.text);
 
 				if (romanized === null) {
@@ -421,11 +441,11 @@ var YouTyping = function (element, settings) {
 
 		for (var i = noteIndex + 1; i < youTyping.roll.length; i++) {
 			var item = youTyping.roll[i];
-			if (item.type === 'stop') {
+			if (item.type === youTyping.itemType.STOP) {
 				nextNote = null;
 				break;
 			}
-			if (item.type === 'note') {
+			if (item.type === youTyping.itemType.NOTE) {
 				nextNote = i;
 				break;
 			}
@@ -440,7 +460,7 @@ var YouTyping = function (element, settings) {
 
 		for (var i = itemIndex + 1; i < youTyping.roll.length; i++) {
 			var item = youTyping.roll[i];
-			if (item.type === 'lyric') {
+			if (item.type === youTyping.itemType.LYRIC) {
 				nextLyric = i;
 				break;
 			}
@@ -534,7 +554,7 @@ var YouTyping = function (element, settings) {
 		var previousLiveNoteIndex = null;
 		youTyping.roll.forEach(function (note, index) {
 			// if it's note and passed
-			if (note.type === 'note'
+			if (note.type === youTyping.itemType.NOTE
 			    && note.time + youTyping.settings.failureSuspension < time) {
 				// and if the note is live
 				if (note.state === youTyping.noteState.WAITING
@@ -553,13 +573,13 @@ var YouTyping = function (element, settings) {
 					previousLiveNote = note;
 					previousLiveNoteIndex = index;
 				}
-			} else if (note.type === 'lyric' && note.time < time) {
+			} else if (note.type === youTyping.itemType.LYRIC && note.time < time) {
 				// update current lyric index
 				if (youTyping.currentLyricIndex < index) { // null < number is true.
 					youTyping.currentLyricIndex = index;
 					youTyping.nextLyricIndex = findNextLyric(index);
 				}
-			} else if (note.type === 'stop' && note.time < time) { // if order stop marks
+			} else if (note.type === youTyping.itemType.STOP && note.time < time) { // if order stop marks
 				// cancel current lyric
 				if (youTyping.currentLyricIndex < index) {
 					youTyping.currentLyricIndex = null;
@@ -617,7 +637,7 @@ var YouTyping = function (element, settings) {
 		var scoredWeight = 0;
 
 		youTyping.roll.forEach(function (item) {
-			if (item.type === 'note') {
+			if (item.type === youTyping.itemType.NOTE) {
 				if (item.judgement) {
 					var weight = null;
 
@@ -788,7 +808,7 @@ var YouTyping = function (element, settings) {
 
 			// mark all the previous note failed
 			youTyping.roll.forEach(function (item, index) {
-				if (item.type === 'note' && item.time < note.time) {
+				if (item.type === youTyping.itemType.NOTE && item.time < note.time) {
 					if (item.state === youTyping.noteState.WAITING
 					    || item.state === youTyping.noteState.HITTING) {
 						markFailed(item);
@@ -843,7 +863,7 @@ var YouTyping = function (element, settings) {
 		var nearestNewNote = null;
 		var nearestDistance = Infinity;
 		youTyping.roll.forEach(function (item, index) {
-			if (item.type === 'note') {
+			if (item.type === youTyping.itemType.NOTE) {
 				var distance = item.time - time;
 
 				if (
@@ -971,11 +991,11 @@ var YouTyping = function (element, settings) {
 		var kanaLyric = '';
 
 		for (var i = lyricIndex + 1; i < youTyping.roll.length; i++) {
-			if (youTyping.roll[i].type === 'note') {
+			if (youTyping.roll[i].type === youTyping.itemType.NOTE) {
 				kanaLyric += youTyping.roll[i].text;
 			} else if (
-				youTyping.roll[i].type === 'stop' ||
-				youTyping.roll[i].type === 'lyric'
+				youTyping.roll[i].type === youTyping.itemType.STOP ||
+				youTyping.roll[i].type === youTyping.itemType.LYRIC
 			) {
 				break;
 			}
