@@ -1,4 +1,4 @@
-/* youtyping-screen.js 08-25-2014 */
+/* youtyping-screen.js 08-28-2014 */
 
 (function(exports){
 var Screen = function (element, settings) {
@@ -238,7 +238,7 @@ var Screen = function (element, settings) {
 					items[index] = new paper.Group();
 
 					// long line which devides roll to measures
-					if (item.type === 'longline') {
+					if (item.type === youTyping.itemType.LONGLINE) {
 						items[index].longLine = items[index].addChild(new paper.Path.Line({
 							from: [
 								position,
@@ -253,7 +253,7 @@ var Screen = function (element, settings) {
 						}));
 					}
 					// small line
-					if (item.type === 'line') {
+					if (item.type === youTyping.itemType.LINE) {
 						items[index].smallLine = items[index].addChild(new paper.Path.Line({
 							from: [
 								position,
@@ -267,7 +267,7 @@ var Screen = function (element, settings) {
 							strokeWidth: 1
 						}));
 					}
-					if (item.type === 'note') {
+					if (item.type === youTyping.itemType.NOTE) {
 						// note
 						items[index].note = items[index].addChild(new paper.Path.Circle({
 							center: [position, settings.rollYpos * settings.height],
@@ -289,7 +289,7 @@ var Screen = function (element, settings) {
 						}));
 					}
 					// order stop mark
-					if (item.type === 'stop') {
+					if (item.type === youTyping.itemType.STOP) {
 						items[index].orderStop = items[index].addChild(new paper.Path({
 							segments: [
 								[
@@ -315,16 +315,16 @@ var Screen = function (element, settings) {
 			}
 
 			// update item style
-			if (item.type === 'longline') {
+			if (item.type === youTyping.itemType.LONGLINE) {
 				items[index].position.x = position;
 			}
-			if (item.type === 'line') {
+			if (item.type === youTyping.itemType.LINE) {
 				items[index].position.x = position;
 			}
-			if (item.type === 'stop') {
+			if (item.type === youTyping.itemType.STOP) {
 				items[index].position.x = position;
 			}
-			if (item.type === 'note') {
+			if (item.type === youTyping.itemType.NOTE) {
 				items[index].position.x = position;
 				if (item.state === youTyping.noteState.CLEARED) {
 					items[index].note.visible = false;
@@ -536,6 +536,17 @@ var Screen = function (element, settings) {
 			fontSize: 36,
 			fontFamily: 'sans-serif'
 		}));
+
+		/*
+		screen.result.push(new paper.PointText({
+			point: screenSize.multiply([0.2, 0]).add([0, 550]),
+			content: 'HighScore: ' + youTyping.highScore,
+			fillColor: 'black',
+			justification: 'left',
+			fontSize: 36,
+			fontFamily: 'sans-serif'
+		}));
+		*/
 	};
 
 	// Initialization
@@ -679,6 +690,18 @@ function assert(condition, message) {
 		throw message; // Fallback
 	}
 }
+
+String.prototype.mapsTo = function (table) {
+	for (var key in table) {
+		if (table.hasOwnProperty(key)) {
+			if (this.valueOf() === key) {
+				return table[key];
+			}
+		}
+	}
+
+	return null;
+};
 
 
 exports.Screen = Screen;
