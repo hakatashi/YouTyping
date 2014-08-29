@@ -534,7 +534,6 @@ var Screen = function (element, settings) {
 			fontFamily: 'sans-serif'
 		}));
 
-		/*
 		screen.result.push(new paper.PointText({
 			point: screenSize.multiply([0.2, 0]).add([0, 550]),
 			content: 'HighScore: ' + youTyping.highScore,
@@ -543,7 +542,6 @@ var Screen = function (element, settings) {
 			fontSize: 36,
 			fontFamily: 'sans-serif'
 		}));
-		*/
 	};
 
 	// Initialization

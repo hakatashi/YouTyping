@@ -102,6 +102,11 @@ var YouTyping = function (element, settings) {
 	this.table = [];
 
 
+	/******************* Internal variables *******************/
+
+	var gameEndFlag = false;
+
+
 	/******************* Internal functions *******************/
 
 	var setupPlayerDeferred;
@@ -601,6 +606,12 @@ var YouTyping = function (element, settings) {
 				previousLiveNoteIndex = null;
 			}
 		});
+
+		// end game
+		if (gameEndFlag) {
+			gameEndFlag = false;
+			endGame();
+		}
 	};
 
 	// mark as failed
@@ -616,14 +627,13 @@ var YouTyping = function (element, settings) {
 
 		if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
 		    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
-			endGame();
+			gameEndFlag = true;
 		}
 
 		youTyping.combo = 0;
 	};
 
 	var endGame = function () {
-		youTyping.isPlayingGame = false;
 
 		// Update high score
 		if (youTyping.highScore <= youTyping.score) {
@@ -838,7 +848,7 @@ var YouTyping = function (element, settings) {
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
 			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
-				endGame();
+				gameEndFlag = true;
 			}
 		};
 
@@ -1082,6 +1092,9 @@ var YouTyping = function (element, settings) {
 		}
 		youTyping.highScore = storagedData.highScore || 0;
 		youTyping.highScoreReplay = storagedData.highScoreReplay || [];
+
+		// internal
+		gameEndFlag = false;
 
 		// sanitize Screen
 		var callbacks = [
