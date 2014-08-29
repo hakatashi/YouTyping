@@ -87,13 +87,21 @@
 		choice.offset = choice.offset || 0;
 		choice.videoStop = choice.videoStop || 0;
 		choice.controlledCorrection = choice.controlledCorrection || 0;
-	})
+	});
+
+	var settings = $.deparam(location.search.slice(1));
+
+	settings.id = settings.id || choices[0].id;
+
+	// load data from local storage
+	var storagedData = {};
+	if (window.localStorage !== undefined
+		&& window.localStorage.YouTyping !== undefined) {
+		storagedData = JSON.parse(window.localStorage.YouTyping);
+	}
+	var storage = storagedData[settings.id] || {};
 
 	$(document).ready(function () {
-		var settings = $.deparam(location.search.slice(1));
-
-		settings.id = settings.id || choices[0].id;
-
 		// render choices
 		choices.forEach(function (choice) {
 			$('<a>', {
@@ -122,9 +130,22 @@
 		settings.videoStop = choice.videoStop;
 		settings.initial = settings.initial || choice.initial || false;
 		settings.tableFile = '../convert/romaji.xml';
+		settings.onGameEnd = onGameEnd;
+		settings.highScore = storage.highScore || 0;
 		youScreen = new Screen($('#youtyping'), settings);
 		youTyping = youScreen.youTyping;
 	});
+
+	var onGameEnd = function () {
+		// Update high score
+		if (youScreen.newRecord) {
+			storage.highScore = youTyping.score;
+			storage.highScoreReplay = youTyping.replay;
+			storagedData[settings.id] = storage;
+
+			localStorage.YouTyping = JSON.stringify(storagedData);
+		}
+	};
 	</script>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
