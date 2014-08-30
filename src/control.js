@@ -996,6 +996,8 @@ var YouTyping = function (element, settings) {
 		youTyping.initialize();
 		// and re-initialize roll
 		initializeRoll();
+		// and re-calculate weight
+		calculateWeight();
 		// also break the flag
 		youTyping.isPlayingGame = false;
 
