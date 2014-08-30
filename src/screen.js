@@ -32,7 +32,9 @@ var Screen = function (element, settings) {
 			failed: '#a34',
 			neglect: '#39a'
 		},
-		cursorHideTime: 1000 // millisecond
+		cursorHideTime: 1000, // millisecond
+		onGameEnd: function () {}, // function
+		highScore: 0 // number
 	};
 
 	// default YouTyping setting
@@ -115,6 +117,9 @@ var Screen = function (element, settings) {
 		}, 1000);
 
 		screen.scorePad = 0;
+
+		screen.highScore = screen.settings.highScore;
+		screen.newRecord = false;
 
 		logTrace('Screen Initialized.');
 	};
@@ -453,6 +458,11 @@ var Screen = function (element, settings) {
 		// unbind keys
 		paper.tool.onKeyDown = null;
 
+		if (screen.highScore < youTyping.score) {
+			screen.highScore = youTyping.score;
+			screen.newRecord = true;
+		}
+
 		screen.resultCover = new paper.Path.Rectangle(paper.view.bounds);
 		screen.resultCover.fillColor = '#ddd';
 		screen.resultCover.fillColor.alpha = 0;
@@ -464,6 +474,8 @@ var Screen = function (element, settings) {
 				showResult();
 			}
 		};
+
+		screen.settings.onGameEnd.call(screen);
 	};
 
 	var showResult = function () {
@@ -534,16 +546,14 @@ var Screen = function (element, settings) {
 			fontFamily: 'sans-serif'
 		}));
 
-		/*
 		screen.result.push(new paper.PointText({
 			point: screenSize.multiply([0.2, 0]).add([0, 550]),
-			content: 'HighScore: ' + youTyping.highScore,
+			content: 'HighScore: ' + screen.highScore,
 			fillColor: 'black',
 			justification: 'left',
 			fontSize: 36,
 			fontFamily: 'sans-serif'
 		}));
-		*/
 	};
 
 	// Initialization
@@ -559,6 +569,12 @@ var Screen = function (element, settings) {
 				this.settings[param] = settings[param];
 			} else if (typeof this.settings[param] === 'boolean') {
 				this.settings[param] = Boolean(settings[param]);
+			} else if (typeof this.settings[param] === 'function') {
+				this.settings[param] = settings[param];
+			} else if (typeof this.settings[param] === 'object') {
+				this.settings[param] = typeof settings[param] === 'object'
+				                       ? settings[param]
+				                       : JSON.parse(settings[param]);
 			}
 		}
 	}

@@ -102,6 +102,11 @@ var YouTyping = function (element, settings) {
 	this.table = [];
 
 
+	/******************* Internal variables *******************/
+
+	var gameEndFlag = false;
+
+
 	/******************* Internal functions *******************/
 
 	var setupPlayerDeferred;
@@ -601,6 +606,12 @@ var YouTyping = function (element, settings) {
 				previousLiveNoteIndex = null;
 			}
 		});
+
+		// end game
+		if (gameEndFlag) {
+			gameEndFlag = false;
+			endGame();
+		}
 	};
 
 	// mark as failed
@@ -616,26 +627,13 @@ var YouTyping = function (element, settings) {
 
 		if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
 		    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
-			endGame();
+			gameEndFlag = true;
 		}
 
 		youTyping.combo = 0;
 	};
 
 	var endGame = function () {
-		youTyping.isPlayingGame = false;
-
-		// Update high score
-		if (youTyping.highScore <= youTyping.score) {
-			youTyping.highScore = youTyping.score;
-			youTyping.highScoreReplay = youTyping.replay;
-		}
-
-		localStorage.YouTyping = JSON.stringify({
-			highScore: youTyping.highScore,
-			highScoreReplay: youTyping.highScoreReplay
-		});
-
 		screen.onGameEnd();
 	};
 
@@ -706,7 +704,7 @@ var YouTyping = function (element, settings) {
 
 		// check hit-ability of note by passed key.
 		// return false when un-hit-able, and info about new note when hit-able
-		var preHitNote = function (noteIndex, hitKey) {
+		var preHitNote = function (noteIndex, hitKey, remainingText) {
 			var note = youTyping.roll[noteIndex];
 			var newInputBuffer = '';
 
@@ -716,11 +714,9 @@ var YouTyping = function (element, settings) {
 				newInputBuffer = key;
 			}
 
-			if (!hitKey) {
-				hitKey = key;
-			}
+			hitKey = hitKey || key;
+			remainingText = remainingText || note.remainingText;
 
-			// TODO: Polyfill Array.prototype.filter (IE<9)
 			var matchingRules = youTyping.table.filter(function (rule) {
 				// currently YouTyping assumes no character in lyric cannnot be input as
 				// single character. (e.g. 'きゃ' is also inputtable as 'ki lya' in romaji mode)
@@ -730,16 +726,34 @@ var YouTyping = function (element, settings) {
 				if (!startsWith(rule.before, newInputBuffer)) {
 					return false;
 				}
-				if (!startsWith(note.remainingText, rule.after)) {
+				if (!startsWith(remainingText, rule.after)) {
 					return false;
 				}
 
-				// if rule has next character
-				if (rule.next) {
-					// check for hittability of next note by next character.
+				// if rule has next character and not yet satisfied
+				if (rule.next && newInputBuffer.length < rule.before.length) {
+					// check for hittability of next string by next character.
+
 					var nextNoteIndex;
-					if ((nextNoteIndex = findNextNote(noteIndex)) !== null) { // if next note exists
-						var nextNoteInfo = preHitNote(nextNoteIndex, rule.next);
+					var nextNoteInfo;
+
+					// if text remains
+					if (remainingText.length > rule.after.length) {
+						// try to hit current note
+						var remainingString = remainingText.slice(rule.after.length);
+						nextNoteInfo = preHitNote(noteIndex, rule.next, remainingString);
+
+						// if note is still hittable, return true.
+						if (nextNoteInfo) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+					// else if next note exists
+					else if ((nextNoteIndex = findNextNote(noteIndex)) !== null) {
+						// try to hit next note
+						nextNoteInfo = preHitNote(nextNoteIndex, rule.next);
 
 						// if next note is hittable, return true.
 						if (nextNoteInfo) {
@@ -783,7 +797,7 @@ var YouTyping = function (element, settings) {
 				// rule.after are taken from remaining text.
 				// this can be done by just comparing their length.
 				else if (newInputBuffer.length === minimumRule.before.length) {
-					newNoteInfo.remainingText = note.remainingText.substr(minimumRule.after.length);
+					newNoteInfo.remainingText = remainingText.substr(minimumRule.after.length);
 					newNoteInfo.inputBuffer = '';
 
 					if (minimumRule.next) {
@@ -791,7 +805,7 @@ var YouTyping = function (element, settings) {
 						newNoteInfo.forcedHit = minimumRule.next;
 					}
 				} else {
-					newNoteInfo.remainingText = note.remainingText;
+					newNoteInfo.remainingText = remainingText;
 					newNoteInfo.inputBuffer = newInputBuffer;
 				}
 
@@ -838,7 +852,7 @@ var YouTyping = function (element, settings) {
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
 			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
-				endGame();
+				gameEndFlag = true;
 			}
 		};
 
@@ -935,7 +949,6 @@ var YouTyping = function (element, settings) {
 				// update current note judgement
 				nearestNote.judgement = hitJudge;
 
-
 				// breaking combo
 				// TODO: when hit judge is poor than break combo
 				if (hitJudge === youTyping.settings.breakCombo) {
@@ -983,6 +996,8 @@ var YouTyping = function (element, settings) {
 		youTyping.initialize();
 		// and re-initialize roll
 		initializeRoll();
+		// and re-calculate weight
+		calculateWeight();
 		// also break the flag
 		youTyping.isPlayingGame = false;
 
@@ -1074,14 +1089,8 @@ var YouTyping = function (element, settings) {
 			youTyping.scorebook.cleared[judge.name] = 0;
 		});
 
-		// load data from local storage
-		var storagedData = {};
-		if (window.localStorage !== undefined
-		    && window.localStorage.YouTyping !== undefined) {
-			storagedData = JSON.parse(window.localStorage.YouTyping);
-		}
-		youTyping.highScore = storagedData.highScore || 0;
-		youTyping.highScoreReplay = storagedData.highScoreReplay || [];
+		// internal
+		gameEndFlag = false;
 
 		// sanitize Screen
 		var callbacks = [
