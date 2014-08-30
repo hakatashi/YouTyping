@@ -115,7 +115,7 @@ redirect_from: "/"
 			bgColor: '#f25648',
 			color: '#ffffff',
 			lowerThan: 'IE9',
-			languagePath: './outdatedbrowser/lang/' + navigator.language + '.html'
+			languagePath: './outdatedbrowser/lang/' + (navigator.language || navigator.userLanguage) + '.html'
 		});
 
 		// render choices
