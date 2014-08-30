@@ -933,7 +933,6 @@ var YouTyping = function (element, settings) {
 				// update current note judgement
 				nearestNote.judgement = hitJudge;
 
-
 				// breaking combo
 				// TODO: when hit judge is poor than break combo
 				if (hitJudge === youTyping.settings.breakCombo) {

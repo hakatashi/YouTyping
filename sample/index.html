@@ -2,9 +2,9 @@
 <html>
 <head>
 	<title>YouTyping test page</title>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.12/paper-full.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.12/paper-full.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	<script src="../youtyping.js"></script>
 	<script src="../youtyping-screen.js"></script>
 	<script src="jquery-deparam.js"></script>
@@ -102,6 +102,14 @@
 	var storage = storagedData[settings.id] || {};
 
 	$(document).ready(function () {
+		// outdated browser
+		outdatedBrowser({
+			bgColor: '#f25648',
+			color: '#ffffff',
+			lowerThan: 'IE9',
+			languagePath: './outdatedbrowser/lang/en.html'
+		});
+
 		// render choices
 		choices.forEach(function (choice) {
 			$('<a>', {
@@ -148,7 +156,8 @@
 	};
 	</script>
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="./outdatedbrowser/outdatedbrowser.css" media="screen" title="outdated browser" charset="utf-8">
 </head>
 <body>
 	<h1>YouTyping Test Page</h1>
@@ -160,5 +169,7 @@
 	<p>Setting can be overrided by URI query e.g. <a href="./?speed=1.0&amp;noteSize=30">./?speed=1.0&amp;noteSize=30</a></p>
 	<p>Powered by <a href="https://www.youtube.com/">YouTube</a></p>
 	<textarea id="debug"></textarea>
+	<div id="outdated"></div>
+	<script src="./outdatedbrowser/outdatedbrowser.js" charset="utf-8"></script>
 </body>
 </html>
