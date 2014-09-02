@@ -161,6 +161,10 @@ var Screen = function (element, settings) {
 			strokeWidth: 1,
 			strokeColor: 'white'
 		});
+
+		screen.nextLyric.content = youTyping.nextLyricIndex !== null
+		                           ? youTyping.roll[youTyping.nextLyricIndex].text
+		                           : '';
 	};
 
 	this.onGameReady = function () {
@@ -363,12 +367,6 @@ var Screen = function (element, settings) {
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 		screen.debugTexts[5].content = 'Time: ' + youTyping.time.toFixed(2);
 		screen.bufferText.content = youTyping.inputBuffer;
-		screen.currentLyric.content = youTyping.currentLyricIndex
-		                              ? youTyping.roll[youTyping.currentLyricIndex].text
-		                              : '';
-		screen.nextLyric.content = youTyping.nextLyricIndex
-		                           ? youTyping.roll[youTyping.nextLyricIndex].text
-		                           : '';
 		screen.scorePad += (youTyping.score - screen.scorePad) * 0.5;
 		screen.scoreText.content = Math.round(screen.scorePad);
 		// screen.kanaLyric.content = (kanaLyric = youTyping.getKanaLyric()) ? kanaLyric : '';
@@ -451,6 +449,15 @@ var Screen = function (element, settings) {
 				this.item.remove();
 			}
 		};
+	};
+
+	this.onLyricChange = function () {
+		screen.currentLyric.content = youTyping.currentLyricIndex !== null
+		                              ? youTyping.roll[youTyping.currentLyricIndex].text
+		                              : '';
+		screen.nextLyric.content = youTyping.nextLyricIndex !== null
+		                           ? youTyping.roll[youTyping.nextLyricIndex].text
+		                           : '';
 	};
 
 	this.onGameEnd = function () {
@@ -648,6 +655,7 @@ var Screen = function (element, settings) {
 	youTyping.addEventListener('playerstatechange', screen.onPlayerStateChange);
 	youTyping.addEventListener('judgement', screen.onJudgement);
 	youTyping.addEventListener('gameend', screen.onGameEnd);
+	youTyping.addEventListener('lyricchange', screen.onLyricChange);
 
 	this.initialize();
 };

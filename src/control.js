@@ -583,6 +583,8 @@ var YouTyping = function (element, settings) {
 				if (youTyping.currentLyricIndex < index) { // null < number is true.
 					youTyping.currentLyricIndex = index;
 					youTyping.nextLyricIndex = findNextLyric(index);
+
+					youTyping.dispatchEvent('lyricchange');
 				}
 			}
 			// if order stop marks
@@ -590,6 +592,7 @@ var YouTyping = function (element, settings) {
 				// cancel current lyric
 				if (youTyping.currentLyricIndex < index) {
 					youTyping.currentLyricIndex = null;
+					youTyping.dispatchEvent('lyricchange');
 				}
 				// and if previous live note exists
 				if (previousLiveNote) {
