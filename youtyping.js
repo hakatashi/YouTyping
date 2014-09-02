@@ -583,7 +583,8 @@ var YouTyping = function (element, settings) {
 				}
 			} else if (note.type === youTyping.itemType.LYRIC && note.time < time) {
 				// update current lyric index
-				if (youTyping.currentLyricIndex < index) { // null < number is true.
+				if (youTyping.nextLyricIndex !== null
+				    && youTyping.nextLyricIndex <= index) {
 					youTyping.currentLyricIndex = index;
 					youTyping.nextLyricIndex = findNextLyric(index);
 
@@ -593,7 +594,8 @@ var YouTyping = function (element, settings) {
 			// if order stop marks
 			else if (note.type === youTyping.itemType.STOP && note.time < time) {
 				// cancel current lyric
-				if (youTyping.currentLyricIndex < index) {
+				if (youTyping.currentLyricIndex !== null
+				    && youTyping.currentLyricIndex < index) {
 					youTyping.currentLyricIndex = null;
 					youTyping.dispatchEvent('lyricchange');
 				}
