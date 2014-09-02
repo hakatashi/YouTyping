@@ -169,7 +169,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	var onPlayerStateChange = function (event) {
-		screen.onPlayerStateChange.call(screen, event);
+		youTyping.dispatchEvent('playerstatechange', event);
 
 		switch (event.data) {
 		case YT.PlayerState.ENDED:
@@ -583,6 +583,8 @@ var YouTyping = function (element, settings) {
 				if (youTyping.currentLyricIndex < index) { // null < number is true.
 					youTyping.currentLyricIndex = index;
 					youTyping.nextLyricIndex = findNextLyric(index);
+
+					youTyping.dispatchEvent('lyricchange');
 				}
 			}
 			// if order stop marks
@@ -590,6 +592,7 @@ var YouTyping = function (element, settings) {
 				// cancel current lyric
 				if (youTyping.currentLyricIndex < index) {
 					youTyping.currentLyricIndex = null;
+					youTyping.dispatchEvent('lyricchange');
 				}
 				// and if previous live note exists
 				if (previousLiveNote) {
@@ -634,7 +637,7 @@ var YouTyping = function (element, settings) {
 	};
 
 	var endGame = function () {
-		screen.onGameEnd();
+		youTyping.dispatchEvent('gameend');
 	};
 
 	var getLastKeyHit = function () {
@@ -976,7 +979,7 @@ var YouTyping = function (element, settings) {
 				updateScore();
 
 				// trigger judgement effect
-				screen.onJudgement.call(screen, {
+				youTyping.dispatchEvent('judgement', {
 					judgement: {
 						distance: distance,
 						judge: hitJudge,
@@ -1033,11 +1036,58 @@ var YouTyping = function (element, settings) {
 		return kanaLyric;
 	};
 
+	// Event listener pseudo-implementation
+
+	// Available events:
+	// * resourceready
+	// * gameready
+	// * playerstatechange
+	// * miss
+	// * hit
+	// * judgement
+	// * noteclear
+	// * lyricchange
+	// * scorechange
+	// * videoend
+	// * gameend
+	// * error
+	this.addEventListener = function (type, listener) {
+		if (youTyping.events[type] === undefined) {
+			youTyping.events[type] = [];
+		}
+
+		youTyping.events[type].push(listener);
+	};
+
+	this.removeEventListener = function (type, listener) {
+		if (youTyping.events[type] === undefined) {
+			youTyping.events[type] = [];
+		}
+
+		for (var i = youTyping.events[type].length - 1; i >= 0; i--) {
+			if (youTyping.events[type][i] === listener) {
+				youTyping.events[type].splice(i, 1);
+			}
+		}
+	};
+
+	// wow so dispatching very pseudo
+	this.dispatchEvent = function (type, properties) {
+		if (youTyping.events[type] === undefined) {
+			youTyping.events[type] = [];
+		}
+
+		youTyping.events[type].forEach(function (listener) {
+			listener.call(screen, properties);
+		});
+	};
+
 
 	/******************* Initialization *******************/
 
 	youTyping.totalWeight = 0;
 	youTyping.totalCombo = 0;
+	youTyping.events = {};
 
 	this.initialize = function () {
 		// ZeroTime calculation
@@ -1091,27 +1141,6 @@ var YouTyping = function (element, settings) {
 
 		// internal
 		gameEndFlag = false;
-
-		// sanitize Screen
-		var callbacks = [
-		'onResourceReady',
-		'onGameReady',
-		'onPlayerStateChange',
-		'onMiss',
-		'onHit',
-		'onJudgement',
-		'onNoteClear',
-		'onLyricChange',
-		'onScoreChange',
-		'onVideoEnd',
-		'onGameEnd',
-		'onError'
-		];
-		callbacks.forEach(function (callback) {
-			if (typeof screen[callback] !== 'function') {
-				screen[callback] = function () {};
-			}
-		});
 	};
 
 	this.initialize();
@@ -1124,10 +1153,10 @@ var YouTyping = function (element, settings) {
 			loadTable()
 		).done(
 			calculateWeight,
-			screen.onResourceReady
+			youTyping.dispatchEvent.bind(undefined, 'resourceready')
 		),
 		setupPlayer()
-	).done(screen.onGameReady)
+	).done(youTyping.dispatchEvent.bind(undefined, 'gameready'))
 	.fail(function () {
 		logTrace('ERROR: Initialization Failed...');
 	});
