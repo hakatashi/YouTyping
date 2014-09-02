@@ -642,5 +642,12 @@ var Screen = function (element, settings) {
 	this.youTyping = new YouTyping(this.DOM.player, youTypingSettings);
 	var youTyping = this.youTyping; // just a shorthand
 
+	// apply event listeners
+	youTyping.addEventListener('resourceready', screen.onResourceReady);
+	youTyping.addEventListener('gameready', screen.onGameReady);
+	youTyping.addEventListener('playerstatechange', screen.onPlayerStateChange);
+	youTyping.addEventListener('judgement', screen.onJudgement);
+	youTyping.addEventListener('gameend', screen.onGameEnd);
+
 	this.initialize();
 };
