@@ -1,4 +1,4 @@
-/* youtyping-screen.js 08-30-2014 */
+/* youtyping-screen.js 09-02-2014 */
 
 (function(exports){
 var Screen = function (element, settings) {
@@ -37,7 +37,8 @@ var Screen = function (element, settings) {
 		},
 		cursorHideTime: 1000, // millisecond
 		onGameEnd: function () {}, // function
-		highScore: 0 // number
+		highScore: 0, // number
+		'3d': false // boolean
 	};
 
 	// default YouTyping setting
@@ -605,7 +606,8 @@ var Screen = function (element, settings) {
 			width: this.settings.width + 'px',
 			height: this.settings.height + 'px',
 			margin: '0 auto',
-			position: 'relative'
+			position: 'relative',
+			'-webkit-perspective': this.settings['3d'] ? '1000px' : '0px'
 		})[0],
 
 		player: $('<div/>', {
@@ -614,7 +616,10 @@ var Screen = function (element, settings) {
 			width: this.settings.width + 'px',
 			height: this.settings.height + 'px',
 			display: 'block',
-			'z-index': 0
+			'z-index': 0,
+			'-webkit-transform': this.settings['3d']
+			                     ? 'rotateY(-30deg) scale(0.8) translateX(-100px)'
+			                     : ''
 		})[0],
 
 		screen: $('<canvas/>', {
