@@ -87,21 +87,8 @@ var Screen = function (element, settings) {
 			fontSize: 24
 		});
 
-		screen.currentLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(settings.currentLyricPosition),
-			content: '',
-			fillColor: 'white',
-			justification: 'center',
-			fontSize: 36
-		});
-
-		screen.nextLyric = new paper.PointText({
-			point: paper.view.bounds.bottomRight.multiply(settings.nextLyricPosition),
-			content: '',
-			fillColor: 'white',
-			justification: 'center',
-			fontSize: 18
-		});
+		screen.currentLyric = new paper.Group();
+		screen.nextLyric = new paper.Group();
 
 		screen.kanaLyric = new paper.PointText({
 			point: paper.view.bounds.bottomRight.multiply(settings.kanaLyricPosition),
@@ -164,6 +151,10 @@ var Screen = function (element, settings) {
 			strokeWidth: 1,
 			strokeColor: 'white'
 		});
+
+		screen.nextLyric.content = youTyping.nextLyricIndex !== null
+		                           ? youTyping.roll[youTyping.nextLyricIndex].text
+		                           : '';
 	};
 
 	this.onGameReady = function () {
@@ -366,12 +357,6 @@ var Screen = function (element, settings) {
 		screen.debugTexts[4].content = 'Zero Time: ' + youTyping.zeroTime.toFixed(2);
 		screen.debugTexts[5].content = 'Time: ' + youTyping.time.toFixed(2);
 		screen.bufferText.content = youTyping.inputBuffer;
-		screen.currentLyric.content = youTyping.currentLyricIndex
-		                              ? youTyping.roll[youTyping.currentLyricIndex].text
-		                              : '';
-		screen.nextLyric.content = youTyping.nextLyricIndex
-		                           ? youTyping.roll[youTyping.nextLyricIndex].text
-		                           : '';
 		screen.scorePad += (youTyping.score - screen.scorePad) * 0.5;
 		screen.scoreText.content = Math.round(screen.scorePad);
 		// screen.kanaLyric.content = (kanaLyric = youTyping.getKanaLyric()) ? kanaLyric : '';
@@ -454,6 +439,60 @@ var Screen = function (element, settings) {
 				this.item.remove();
 			}
 		};
+	};
+
+	this.onLyricChange = function () {
+		screen.currentLyric.remove();
+		screen.currentLyric = new paper.Group();
+
+		var totalWidth;
+
+		if (youTyping.currentLyricIndex !== null) {
+			var currentLyrics = youTyping.roll[youTyping.currentLyricIndex].text.split('¥|');
+			// sum of length from the left side of beginning of text
+			totalWidth = 0;
+
+			currentLyrics.forEach(function (lyric, index) {
+				var currentLyric = screen.currentLyric.addChild(new paper.PointText({
+					point: paper.view.bounds.bottomRight.multiply(
+						settings.currentLyricPosition).add([totalWidth, 0]),
+					content: lyric,
+					fillColor: 'white',
+					justification: 'left',
+					opacity: index % 2 === 0 ? 1.0 : 0.5,
+					fontSize: 36
+				}));
+
+				totalWidth += currentLyric.bounds.width;
+			});
+
+			screen.currentLyric.translate([-totalWidth / 2, 0]);
+		}
+
+		screen.nextLyric.remove();
+		screen.nextLyric = new paper.Group();
+
+		if (youTyping.nextLyricIndex !== null) {
+			var nextLyrics = youTyping.roll[youTyping.nextLyricIndex].text.split('¥|');
+			// sum of length from the left side of beginning of text
+			totalWidth = 0;
+
+			nextLyrics.forEach(function (lyric, index) {
+				var nextLyric = screen.nextLyric.addChild(new paper.PointText({
+					point: paper.view.bounds.bottomRight.multiply(
+						settings.nextLyricPosition).add([totalWidth, 0]),
+					content: lyric,
+					fillColor: 'white',
+					justification: 'left',
+					opacity: index % 2 === 0 ? 1.0 : 0.5,
+					fontSize: 18
+				}));
+
+				totalWidth += nextLyric.bounds.width;
+			});
+
+			screen.nextLyric.translate([-totalWidth / 2, 0]);
+		}
 	};
 
 	this.onGameEnd = function () {
@@ -644,6 +683,14 @@ var Screen = function (element, settings) {
 
 	this.youTyping = new YouTyping(this.DOM.player, youTypingSettings);
 	var youTyping = this.youTyping; // just a shorthand
+
+	// apply event listeners
+	youTyping.addEventListener('resourceready', screen.onResourceReady);
+	youTyping.addEventListener('gameready', screen.onGameReady);
+	youTyping.addEventListener('playerstatechange', screen.onPlayerStateChange);
+	youTyping.addEventListener('judgement', screen.onJudgement);
+	youTyping.addEventListener('gameend', screen.onGameEnd);
+	youTyping.addEventListener('lyricchange', screen.onLyricChange);
 
 	this.initialize();
 };
