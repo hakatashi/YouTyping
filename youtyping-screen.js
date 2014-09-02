@@ -607,7 +607,7 @@ var Screen = function (element, settings) {
 			height: this.settings.height + 'px',
 			margin: '0 auto',
 			position: 'relative',
-			'-webkit-perspective': this.settings['3d'] ? '1000px' : '0px'
+			'perspective': this.settings['3d'] ? '1000px' : '0px'
 		})[0],
 
 		player: $('<div/>', {
@@ -617,9 +617,9 @@ var Screen = function (element, settings) {
 			height: this.settings.height + 'px',
 			display: 'block',
 			'z-index': 0,
-			'-webkit-transform': this.settings['3d']
-			                     ? 'rotateY(-30deg) scale(0.8) translateX(-100px)'
-			                     : ''
+			'transform': this.settings['3d']
+			             ? 'rotateY(-30deg) scale(0.8) translateX(-100px)'
+			             : ''
 		})[0],
 
 		screen: $('<canvas/>', {
