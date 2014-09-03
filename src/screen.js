@@ -35,7 +35,8 @@ var Screen = function (element, settings) {
 		cursorHideTime: 1000, // millisecond
 		onGameEnd: function () {}, // function
 		highScore: 0, // number
-		'3d': false // boolean
+		'3d': false, // boolean
+		romaji: false // boolean
 	};
 
 	// default YouTyping setting
@@ -281,6 +282,20 @@ var Screen = function (element, settings) {
 							fontSize: settings.lyricSize,
 							fontFamily: 'sans-serif'
 						}));
+						// romaji
+						if (screen.settings.romaji) {
+							items[index].romaji = items[index].addChild(new paper.PointText({
+								point: [
+									position,
+									settings.rollYpos * settings.height + settings.noteSize + 80
+								],
+								content: item.romaji,
+								fillColor: 'white',
+								justification: 'center',
+								fontSize: settings.lyricSize,
+								fontFamily: 'sans-serif'
+							}));
+						}
 					}
 					// order stop mark
 					if (item.type === youTyping.itemType.STOP) {
