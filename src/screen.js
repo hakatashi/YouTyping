@@ -456,7 +456,7 @@ var Screen = function (element, settings) {
 					content: lyric,
 					fillColor: 'white',
 					justification: 'left',
-					opacity: index % 2 === 0 ? 1.0 : 0.5,
+					opacity: index % 2 === 0 ? 1.0 : 0.3,
 					fontSize: 36
 				}));
 
@@ -481,7 +481,7 @@ var Screen = function (element, settings) {
 					content: lyric,
 					fillColor: 'white',
 					justification: 'left',
-					opacity: index % 2 === 0 ? 1.0 : 0.5,
+					opacity: index % 2 === 0 ? 1.0 : 0.3,
 					fontSize: 18
 				}));
 
