@@ -458,9 +458,9 @@ var YouTyping = function (element, settings) {
 						} else {
 							// if note is satisfied
 							if (remainingString === note.text) {
-								note.romaji = rule.before.slice(rule.next.length);
+								note.romaji = rule.before.slice(0, rule.next ? -1 : undefined);
 							} else {
-								leftString = rule.before.slice(rule.next.length);
+								leftString = rule.before.slice(0, rule.next ? -1 : undefined);
 							}
 							return true;
 						}
@@ -476,9 +476,9 @@ var YouTyping = function (element, settings) {
 						if (result) {
 							// if note is satisfied
 							if (remainingString === note.text) {
-								note.romaji = rule.before.slice(rule.next.length);
+								note.romaji = rule.before.slice(0, rule.next ? -1 : undefined);
 							} else {
-								leftString = rule.before.slice(rule.next.length);
+								leftString = rule.before.slice(0, rule.next ? -1 : undefined);
 							}
 							return true;
 						} else {
@@ -499,11 +499,11 @@ var YouTyping = function (element, settings) {
 					}
 					// if note is satisfied
 					else if (remainingString === note.text) {
-						note.romaji = rule.before.slice(rule.next.length) + result;
+						note.romaji = rule.before.slice(0, rule.next ? -1 : undefined) + result;
 					}
 					// if note isn't satisfied
 					else {
-						leftString = rule.before.slice(rule.next.length) + result;
+						leftString = rule.before.slice(0, rule.next ? -1 : undefined) + result;
 					}
 
 					return true;
