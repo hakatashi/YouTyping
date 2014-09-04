@@ -278,7 +278,9 @@ var YouTyping = function (element, settings) {
 					note: youTyping.itemType.NOTE,
 					lyric: youTyping.itemType.LYRIC,
 					stop: youTyping.itemType.STOP
-				})
+				}),
+				romaji: '',
+				remainingRomaji: ''
 			};
 
 			if (tempItem.type === null) {
@@ -384,9 +386,10 @@ var YouTyping = function (element, settings) {
 
 	// evaluate weight of each notes and compute scores of each notes
 	var calculateWeight = function () {
-		// romanize
 		var firstNote = true;
+		var totalWeight = 0;
 		youTyping.roll.forEach(function (item, index) {
+			// romanize
 			if (item.type === youTyping.itemType.LYRIC) {
 				firstNote = true;
 			} else if (item.type === youTyping.itemType.NOTE && firstNote) {
@@ -398,14 +401,14 @@ var YouTyping = function (element, settings) {
 
 				firstNote = false;
 			}
-		});
 
-		// sum the weights
-		var totalWeight = 0;
-		youTyping.roll.forEach(function (item) {
 			if (item.type === youTyping.itemType.NOTE) {
+				// calculate and sum weights
 				item.weight = item.romaji.length;
 				totalWeight += item.weight;
+
+				// duplicate romaji
+				item.remainingRomaji = item.romaji;
 			}
 		});
 

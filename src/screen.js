@@ -289,7 +289,7 @@ var Screen = function (element, settings) {
 									position,
 									settings.rollYpos * settings.height + settings.noteSize + 80
 								],
-								content: item.romaji,
+								content: item.remainingRomaji,
 								fillColor: 'white',
 								justification: 'center',
 								fontSize: settings.lyricSize,
