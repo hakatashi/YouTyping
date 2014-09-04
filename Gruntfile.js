@@ -114,6 +114,12 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-connect');
 
-	grunt.registerTask('default', ['concat', 'jshint', 'uglify']);
+	grunt.registerTask('default', [
+		'jshint:src',
+		'concat',
+		'jshint:youtyping',
+		'jshint:screen',
+		'uglify'
+	]);
 	grunt.registerTask('debug', ['concat', 'jshint', 'uglify', 'connect']);
 };

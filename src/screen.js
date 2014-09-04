@@ -35,7 +35,8 @@ var Screen = function (element, settings) {
 		cursorHideTime: 1000, // millisecond
 		onGameEnd: function () {}, // function
 		highScore: 0, // number
-		'3d': false // boolean
+		'3d': false, // boolean
+		romaji: false // boolean
 	};
 
 	// default YouTyping setting
@@ -281,6 +282,20 @@ var Screen = function (element, settings) {
 							fontSize: settings.lyricSize,
 							fontFamily: 'sans-serif'
 						}));
+						// romaji
+						if (screen.settings.romaji) {
+							items[index].romaji = items[index].addChild(new paper.PointText({
+								point: [
+									position,
+									settings.rollYpos * settings.height + settings.noteSize + 80
+								],
+								content: item.remainingRomaji,
+								fillColor: 'white',
+								justification: 'center',
+								fontSize: settings.lyricSize,
+								fontFamily: 'sans-serif'
+							}));
+						}
 					}
 					// order stop mark
 					if (item.type === youTyping.itemType.STOP) {
@@ -321,8 +336,7 @@ var Screen = function (element, settings) {
 			if (item.type === youTyping.itemType.NOTE) {
 				items[index].position.x = position;
 				if (item.state === youTyping.noteState.CLEARED) {
-					items[index].note.visible = false;
-					items[index].lyric.visible = false;
+					items[index].visible = false;
 				} else {
 					// note
 					items[index].note.style = {
@@ -337,6 +351,10 @@ var Screen = function (element, settings) {
 					) ? 1 : 0.5;
 					// lyric
 					items[index].lyric.content = item.remainingText;
+					// romaji
+					if (screen.settings.romaji) {
+						items[index].romaji.content = item.remainingRomaji;
+					}
 				}
 			}
 		});
@@ -456,7 +474,7 @@ var Screen = function (element, settings) {
 					content: lyric,
 					fillColor: 'white',
 					justification: 'left',
-					opacity: index % 2 === 0 ? 1.0 : 0.5,
+					opacity: index % 2 === 0 ? 1.0 : 0.3,
 					fontSize: 36
 				}));
 
@@ -481,7 +499,7 @@ var Screen = function (element, settings) {
 					content: lyric,
 					fillColor: 'white',
 					justification: 'left',
-					opacity: index % 2 === 0 ? 1.0 : 0.5,
+					opacity: index % 2 === 0 ? 1.0 : 0.3,
 					fontSize: 18
 				}));
 
