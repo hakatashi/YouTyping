@@ -1,4 +1,4 @@
-/* youtyping.js 09-02-2014 */
+/* youtyping.js 09-04-2014 */
 
 (function(exports){
 var YouTyping = function (element, settings) {
@@ -281,7 +281,10 @@ var YouTyping = function (element, settings) {
 					note: youTyping.itemType.NOTE,
 					lyric: youTyping.itemType.LYRIC,
 					stop: youTyping.itemType.STOP
-				})
+				}),
+				romaji: '',
+				remainingRomaji: '',
+				receivedRomaji: ''
 			};
 
 			if (tempItem.type === null) {
@@ -333,13 +336,37 @@ var YouTyping = function (element, settings) {
 						youTyping.table.push({
 							before: $(this).attr('before'),
 							after: $(this).attr('after'),
-							next: $(this).attr('next')
+							next: $(this).attr('next') || '',
+							priority: $(this).attr('priority') || 0,
+							strokePerCharacter:
+								$(this).attr('next') ?
+								($(this).attr('before').length - 1) / $(this).attr('after').length :
+								$(this).attr('before').length / $(this).attr('after').length
 						});
 
 						if ($(this).attr('next')) {
 							if ($(this).attr('next').length !== 1) {
 								throw 'Rule ' + index + ': next string must be one character';
 							}
+						}
+					});
+
+					// romanization prefers rules by following priorities order:
+					// 1. priority is high
+					// 2. 'after' string is long
+					// 3. strokes per character is short
+
+					// table clone and sort
+					youTyping.romanizationTable = $.extend(true, [], youTyping.table);
+					youTyping.romanizationTable.sort(function (a, b) {
+						if (a.priority !== b.priority) {
+							return b.priority - a.priority;
+						} else if (a.after.length !== b.after.length) {
+							return b.after.length - a.after.length;
+						} else if (a.strokePerCharacter !== b.strokePerCharacter) {
+							return a.strokePerCharacter - b.strokePerCharacter;
+						} else {
+							return 0;
 						}
 					});
 
@@ -363,82 +390,146 @@ var YouTyping = function (element, settings) {
 
 	// evaluate weight of each notes and compute scores of each notes
 	var calculateWeight = function () {
-		var sumOfWeight = 0;
+		var firstNote = true;
+		var totalWeight = 0;
+		youTyping.roll.forEach(function (item, index) {
+			// romanize
+			if (item.type === youTyping.itemType.LYRIC) {
+				firstNote = true;
+			} else if (item.type === youTyping.itemType.NOTE && firstNote) {
+				var result = romanizeNotes(index, item.text, '');
 
-		youTyping.roll.forEach(function (item) {
-			if (item.type === youTyping.itemType.NOTE) {
-				var romanized = romanizeString(item.text);
-
-				if (romanized === null) {
+				if (result === false) {
 					throw new Error('Note ' + item.text + ' cannot be romanized');
 				}
 
-				item.romaji = romanized;
-				item.weight = romanized.length;
-				sumOfWeight += item.weight;
+				firstNote = false;
+			}
+
+			if (item.type === youTyping.itemType.NOTE) {
+				// calculate and sum weights
+				item.weight = item.romaji.length;
+				totalWeight += item.weight;
+
+				// duplicate romaji
+				item.remainingRomaji = item.romaji;
 			}
 		});
 
-		youTyping.totalWeight = sumOfWeight;
+		youTyping.totalWeight = totalWeight;
 	};
 
-	// romanize given string in (maybe) minimum expression
-	// TODO: Consider effect of next note. Currently 'あっ' can only be
-	// romanized as 'altu'.
-	var romanizeString = function (string, next) {
-		var minimumStrokePerCharacter = Infinity;
-		var maximumCharacter = 0;
-		var minimumRule = null;
+	// romanize notes from specified index to lyric end
+	// @param prefix: limit romanization to start with specified characters
+	// if romanization succeeded and note.text is fully satisfied, this returns true.
+	// if romanization failed, this returns false.
+	// if romanization succeeded but text remains, this returns currently converted
+	// romaji at all.
+	var romanizeNotes = function (index, remainingString, prefix) {
+		var note = youTyping.roll[index];
 
-		youTyping.table.forEach(function (rule) {
-			var strokePerCharacter = null;
-			if (rule.next) {
-				strokePerCharacter = (rule.before.length - 1) / rule.after.length;
-			} else {
-				strokePerCharacter = rule.before.length / rule.after.length;
-			}
+		assert(note.type === youTyping.itemType.NOTE);
 
+		// inspection
+		var leftString = '';
+		var result;
+		var found = youTyping.romanizationTable.some(function (rule) {
 			if (
-				// rule matches given next string
-					// fmm...this can cause some problem. We'll soon invent
-					// more neat method to calculate romanized and please wait.
-				// (!next || rule.before[0] === next)
-				// and rule matches given string
-				startsWith(string, rule.after)
-				// and there are margins for satisfying 'next' rule
-				&& (!rule.next || string.length > rule.next.length)
-				// and also this rule is 'minimum'
-				&& (
-					minimumStrokePerCharacter > strokePerCharacter
-					|| (
-						minimumStrokePerCharacter === strokePerCharacter
-						&& maximumCharacter < rule.after.length
-					)
+				startsWith(remainingString, rule.after) && (
+					!prefix
+					|| startsWith(rule.before, prefix)
+					|| startsWith(prefix, rule.before)
 				)
 			) {
-				minimumStrokePerCharacter = strokePerCharacter;
-				maximumCharacter = rule.after.length;
-				minimumRule = rule;
+				var followingString = remainingString.slice(rule.after.length);
+
+				var remainingPrefix;
+				if (!prefix) {
+					remainingPrefix = rule.before;
+				} else if (rule.before.length >= prefix.length) {
+					remainingPrefix = rule.before;
+				} else {
+					remainingPrefix = prefix;
+				}
+				remainingPrefix = remainingPrefix.slice(rule.before.length - rule.next.length);
+
+				// if text doesn't remains
+				if (followingString === '') {
+					var nextNoteIndex = findNextNote(index);
+
+					// if next note doesn't exist
+					if (nextNoteIndex === null) {
+						// if prefix remains, it can never be satisfied.
+						if (remainingPrefix) {
+							return false;
+						} else {
+							// if note is satisfied
+							if (remainingString === note.text) {
+								note.romaji = rule.before.slice(0, rule.next ? -1 : undefined);
+								note.remainingRomaji = note.romaji;
+							} else {
+								leftString = rule.before.slice(0, rule.next ? -1 : undefined);
+							}
+							return true;
+						}
+					}
+					// if next note exists
+					else {
+						var nextNote = youTyping.roll[nextNoteIndex];
+						result = romanizeNotes(nextNoteIndex, nextNote.text, remainingPrefix);
+
+						// note must be satisfied or failed
+						assert(typeof result === 'boolean');
+
+						if (result) {
+							// if note is satisfied
+							if (remainingString === note.text) {
+								note.romaji = rule.before.slice(0, rule.next ? -1 : undefined);
+								note.remainingRomaji = note.romaji;
+							} else {
+								leftString = rule.before.slice(0, rule.next ? -1 : undefined);
+							}
+							return true;
+						} else {
+							return false;
+						}
+					}
+				}
+				// if text remains
+				else {
+					result = romanizeNotes(index, followingString, remainingPrefix);
+
+					// result mustn't be satisfied
+					assert(result !== true);
+
+					// if romanization failed
+					if (result === false) {
+						return false;
+					}
+					// if note is satisfied
+					else if (remainingString === note.text) {
+						note.romaji = rule.before.slice(0, rule.next ? -1 : undefined) + result;
+						note.remainingRomaji = note.romaji;
+					}
+					// if note isn't satisfied
+					else {
+						leftString = rule.before.slice(0, rule.next ? -1 : undefined) + result;
+					}
+
+					return true;
+				}
+			} else {
+				return false;
 			}
 		});
 
-		if (minimumRule === null) {
-			return null;
-		}
-
-		assert(string.length >= minimumRule.after.length);
-
-		var remainingString = string.slice(minimumRule.after.length);
-
-		if (remainingString.length === 0) {
-			return minimumRule.before;
+		if (!found) {
+			return false;
 		} else {
-			var remainingRomaji = romanizeString(remainingString, minimumRule.next);
-
-			if (remainingRomaji === null) {
-				return null;
+			if (leftString) {
+				return leftString;
 			} else {
-				return minimumRule.before + remainingRomaji;
+				return true;
 			}
 		}
 	};
@@ -842,6 +933,15 @@ var YouTyping = function (element, settings) {
 				youTyping.inputBuffer = newNoteInfo.inputBuffer;
 			}
 
+			// record romaji and regenerate romanizations
+			note.receivedRomaji += key;
+			if (note.remainingRomaji.slice(0, 1) !== key) {
+				romanizeNotes(newNoteInfo.noteIndex, note.text, note.receivedRomaji);
+				note.remainingRomaji = note.romaji.slice(note.receivedRomaji.length);
+			} else {
+				note.remainingRomaji = note.remainingRomaji.slice(1);
+			}
+
 			// mark all the previous note failed
 			youTyping.roll.forEach(function (item, index) {
 				if (item.type === youTyping.itemType.NOTE && item.time < note.time) {
@@ -1044,18 +1144,18 @@ var YouTyping = function (element, settings) {
 	// Event listener pseudo-implementation
 
 	// Available events:
-	// * resourceready
-	// * gameready
-	// * playerstatechange
-	// * miss
-	// * hit
-	// * judgement
-	// * noteclear
-	// * lyricchange
-	// * scorechange
-	// * videoend
-	// * gameend
-	// * error
+	// [x] resourceready
+	// [x] gameready
+	// [x] playerstatechange
+	// [ ] miss
+	// [ ] hit
+	// [x] judgement
+	// [ ] noteclear
+	// [x] lyricchange
+	// [ ] scorechange
+	// [ ] videoend
+	// [x] gameend
+	// [ ] error
 	this.addEventListener = function (type, listener) {
 		if (youTyping.events[type] === undefined) {
 			youTyping.events[type] = [];
