@@ -349,7 +349,7 @@ var YouTyping = function (element, settings) {
 					// 1. priority is high
 					// 2. 'after' string is long
 					// 3. strokes per character is short
-					
+
 					// table clone and sort
 					youTyping.romanizationTable = $.extend(true, [], youTyping.table);
 					youTyping.romanizationTable.sort(function (a, b) {
@@ -491,7 +491,7 @@ var YouTyping = function (element, settings) {
 					result = romanizeNotes(index, followingString, remainingPrefix);
 
 					// result mustn't be satisfied
-					assert(result !== true); 
+					assert(result !== true);
 
 					// if romanization failed
 					if (result === false) {
@@ -1125,18 +1125,18 @@ var YouTyping = function (element, settings) {
 	// Event listener pseudo-implementation
 
 	// Available events:
-	// * resourceready
-	// * gameready
-	// * playerstatechange
-	// * miss
-	// * hit
-	// * judgement
-	// * noteclear
-	// * lyricchange
-	// * scorechange
-	// * videoend
-	// * gameend
-	// * error
+	// [x] resourceready
+	// [x] gameready
+	// [x] playerstatechange
+	// [ ] miss
+	// [ ] hit
+	// [x] judgement
+	// [ ] noteclear
+	// [x] lyricchange
+	// [ ] scorechange
+	// [ ] videoend
+	// [x] gameend
+	// [ ] error
 	this.addEventListener = function (type, listener) {
 		if (youTyping.events[type] === undefined) {
 			youTyping.events[type] = [];
