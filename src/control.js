@@ -280,7 +280,8 @@ var YouTyping = function (element, settings) {
 					stop: youTyping.itemType.STOP
 				}),
 				romaji: '',
-				remainingRomaji: ''
+				remainingRomaji: '',
+				receivedRomaji: ''
 			};
 
 			if (tempItem.type === null) {
@@ -462,6 +463,7 @@ var YouTyping = function (element, settings) {
 							// if note is satisfied
 							if (remainingString === note.text) {
 								note.romaji = rule.before.slice(0, rule.next ? -1 : undefined);
+								note.remainingRomaji = note.romaji;
 							} else {
 								leftString = rule.before.slice(0, rule.next ? -1 : undefined);
 							}
@@ -480,6 +482,7 @@ var YouTyping = function (element, settings) {
 							// if note is satisfied
 							if (remainingString === note.text) {
 								note.romaji = rule.before.slice(0, rule.next ? -1 : undefined);
+								note.remainingRomaji = note.romaji;
 							} else {
 								leftString = rule.before.slice(0, rule.next ? -1 : undefined);
 							}
@@ -503,6 +506,7 @@ var YouTyping = function (element, settings) {
 					// if note is satisfied
 					else if (remainingString === note.text) {
 						note.romaji = rule.before.slice(0, rule.next ? -1 : undefined) + result;
+						note.remainingRomaji = note.romaji;
 					}
 					// if note isn't satisfied
 					else {
@@ -924,6 +928,15 @@ var YouTyping = function (element, settings) {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
 				youTyping.inputBuffer = newNoteInfo.inputBuffer;
+			}
+
+			// record romaji and regenerate romanizations
+			note.receivedRomaji += key;
+			if (note.remainingRomaji.slice(0, 1) !== key) {
+				romanizeNotes(newNoteInfo.noteIndex, note.text, note.receivedRomaji);
+				note.remainingRomaji = note.romaji.slice(note.receivedRomaji.length);
+			} else {
+				note.remainingRomaji = note.remainingRomaji.slice(1);
 			}
 
 			// mark all the previous note failed

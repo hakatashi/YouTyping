@@ -336,8 +336,7 @@ var Screen = function (element, settings) {
 			if (item.type === youTyping.itemType.NOTE) {
 				items[index].position.x = position;
 				if (item.state === youTyping.noteState.CLEARED) {
-					items[index].note.visible = false;
-					items[index].lyric.visible = false;
+					items[index].visible = false;
 				} else {
 					// note
 					items[index].note.style = {
@@ -352,6 +351,10 @@ var Screen = function (element, settings) {
 					) ? 1 : 0.5;
 					// lyric
 					items[index].lyric.content = item.remainingText;
+					// romaji
+					if (screen.settings.romaji) {
+						items[index].romaji.content = item.remainingRomaji;
+					}
 				}
 			}
 		});
