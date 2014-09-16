@@ -1,4 +1,4 @@
-/* youtyping.js 09-04-2014 */
+/* youtyping.js 09-17-2014 */
 
 (function(exports){
 var YouTyping = function (element, settings) {
@@ -60,10 +60,12 @@ var YouTyping = function (element, settings) {
 		breakCombo: 'bad', // judgement name
 		failureSuspension: 100, // millisecond
 		initial: false, // boolean
+		mercy: true, // boolean
+		mercyBorder: 14, // stroke per second
 		correction: 0, // millisecond
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
-		videoStop: 0, //second
+		videoStop: 0, // second
 		volume: 100, // percent
 		playbackQuality: 'default' // string
 	};
@@ -268,8 +270,8 @@ var YouTyping = function (element, settings) {
 		youTyping.roll = [];
 
 		var lastNote = null;
-
 		var virtualCombo = 0;
+		var previousNote = null;
 
 		$(items).each(function () {
 			var tempItem = {
@@ -298,6 +300,15 @@ var YouTyping = function (element, settings) {
 				tempItem.remainingText = $(this).children('text').text();
 			}
 
+			// calculate time to the next note
+			if (previousNote !== null && (
+					tempItem.type === youTyping.itemType.NOTE
+					|| tempItem.type === youTyping.itemType.STOP
+				)
+			) {
+				previousNote.duration = tempItem.time - previousNote.time;
+			}
+
 			if (tempItem.type === youTyping.itemType.NOTE) {
 				tempItem.state = youTyping.noteState.WAITING;
 				tempItem.judgement = null;
@@ -308,6 +319,12 @@ var YouTyping = function (element, settings) {
 				}
 
 				youTyping.totalCombo += virtualCombo;
+
+				previousNote = tempItem;
+			}
+
+			if (tempItem.type === youTyping.itemType.STOP) {
+				previousNote = null;
 			}
 
 			youTyping.roll.push(tempItem);
@@ -409,10 +426,32 @@ var YouTyping = function (element, settings) {
 			if (item.type === youTyping.itemType.NOTE) {
 				// calculate and sum weights
 				item.weight = item.romaji.length;
-				totalWeight += item.weight;
 
 				// duplicate romaji
 				item.remainingRomaji = item.romaji;
+
+				// calculate density
+				item.density = item.romaji.length / item.duration * 1000;
+
+				if (youTyping.settings.mercy && item.density >= youTyping.settings.mercyBorder) {
+					item.mercy = Math.floor(youTyping.settings.mercyBorder * item.duration / 1000);
+
+					if (item.mercy === 0) {
+						if (item.romaji.length === 1) {
+							item.mercy = false;
+						} else {
+							item.mercy = 1;
+						}
+					}
+				} else {
+					item.mercy = false;
+				}
+
+				if (item.mercy !== false) {
+					item.weight = item.mercy;
+				}
+
+				totalWeight += item.weight;
 			}
 		});
 
@@ -919,7 +958,19 @@ var YouTyping = function (element, settings) {
 			// update current note index
 			youTyping.currentNoteIndex = newNoteInfo.noteIndex;
 
-			if (newNoteInfo.remainingText === '') {
+			// record romaji and regenerate romanizations
+			note.receivedRomaji += key;
+			if (note.remainingRomaji.slice(0, 1) !== key) {
+				romanizeNotes(newNoteInfo.noteIndex, note.text, note.receivedRomaji);
+				note.remainingRomaji = note.romaji.slice(note.receivedRomaji.length);
+			} else {
+				note.remainingRomaji = note.remainingRomaji.slice(1);
+			}
+
+			if (newNoteInfo.remainingText === '' || (
+				note.mercy !== false
+				&& note.receivedRomaji.length >= note.mercy
+			)) {
 				note.state = youTyping.noteState.CLEARED;
 				note.remainingText = '';
 				youTyping.inputBuffer = '';
@@ -931,15 +982,6 @@ var YouTyping = function (element, settings) {
 				note.state = youTyping.noteState.HITTING;
 				note.remainingText = newNoteInfo.remainingText;
 				youTyping.inputBuffer = newNoteInfo.inputBuffer;
-			}
-
-			// record romaji and regenerate romanizations
-			note.receivedRomaji += key;
-			if (note.remainingRomaji.slice(0, 1) !== key) {
-				romanizeNotes(newNoteInfo.noteIndex, note.text, note.receivedRomaji);
-				note.remainingRomaji = note.romaji.slice(note.receivedRomaji.length);
-			} else {
-				note.remainingRomaji = note.remainingRomaji.slice(1);
 			}
 
 			// mark all the previous note failed
@@ -959,7 +1001,8 @@ var YouTyping = function (element, settings) {
 
 			// if last note is cleared, let's end game
 			if (youTyping.lastNote.state !== youTyping.noteState.WAITING &&
-			    youTyping.lastNote.state !== youTyping.noteState.HITTING) {
+			    youTyping.lastNote.state !== youTyping.noteState.HITTING &&
+			    youTyping.lastNote.state !== youTyping.noteState.MERCIFIED) {
 				gameEndFlag = true;
 			}
 		};

@@ -1,4 +1,4 @@
-/* youtyping-screen.js 09-04-2014 */
+/* youtyping-screen.js 09-17-2014 */
 
 (function(exports){
 var Screen = function (element, settings) {
@@ -39,7 +39,7 @@ var Screen = function (element, settings) {
 		onGameEnd: function () {}, // function
 		highScore: 0, // number
 		'3d': false, // boolean
-		romaji: false // boolean
+		romaji: true // boolean
 	};
 
 	// default YouTyping setting
@@ -54,7 +54,8 @@ var Screen = function (element, settings) {
 		offset: 0, // second
 		volume: 100, // percent
 		playbackQuality: 'default',
-		screen: screen
+		screen: screen,
+		mercyBorder: 14
 	};
 
 	this.initialize = function () {
@@ -271,7 +272,7 @@ var Screen = function (element, settings) {
 							center: [position, settings.rollYpos * settings.height],
 							radius: settings.noteSize,
 							strokeWidth: 1,
-							strokeColor: '#aaa'
+							strokeColor: 'white'
 						}));
 						// lyric
 						items[index].lyric = items[index].addChild(new paper.PointText({
@@ -293,6 +294,17 @@ var Screen = function (element, settings) {
 									settings.rollYpos * settings.height + settings.noteSize + 80
 								],
 								content: item.remainingRomaji,
+								fillColor: 'white',
+								justification: 'center',
+								fontSize: settings.lyricSize,
+								fontFamily: 'sans-serif'
+							}));
+							items[index].mercy = items[index].addChild(new paper.PointText({
+								point: [
+									position,
+									settings.rollYpos * settings.height + settings.noteSize + 110
+								],
+								content: item.mercy ? item.mercy : '',
 								fillColor: 'white',
 								justification: 'center',
 								fontSize: settings.lyricSize,
@@ -341,16 +353,23 @@ var Screen = function (element, settings) {
 				if (item.state === youTyping.noteState.CLEARED) {
 					items[index].visible = false;
 				} else {
+					var fillColor;
+
+					switch (item.state) {
+						case youTyping.noteState.WAITING:
+						case youTyping.noteState.HITTING:
+							fillColor = item.mercy ? 'orange' : 'red'; break;
+						default:
+							fillColor = '#aaa'; break;
+					}
+
 					// note
 					items[index].note.style = {
-						fillColor: (
-							item.state === youTyping.noteState.WAITING ||
-							item.state === youTyping.noteState.HITTING
-						) ? 'red' : '#aaa'
+						fillColor: fillColor
 					};
 					items[index].note.opacity = (
-						item.state === youTyping.noteState.FAILED ||
-						item.state === youTyping.noteState.WAITING
+						item.state === youTyping.noteState.FAILED
+						|| item.state === youTyping.noteState.WAITING
 					) ? 1 : 0.5;
 					// lyric
 					items[index].lyric.content = item.remainingText;
