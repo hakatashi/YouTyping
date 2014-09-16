@@ -310,8 +310,9 @@
 	<rule before="whe" after="ゑ" priority="1"/>
 	<rule before="wye" after="ゑ"/>
 	<rule before="wo" after="を" priority="1"/>
-	<rule before="nn" after="ん" priority="1"/>
-	<rule before="xn" after="ん"/>
+	<rule before="nn" after="ん"/>
+	<rule before="xn" after="ん" priority="1"/>
+	<rule before="n'" after="ん" priority="-1"/>
 	<rule before="lwa" after="ゎ" priority="1"/>
 	<rule before="xwa" after="ゎ"/>
 	<rule before="qq" after="っ" next="q" priority="1"/>
