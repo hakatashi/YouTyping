@@ -61,7 +61,7 @@ var YouTyping = function (element, settings) {
 		failureSuspension: 100, // millisecond
 		initial: false, // boolean
 		mercy: true, // boolean
-		mercyBorder: 14, // stroke per second
+		mercyBorder: 13.5, // stroke per second
 		correction: 0, // millisecond
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
@@ -435,6 +435,10 @@ var YouTyping = function (element, settings) {
 
 				if (youTyping.settings.mercy && item.density >= youTyping.settings.mercyBorder) {
 					item.mercy = Math.floor(youTyping.settings.mercyBorder * item.duration / 1000);
+
+					if (item.mercy === item.romaji.length) {
+						item.mercy--;
+					}
 
 					if (item.mercy === 0) {
 						if (item.romaji.length === 1) {

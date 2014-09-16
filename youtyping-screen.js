@@ -55,7 +55,7 @@ var Screen = function (element, settings) {
 		volume: 100, // percent
 		playbackQuality: 'default',
 		screen: screen,
-		mercyBorder: 14
+		mercyBorder: 13.5
 	};
 
 	this.initialize = function () {
