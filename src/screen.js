@@ -36,7 +36,7 @@ var Screen = function (element, settings) {
 		onGameEnd: function () {}, // function
 		highScore: 0, // number
 		'3d': false, // boolean
-		romaji: false // boolean
+		romaji: true // boolean
 	};
 
 	// default YouTyping setting
@@ -51,7 +51,8 @@ var Screen = function (element, settings) {
 		offset: 0, // second
 		volume: 100, // percent
 		playbackQuality: 'default',
-		screen: screen
+		screen: screen,
+		mercyBorder: 14
 	};
 
 	this.initialize = function () {

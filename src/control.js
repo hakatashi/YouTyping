@@ -58,7 +58,7 @@ var YouTyping = function (element, settings) {
 		failureSuspension: 100, // millisecond
 		initial: false, // boolean
 		mercy: true, // boolean
-		mercyBorder: 15, // stroke per second
+		mercyBorder: 14, // stroke per second
 		correction: 0, // millisecond
 		controlledCorrection: 0, // millisecond
 		offset: 0, // second
