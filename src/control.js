@@ -430,7 +430,7 @@ var YouTyping = function (element, settings) {
 				// calculate density
 				item.density = item.romaji.length / item.duration * 1000;
 
-				if (youTyping.settings.mercy && item.density > youTyping.settings.mercyBorder) {
+				if (youTyping.settings.mercy && item.density >= youTyping.settings.mercyBorder) {
 					item.mercy = Math.floor(youTyping.settings.mercyBorder * item.duration / 1000);
 
 					if (item.mercy === 0) {
