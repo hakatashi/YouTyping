@@ -32,7 +32,7 @@
 	<rule before="who" after="うぉ" priority="1"/>
 	<rule before="ka" after="か" priority="1"/>
 	<rule before="ca" after="か"/>
-	<rule before="ki" after="き" priority="1"/>
+	<rule before="ki" after="き"/>
 	<rule before="ku" after="く" priority="1"/>
 	<rule before="cu" after="く"/>
 	<rule before="qu" after="く"/>
@@ -83,16 +83,16 @@
 	<rule before="gwe" after="ぐぇ" priority="1"/>
 	<rule before="gwo" after="ぐぉ" priority="1"/>
 	<rule before="sa" after="さ" priority="1"/>
-	<rule before="si" after="し" priority="1"/>
-	<rule before="ci" after="し"/>
-	<rule before="shi" after="し"/>
+	<rule before="si" after="し" priority="0"/>
+	<rule before="ci" after="し" priority="-1"/>
+	<rule before="shi" after="し" priority="-1"/>
 	<rule before="su" after="す" priority="1"/>
 	<rule before="se" after="せ" priority="1"/>
 	<rule before="ce" after="せ"/>
 	<rule before="so" after="そ" priority="1"/>
 	<rule before="za" after="ざ" priority="1"/>
-	<rule before="zi" after="じ"/>
-	<rule before="ji" after="じ" priority="1"/>
+	<rule before="zi" after="じ" priority="-1"/>
+	<rule before="ji" after="じ" priority="0"/>
 	<rule before="zu" after="ず" priority="1"/>
 	<rule before="ze" after="ぜ" priority="1"/>
 	<rule before="zo" after="ぞ" priority="1"/>
@@ -125,8 +125,8 @@
 	<rule before="jo" after="じょ" priority="1"/>
 	<rule before="jyo" after="じょ"/>
 	<rule before="ta" after="た" priority="1"/>
-	<rule before="ti" after="ち" priority="1"/>
-	<rule before="chi" after="ち"/>
+	<rule before="ti" after="ち" priority="0"/>
+	<rule before="chi" after="ち" priority="-1"/>
 	<rule before="tu" after="つ" priority="1"/>
 	<rule before="tsu" after="つ"/>
 	<rule before="te" after="て" priority="1"/>
@@ -136,7 +136,7 @@
 	<rule before="ltsu" after="っ"/>
 	<rule before="xtsu" after="っ"/>
 	<rule before="da" after="だ" priority="1"/>
-	<rule before="di" after="ぢ" priority="1"/>
+	<rule before="di" after="ぢ" priority="0"/>
 	<rule before="du" after="づ" priority="1"/>
 	<rule before="de" after="で" priority="1"/>
 	<rule before="do" after="ど" priority="1"/>
@@ -194,18 +194,18 @@
 	<rule before="nye" after="にぇ" priority="1"/>
 	<rule before="nyo" after="にょ" priority="1"/>
 	<rule before="ha" after="は" priority="1"/>
-	<rule before="hi" after="ひ" priority="1"/>
+	<rule before="hi" after="ひ" priority="0"/>
 	<rule before="hu" after="ふ"/>
 	<rule before="fu" after="ふ" priority="1"/>
 	<rule before="he" after="へ" priority="1"/>
 	<rule before="ho" after="ほ" priority="1"/>
 	<rule before="ba" after="ば" priority="1"/>
-	<rule before="bi" after="び" priority="1"/>
+	<rule before="bi" after="び" priority="0"/>
 	<rule before="bu" after="ぶ" priority="1"/>
 	<rule before="be" after="べ" priority="1"/>
 	<rule before="bo" after="ぼ" priority="1"/>
 	<rule before="pa" after="ぱ" priority="1"/>
-	<rule before="pi" after="ぴ" priority="1"/>
+	<rule before="pi" after="ぴ" priority="0"/>
 	<rule before="pu" after="ぷ" priority="1"/>
 	<rule before="pe" after="ぺ" priority="1"/>
 	<rule before="po" after="ぽ" priority="1"/>
@@ -274,7 +274,7 @@
 	<rule before="vye" after="ゔぇ" priority="1"/>
 	<rule before="vyo" after="ゔょ" priority="1"/>
 	<rule before="ma" after="ま" priority="1"/>
-	<rule before="mi" after="み" priority="1"/>
+	<rule before="mi" after="み" priority="0"/>
 	<rule before="mu" after="む" priority="1"/>
 	<rule before="me" after="め" priority="1"/>
 	<rule before="mo" after="も" priority="1"/>
