@@ -423,7 +423,6 @@ var YouTyping = function (element, settings) {
 			if (item.type === youTyping.itemType.NOTE) {
 				// calculate and sum weights
 				item.weight = item.romaji.length;
-				totalWeight += item.weight;
 
 				// duplicate romaji
 				item.remainingRomaji = item.romaji;
@@ -435,15 +434,21 @@ var YouTyping = function (element, settings) {
 					item.mercy = Math.floor(youTyping.settings.mercyBorder * item.duration / 1000);
 
 					if (item.mercy === 0) {
-						item.mercy = false;
+						if (item.romaji.length === 1) {
+							item.mercy = false;
+						} else {
+							item.mercy = 1;
+						}
 					}
 				} else {
 					item.mercy = false;
 				}
 
 				if (item.mercy !== false) {
-					item.weight = item.mercy.length;
+					item.weight = item.mercy;
 				}
+
+				totalWeight += item.weight;
 			}
 		});
 
