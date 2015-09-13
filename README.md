@@ -1,6 +1,8 @@
 YouTyping
 =========
 
+[![Dependency Status](https://gemnasium.com/hakatashi/YouTyping.svg)](https://gemnasium.com/hakatashi/YouTyping)
+
 UTyping on browser.
 
 Test is running [here](http://hakatashi.github.io/YouTyping/sample/).

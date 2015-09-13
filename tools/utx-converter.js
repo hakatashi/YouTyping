@@ -82,7 +82,7 @@ var extractCreator = {
 /******** Parser ********/
 
 try {
-	var rollLines = rollText.split('\r\n');
+	var rollLines = rollText.replace(/\r\n/g, '\n').split('\n');
 
 	// first line of roll file describes music file name
 	if (rollLines[0].startsWith('@')) {
