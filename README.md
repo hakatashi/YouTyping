@@ -1,6 +1,8 @@
 YouTyping
 =========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/hakatashi/YouTyping.svg)](https://greenkeeper.io/)
+
 [![Dependency Status](https://gemnasium.com/hakatashi/YouTyping.svg)](https://gemnasium.com/hakatashi/YouTyping)
 
 UTyping on browser.
